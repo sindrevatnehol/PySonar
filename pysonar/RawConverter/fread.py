@@ -39,14 +39,8 @@ def fread(fid, nelements, dtype):
         dt = dtype 
         
     if (isinstance( nelements, int )== True)or (isinstance( nelements, np.int32 )== True):
-        print(fid)
         data_array = np.fromfile(fid, dt, nelements)
     else: 
         data_array = np.fromfile(fid, dt, nelements[0])
         
     return data_array; 
-    
-    
-if __name__ == '__main__':    
-    fread(fid, nelements, dtype)
-    

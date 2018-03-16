@@ -154,9 +154,9 @@ def main():
         
         #Convert data to netcdf
         print('    *Convert data         ',end='\r')
-#        os.chdir(current_dir)
-#        tools.DataConverter(CruiceIndex,WorkDirectory,current_dir,
-#                            maxPingInFile,MaxNumberOfFilesInNC,directory2Data)
+        os.chdir(current_dir)
+        tools.DataConverter(CruiceIndex,WorkDirectory,current_dir,
+                            maxPingInFile,MaxNumberOfFilesInNC,directory2Data)
         
         
         
@@ -165,13 +165,12 @@ def main():
         TimeIDX=tools.TransectTimeIDX(CruiceIndex)
         
         if TimeIDX == []: 
-#            import glob
-#            print(glob.glob(directory2Data.dir_src + '/EKLUF20'))
             
-            filename = 'C:/Users/sindrev/Desktop/ListUserFile20__L7284.0-1959.0.txt'
-            TimeIDX = AlternativTransectTime(filename,str(CruiceIndex.getAttribute('code')))
+            for dirpath,_,filenames in os.walk(directory2Data.dir_src + '/EKLUF20/'):
+                for f in filenames:
+                    filename =  os.path.abspath(os.path.join(dirpath, f))
+                    TimeIDX = AlternativTransectTime(filename,str(CruiceIndex.getAttribute('code')))
         
-        print(TimeIDX)
 #            
 #        
 #        

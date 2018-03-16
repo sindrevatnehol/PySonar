@@ -99,6 +99,8 @@ def MakeNewFolders(directory2Data):
         os.makedirs(directory2Data.dir_src)
     if not os.path.exists(directory2Data.dir_work):
         os.makedirs(directory2Data.dir_work)
+    if not os.path.exists(directory2Data.dir_NCconvertProgress):
+        os.makedirs(directory2Data.dir_NCconvertProgress)
         
                
         
@@ -185,7 +187,7 @@ def OrginizeData(CruiceIndex,WorkDirectory,OS):
             directory2Data =FolderStructure(WorkDirectory+'/'+cruiceCode[:4]+'/S'+cruiceCode+'_P'+vesselCode,i)        
             MakeNewFolders(directory2Data)
         
-            print('    -Get files from server',end='\r')
+            print('    -Get files from server  ',end='\r')
             ListFromServer = os.listdir(OS+CruiceIndex.getAttribute('CruicePath'))
             ListOfFilesNotcopied = list(set(ListFromServer)-set(os.listdir(directory2Data.dir_originalrawdata)))
             for i in np.arange(len(ListOfFilesNotcopied)): 

@@ -11,8 +11,8 @@
 	platform_type = 'ship, research' 
 	platform_code = '????' 
 	CruicePath = '/cruise_data/2017/S2017107_PGOSARS_4174/ACOUSTIC_DATA/SU90' 
-	PreferedNMEA = '$????'
-	PreferedHeading = '$????'
+	PreferedNMEA = '$INGLL'
+	PreferedHeading = '$INHDT'
 	CruiceNewDirection ='//ces.imr.no/cruise_data/2017/S2017107_PGOSARS_4174/ACOUSTIC_DATA/SU90' 
 	Equipment = 'SU90'>
 	</CruiceCode> 

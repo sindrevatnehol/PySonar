@@ -569,7 +569,7 @@ def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg):
             os.chdir(directory)
             
             #Change to raw folder and display text to user
-            print('Converting '+filename+' to netcdf')
+            print('Loading '+filename+'        ' , end='\r')
             
             
             #open .raw file
@@ -579,7 +579,7 @@ def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg):
             #Read the .raw file
             FileData = ReadRawData.ReadRawData(fid,headerlength)
             
-            
+            print('File '+filename+' is loaded' , end='\r')
             #Change directory to netcdf folder
             os.chdir(directoryOutput)
             
@@ -805,5 +805,7 @@ def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg):
             f_id = open(DirectoryToNCProg+'/ConvertedFiles.txt','w')
             f_id.write(filename)
             f_id.close()
+            
+            print('File '+filename+' is converted' , end='\r')
 
             
