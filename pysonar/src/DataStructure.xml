@@ -15,10 +15,10 @@
 	PreferedHeading = '$????'
 	CruiceNewDirection ='//ces.imr.no/cruise_data/2017/S2017107_PGOSARS_4174/ACOUSTIC_DATA/SU90' 
 	Equipment = 'SU90'>
-	
-	<transect num = '1' startTime = '20170514T173500' endTime = '20170514T181100'></transect>
 	</CruiceCode> 
 </CruiceList> 
+
+
 
 
 <CruiceList> 
