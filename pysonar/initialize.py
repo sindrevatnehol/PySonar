@@ -65,7 +65,7 @@ def AlternativTransectTime(filename,code):
         
         start_time = i.get('start_time').replace(' ','T').replace('-','').replace(':','')
         stop_time = i.find('stop_time').text.replace(' ','T').replace('-','').replace(':','')
-        
+
         if Start == []:
             Start = np.hstack((Start,start_time))
             transect_IDX = np.hstack((transect_IDX,code + '_'+str(transect_i)))
@@ -171,32 +171,34 @@ def main():
                     filename =  os.path.abspath(os.path.join(dirpath, f))
                     TimeIDX = AlternativTransectTime(filename,str(CruiceIndex.getAttribute('code')))
         
-#            
-#        
-#        
-#        
-#        #Get list of files in cruice
-#        ListOfFilesInFolder = ListOfFiles(directory2Data.dir_src,directory2Data.dir_nc)
+            
+        
+        
+        #Get list of files in cruice
+        ListOfFilesInFolder = ListOfFiles(directory2Data.dir_src,directory2Data.dir_nc)
         
         
         
         
         #Loop through each transect in a randomized maner
-#        NumTransect = np.arange(len(TimeIDX))
+        NumTransect = np.arange(len(TimeIDX))
 #        np.random.shuffle(NumTransect)
-#        for Transect in NumTransect: 
-#            print('    -Start on transect: '+ TimeIDX[Transect,0])
-#        
-#            
-#            #Go through each equipment
-#            for i in ['SU90','SX90','SH90']: 
-#                if i == CruiceIndex.getAttribute("Equipment"): 
+        for Transect in NumTransect: 
+            print('    -Start on transect: '+ TimeIDX[Transect,0])
+        
+            
+            #Go through each equipment
+#            for eqip in ['SU90','SX90','SH90']: 
+#                if eqip == CruiceIndex.getAttribute("Equipment"): 
 #                    
 #                    
 #                    #Get list of files
 #                    #Need to fix the equipment stuff.
 #                    #Try ListOfFilesInFolder[0][:4]
-#                    ListOfFilesWithinTimeInterval = [i+'-'+str(i)+'.nc' for i in np.sort(ListOfFilesInFolder) if TimeIDX[Transect,1]*1E6 <= i <=TimeIDX[Transect,2]*1E6]
+#                    
+##                    print(TimeIDX[Transect,1])
+##                    print(ListOfFilesInFolder[0])
+#                    ListOfFilesWithinTimeInterval = [eqip+'-'+str(i)+'.nc' for i in np.sort(ListOfFilesInFolder) if TimeIDX[Transect,1]*1E6 <= i <=TimeIDX[Transect,2]*1E6]
 #                    
 #
 #
@@ -209,7 +211,7 @@ def main():
 #                        MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat')
                         
                         
-#                        
+                        
 #                    #Make the work stuff    
 #                    if os.path.isfile(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt') == False: 
 #                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == True: 

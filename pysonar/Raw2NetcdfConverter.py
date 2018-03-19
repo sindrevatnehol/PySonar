@@ -524,6 +524,21 @@ def Raw2NetcdfConverter(directoryToRaw,vessel_name,platform_type,
             
             
 
+import datetime
+
+def TimeConverter(time_date):
+   
+    try:  
+        temp_date = (time_date[1]*2**32 + time_date[0])/10000
+        fulldate = datetime.datetime.strptime('1601-01-01 00:00:00.000',"%Y-%m-%d %H:%M:%S.%f")
+    
+    
+        fulldate = fulldate + datetime.timedelta(milliseconds=int(temp_date))
+
+    except IndexError: 
+        fulldate = 0
+    return fulldate; 
+    
 
 def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg): 
     
@@ -580,6 +595,7 @@ def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg):
             FileData = ReadRawData.ReadRawData(fid,headerlength)
             
             print('File '+filename+' is loaded' , end='\r')
+            
             #Change directory to netcdf folder
             os.chdir(directoryOutput)
             
@@ -600,6 +616,14 @@ def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg):
                     Time = FileData.NMEA[increment]
     
     
+                    time= TimeConverter(Time)
+                    time = str(time).replace("-","").replace(" ","").replace(":","").replace(".","")
+                    Time = time
+ 
+                    print(Time)
+                
+            
+            
                     '''
                     Temporarly fix for fixing a bug in time indexing
                     It should be redundant now. 

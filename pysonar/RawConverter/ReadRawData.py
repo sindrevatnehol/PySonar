@@ -149,7 +149,8 @@ def ReadRawData(fid,headerlength):
         
         #get time
         NMEA= fread.fread(fid,1,np.uint64)
-        
+       
+    
         #Writn con1 information
         if datagramtype == 'CON1':
             FileData.text = StringArray.StringArray(fread.fread(fid,(bytes2read-headerlength),np.str))
