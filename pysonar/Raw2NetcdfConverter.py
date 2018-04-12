@@ -524,10 +524,11 @@ def Raw2NetcdfConverter(directoryToRaw,vessel_name,platform_type,
             
             
 
-import datetime
+
 
 def TimeConverter(time_date):
-   
+    import datetime   
+    fulldate = datetime.datetime.strptime('1601-01-01 00:00:00.000',"%Y-%m-%d %H:%M:%S.%f")
     try:  
         temp_date = (time_date[1]*2**32 + time_date[0])/10000
         fulldate = datetime.datetime.strptime('1601-01-01 00:00:00.000',"%Y-%m-%d %H:%M:%S.%f")
@@ -539,6 +540,8 @@ def TimeConverter(time_date):
         fulldate = 0
     return fulldate; 
     
+
+
 
 def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg): 
     
@@ -584,7 +587,7 @@ def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg):
             os.chdir(directory)
             
             #Change to raw folder and display text to user
-            print('Loading '+filename+'        ' , end='\r')
+            print('Loading '+filename+'        ')
             
             
             #open .raw file
@@ -611,17 +614,17 @@ def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg):
                 
                 #If there is information inside the ping continue
                 if not FileData.NMEA[increment] ==[]:
-                    
                     #Get the time of the ping from nmea
                     Time = FileData.NMEA[increment]
-    
-    
-                    time= TimeConverter(Time)
+                    import datetime
+                    fulldate = datetime.datetime.strptime('1601-01-01 00:00:00.000',"%Y-%m-%d %H:%M:%S.%f")
+                    time = fulldate + datetime.timedelta(milliseconds=int(Time[0]/10000))
+                    #a = datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%f %H:%M:%S.%f')
+                    #time= TimeConverter(Time)
                     time = str(time).replace("-","").replace(" ","").replace(":","").replace(".","")
+                    
                     Time = time
  
-                    print(Time)
-                
             
             
                     '''
@@ -634,7 +637,7 @@ def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg):
                     elif Time == (int(oldTime)-1):
                         Time = (int(Time)+2)
                         
-                    Time = str(Time[0])
+                    Time = str(Time)
                     '''
                     Underneath: 
                     Get all the variables from raw fil
@@ -695,7 +698,7 @@ def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg):
                     beammode = FileData.PingData[increment].beammode[0]
     
                     BeamAmplitudeData =  FileData.PingData[increment].BeamAmplitudeData
-    
+                    print(FileData.NMEA_time) 
                     try: 
                         Longitude = FileData.Longitude[increment]
         
@@ -703,7 +706,6 @@ def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg):
                     except AttributeError: 
                         Longitude = np.nan
                         Latitude = np.nan
-    
                     try: 
                         [R, L] = BeamAmplitudeData.shape
                         

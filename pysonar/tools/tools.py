@@ -133,20 +133,20 @@ def DataConverter(CruiceIndex,WorkDirectory,current_dir,maxPingInFile,
        
             
             
-        if not os.path.exists(directory2Data.dir_NCconvertProgress + '/finishedNC.txt'):
-            os.chdir(current_dir)
-            Raw2NetcdfConverter.Raw2NetcdfConverter(directory2Data.dir_originalrawdata,
-                                                vessel_name,
-                                                platform_type,
-                                                platform_code,
-                                                maxPingInFile,
-                                                MaxNumberOfFilesInNC,
-                                                PreferedNMEA,
-                                                PreferedHeading,
-                                                directory2Data.dir_rawdata) 
-            f = open(directory2Data.dir_NCconvertProgress + '/finishedNC.txt','w')
-            f.write('0')
-            f.close()
+#        if not os.path.exists(directory2Data.dir_NCconvertProgress + '/finishedNC.txt'):
+#            os.chdir(current_dir)
+#            Raw2NetcdfConverter.Raw2NetcdfConverter(directory2Data.dir_originalrawdata,
+#                                                vessel_name,
+#                                                platform_type,
+#                                                platform_code,
+#                                                maxPingInFile,
+#                                                MaxNumberOfFilesInNC,
+#                                                PreferedNMEA,
+#                                                PreferedHeading,
+#                                                directory2Data.dir_rawdata) 
+#            f = open(directory2Data.dir_NCconvertProgress + '/finishedNC.txt','w')
+#            f.write('0')
+#            f.close()
         
        
             
@@ -197,7 +197,7 @@ def OrginizeData(CruiceIndex,WorkDirectory,OS):
                 try:
                     copyfile(OS+CruiceIndex.getAttribute('CruicePath')+'/'+ListOfFilesNotcopied[i], 
                          directory2Data.dir_originalrawdata+'/'+ListOfFilesNotcopied[i])
-                except PermissionError: 
+                except IsADirectoryError: 
                     print(' ')
                     
     return(directory2Data)

@@ -30,6 +30,7 @@ REDUS (Reducing uncertainty in stock assessment)
 '''
 
 import numpy as np
+
 from RawConverter import fread,StringArray,TimeConverter,bitget
 
 #class ReadRawData:
@@ -318,10 +319,11 @@ def ReadRawData(fid,headerlength):
                 #read the data
                 data = fread.fread(fid,2*(FileData.PingData[ping_count-1].count[BeamCount-1]),
                                           np.float32)
-                
-#                data = np.fromfile(fid,np.float32,count=2*(FileData.PingData[ping_count-1].count[BeamCount-1]) )
-                
-                data = data.reshape(FileData.PingData[ping_count-1].count[BeamCount-1],2).transpose()
+                #print(data.shape)
+                try:
+                    data = data.reshape(FileData.PingData[ping_count-1].count[BeamCount-1],2).transpose() 
+                except ValueError: 
+                    data = np.nan*np.ones((FileData.PingData[ping_count-1].count[BeamCount-1],2)).transpose()
 
                 #sort the data into real and imaginary
                 realstuff = data[0,0:t[1]]

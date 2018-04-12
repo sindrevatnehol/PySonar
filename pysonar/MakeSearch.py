@@ -267,8 +267,9 @@ def ComputeDistance(travelDist,lat,lon):
         
         
         
-    elif len(lat)>=2:
-        
+    elif len(lat)>=20:
+        print(lat)
+        print(lon) 
         #find the delta in longitude and latitude
         delta_lat = lat[-1]-lat[-2]
         delta_lon = lon[-1]-lon[-2]
@@ -306,7 +307,7 @@ def ComputeDistance(travelDist,lat,lon):
 
     
     
-def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data):     # Some bookkeeping
+def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data,dirnc): 
 
     PingCount = True
     MakeWdistStuff= True
@@ -332,14 +333,14 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
         tools.printProgressBar(filename_index + 1, len(ListOfFilesWithinTimeInterval), prefix = 'Make SearchMatrix:', suffix = 'Complete', length = 50)
         
         #Name of the current file in the short list
-        CurrentFileName = ListOfFilesWithinTimeInterval[filename_index]
-        
-            
+        CurrentFileName = ListOfFilesWithinTimeInterval[filename_index].replace(' ','')
+        import os 
+        os.chdir(dirnc)
         #Open the NETCDF file
         try: 
             fileID = Dataset(CurrentFileName,'r',format='NETCDF4')
         except OSError:
-            fileID = Dataset(CurrentFileName[:-9]+'.nc','r',format='NETCDF4')
+            fileID = Dataset(CurrentFileName+'.nc','r',format='NETCDF4')
         
         
         

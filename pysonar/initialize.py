@@ -188,27 +188,25 @@ def main():
         
             
             #Go through each equipment
-#            for eqip in ['SU90','SX90','SH90']: 
-#                if eqip == CruiceIndex.getAttribute("Equipment"): 
-#                    
-#                    
-#                    #Get list of files
-#                    #Need to fix the equipment stuff.
-#                    #Try ListOfFilesInFolder[0][:4]
-#                    
-##                    print(TimeIDX[Transect,1])
-##                    print(ListOfFilesInFolder[0])
-#                    ListOfFilesWithinTimeInterval = [eqip+'-'+str(i)+'.nc' for i in np.sort(ListOfFilesInFolder) if TimeIDX[Transect,1]*1E6 <= i <=TimeIDX[Transect,2]*1E6]
-#                    
-#
-#
-#                    #Make the search matrix
-#                    if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
-#                        MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat')
-#                        print('    *Make New Search',end='\r')
-#                    elif recompute == True: 
-#                        print('    *Make New Search',end='\r')
-#                        MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat')
+            for eqip in ['SU90','SX90','SH90']: 
+                if eqip == CruiceIndex.getAttribute("Equipment"): 
+                    
+                    
+                    #Get list of files
+                    #Need to fix the equipment stuff.
+                    #Try ListOfFilesInFolder[0][:4]
+                   
+                    startTime = TimeIDX[Transect,1].replace('T','')
+                    endTime = TimeIDX[Transect,2].replace('T','')
+
+                    ListOfFilesWithinTimeInterval = [eqip+'-'+str(i)+'.nc' for i in np.sort(ListOfFilesInFolder) if int(startTime)*1E6 <= int(i) <=int(endTime)*1E6]
+                    #Make the search matrix
+                    if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
+                        MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_nc)
+                        print('    *Make New Search',end='\r')
+                    elif recompute == True: 
+                        print('    *Make New Search',end='\r')
+                        MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_nc)
                         
                         
                         

@@ -40,7 +40,10 @@ def fread(fid, nelements, dtype):
         
     if (isinstance( nelements, int )== True)or (isinstance( nelements, np.int32 )== True):
         data_array = np.fromfile(fid, dt, nelements)
-    else: 
-        data_array = np.fromfile(fid, dt, nelements[0])
+    else:
+        try:   
+            data_array = np.fromfile(fid, dt, nelements[0])
+        except IndexError: 
+            data_array = np.fromfile(fid,dt,nelements)
         
     return data_array; 
