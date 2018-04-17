@@ -191,14 +191,15 @@ def OrginizeData(CruiceIndex,WorkDirectory,OS):
             for i in np.arange(len(ListOfFilesNotcopied)): 
                 printProgressBar(i, len(ListOfFilesNotcopied), prefix = 'Copy files', suffix = 'Files left: '+
                                  str(len(ListOfFilesNotcopied)-i) , decimals = 1, length = 50)
-                
-                try:
-                    copyfile(OS+CruiceIndex.getAttribute('CruicePath')+'/'+ListOfFilesNotcopied[i], 
-                         directory2Data.dir_originalrawdata+'/'+ListOfFilesNotcopied[i])
+                try:  
+                    try:
+                        copyfile(OS+CruiceIndex.getAttribute('CruicePath')+'/'+ListOfFilesNotcopied[i], 
+                             directory2Data.dir_originalrawdata+'/'+ListOfFilesNotcopied[i])
 #                except IsADirectoryError: 
 #                    print(' ')
-                except PermissionError: 
-                    print(' ')
-                    
+                    except PermissionError: 
+                        print(' ')
+                except IsADirectoryError:  
+                    print('')
     return(directory2Data)
    
