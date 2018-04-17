@@ -617,12 +617,13 @@ def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg):
                 try: 
                     msg = pynmea2.parse(FileData.NMEA_info[i])
                     try: 
-                        Lon = np.hstack((Lon,np.float(msg.lon)/100))
-                        Lat = np.hstack((Lat,np.float(msg.lat)/100))
-#                        print(msg)
-                        NMEATime = np.hstack((NMEATime,int(str(msg.timestamp).replace(':','').replace('.',''))))
-#                                print(str(Time)[8:])
-#                                print(str(msg.timestamp).replace(':','').replace('.',''))
+                        try: 
+                            np.float(msg.lon)/100+float(msg.lat)/100+int(str(msg.timestamp).replace(':','').replace('.',''))
+                            Lon = np.hstack((Lon,np.float(msg.lon)/100))
+                            Lat = np.hstack((Lat,np.float(msg.lat)/100))
+                            NMEATime = np.hstack((NMEATime,int(str(msg.timestamp).replace(':','').replace('.',''))))
+                        except ValueError: 
+                            k=1
                     except AttributeError: 
                         k=1
                 except pynmea2.nmea.ParseError: 
