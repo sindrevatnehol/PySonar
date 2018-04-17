@@ -195,8 +195,6 @@ def OrginizeData(CruiceIndex,WorkDirectory,OS):
                     try:
                         copyfile(OS+CruiceIndex.getAttribute('CruicePath')+'/'+ListOfFilesNotcopied[i], 
                              directory2Data.dir_originalrawdata+'/'+ListOfFilesNotcopied[i])
-#                except IsADirectoryError: 
-#                    print(' ')
                     except PermissionError: 
                         print(' ')
                 except IsADirectoryError:  

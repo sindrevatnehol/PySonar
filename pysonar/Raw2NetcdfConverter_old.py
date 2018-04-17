@@ -617,8 +617,9 @@ def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg):
                 try: 
                     msg = pynmea2.parse(FileData.NMEA_info[i])
                     try: 
-                        Lat = np.hstack((Lat,np.float(msg.lat)/100))
                         Lon = np.hstack((Lon,np.float(msg.lon)/100))
+                        Lat = np.hstack((Lat,np.float(msg.lat)/100))
+#                        print(msg)
                         NMEATime = np.hstack((NMEATime,int(str(msg.timestamp).replace(':','').replace('.',''))))
 #                                print(str(Time)[8:])
 #                                print(str(msg.timestamp).replace(':','').replace('.',''))
@@ -733,7 +734,6 @@ def Raw2NetcdfConverter2(directory,directoryOutput,DirectoryToNCProg):
                     BeamAmplitudeData =  FileData.PingData[increment].BeamAmplitudeData
 
                     Longitude = Lon[IdxNMEAtime][0]
-
 
                     Latitude = Lat[IdxNMEAtime][0]
 
