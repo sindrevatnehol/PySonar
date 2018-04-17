@@ -9,6 +9,7 @@ import os
 import numpy as np
 from shutil import copyfile
 import Raw2NetcdfConverter
+import Raw2NetcdfConverter_old
 
 
 def printProgressBar(iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = ' '):
@@ -111,6 +112,8 @@ def MakeNewFolders(directory2Data):
 def DataConverter(CruiceIndex,WorkDirectory,current_dir,maxPingInFile,
                   MaxNumberOfFilesInNC,directory2Data) :
     
+#    from Raw2NetcdfConverter 
+    
     vessel_name = CruiceIndex.getAttribute('vessel')
     platform_type = CruiceIndex.getAttribute('platform_type')
     platform_code = CruiceIndex.getAttribute('platform_code')
@@ -124,7 +127,7 @@ def DataConverter(CruiceIndex,WorkDirectory,current_dir,maxPingInFile,
     for i in ['SU90','SX90','SH90']: 
         
         if not os.path.exists(directory2Data.dir_NCconvertProgress + '/finished.txt'):
-            Raw2NetcdfConverter.Raw2NetcdfConverter2(directory2Data.dir_originalrawdata,
+            Raw2NetcdfConverter_old.Raw2NetcdfConverter2(directory2Data.dir_originalrawdata,
                                                      directory2Data.dir_nc,
                                                      directory2Data.dir_NCconvertProgress)
             f = open(directory2Data.dir_NCconvertProgress + '/finished.txt','w')
@@ -133,20 +136,15 @@ def DataConverter(CruiceIndex,WorkDirectory,current_dir,maxPingInFile,
        
             
             
-#        if not os.path.exists(directory2Data.dir_NCconvertProgress + '/finishedNC.txt'):
-#            os.chdir(current_dir)
-#            Raw2NetcdfConverter.Raw2NetcdfConverter(directory2Data.dir_originalrawdata,
-#                                                vessel_name,
-#                                                platform_type,
-#                                                platform_code,
-#                                                maxPingInFile,
-#                                                MaxNumberOfFilesInNC,
-#                                                PreferedNMEA,
-#                                                PreferedHeading,
-#                                                directory2Data.dir_rawdata) 
-#            f = open(directory2Data.dir_NCconvertProgress + '/finishedNC.txt','w')
-#            f.write('0')
-#            f.close()
+        if not os.path.exists(directory2Data.dir_NCconvertProgress + '/finishedNC.txt'):
+            os.chdir(current_dir)
+            
+            Raw2NetcdfConverter.convert.Raw2NetcdfConverter(directory2Data.dir_originalrawdata,vessel_name,platform_type,
+                        platform_code,maxPingInFile,MaxNumberOfFilesInNC,
+                        directory2Data.dir_rawdata)
+            f = open(directory2Data.dir_NCconvertProgress + '/finishedNC.txt','w')
+            f.write('0')
+            f.close()
         
        
             
@@ -197,7 +195,9 @@ def OrginizeData(CruiceIndex,WorkDirectory,OS):
                 try:
                     copyfile(OS+CruiceIndex.getAttribute('CruicePath')+'/'+ListOfFilesNotcopied[i], 
                          directory2Data.dir_originalrawdata+'/'+ListOfFilesNotcopied[i])
-                except IsADirectoryError: 
+#                except IsADirectoryError: 
+#                    print(' ')
+                except PermissionError: 
                     print(' ')
                     
     return(directory2Data)
