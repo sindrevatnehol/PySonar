@@ -7,9 +7,18 @@ Created on Thu Mar 15 18:48:05 2018
 
 
 from netCDF4 import Dataset
-import scipy
+import scipy, os
 import numpy as np
 from tools import tools
+
+
+def UnpackBeam(BeamAmplitudeDataIM):
+    BeamAmplitude = np.zeros(len(BeamAmplitudeDataIM),64)
+    
+    for i in range(len(BeamAmplitude[0,:])):
+        BeamAmplitude[:,i] = BeamAmplitudeDataIM[i]
+
+    return BeamAmplitude
 
 
 
@@ -323,18 +332,24 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
     #Report to the user that files are being loaded
             
     #Loop through all files within the time interval
-    for filename_index in range(0,len(ListOfFilesWithinTimeInterval)): 
-        tools.printProgressBar(filename_index + 1, len(ListOfFilesWithinTimeInterval), prefix = 'Make SearchMatrix:', suffix = 'Complete', length = 50)
+    for filename_index in range(0,len(ListOfFilesWithinTimeInterval[:,0])):
+        
+        
+        filename = os.path.join(dirnc,ListOfFilesWithinTimeInterval[filename_index,1])
+        
+        fileID = Dataset(filename,'r',format = 'NETCDF4')
+        
+#        tools.printProgressBar(filename_index + 1, len(ListOfFilesWithinTimeInterval), prefix = 'Make SearchMatrix:', suffix = 'Complete', length = 50)
         
         #Name of the current file in the short list
-        CurrentFileName = ListOfFilesWithinTimeInterval[filename_index].replace(' ','')
-        import os 
-        os.chdir(dirnc)
-        #Open the NETCDF file
-        try: 
-            fileID = Dataset(CurrentFileName,'r',format='NETCDF4')
-        except OSError:
-            fileID = Dataset(CurrentFileName+'.nc','r',format='NETCDF4')
+#        CurrentFileName = ListOfFilesWithinTimeInterval[filename_index].replace(' ','')
+#        import os 
+#        os.chdir(dirnc)
+#        #Open the NETCDF file
+#        try: 
+#            fileID = Dataset(CurrentFileName,'r',format='NETCDF4')
+#        except OSError:
+#            fileID = Dataset(CurrentFileName+'.nc','r',format='NETCDF4')
         
         
         
@@ -342,18 +357,36 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
         #ADD With a new netcdf format, this protocoll will 
         #be changed. It should then identify the correct location
         #within the file
-        BeamAmplitudeData = fileID.variables['BeamAmplitudeData'][:]
+        print(fileID.groups['Sonar'].groups['Beam_group2'])
+        
+        frequency = fileID.groups['Sonar'].groups['Beam_group2'].variables['transmit_frequency_start'][int(ListOfFilesWithinTimeInterval[filename_index,2])]
+        transmitpower = fileID.groups['Sonar'].groups['Beam_group2'].variables['transmit_power'][int(ListOfFilesWithinTimeInterval[filename_index,2])]
+        pulslength = fileID.groups['Sonar'].groups['Beam_group2'].variables['transmit_duration_nominal'][int(ListOfFilesWithinTimeInterval[filename_index,2])]
+        gaintx = fileID.groups['Sonar'].groups['Beam_group2'].variables['transmit_source_level'][int(ListOfFilesWithinTimeInterval[filename_index,2])]
+        gainrx = fileID.groups['Sonar'].groups['Beam_group2'].variables['receiver_sensitivity'][int(ListOfFilesWithinTimeInterval[filename_index,2])]
+
+
+        #def UnpackBeamData
+        
+        BeamAmplitudeDataIM=UnpackBeam(fileID.groups['Sonar'].groups['Beam_group2'].variables['backscatter_i'][int(ListOfFilesWithinTimeInterval[filename_index,2]),:])
+        BeamAmplitudeDataReal=UnpackBeam(fileID.groups['Sonar'].groups['Beam_group2'].variables['backscatter_r'][int(ListOfFilesWithinTimeInterval[filename_index,2]),:])
+
+        print(BeamAmplitudeDataIM.shape)
+        BeamAmplitudeData =np.sqrt((BeamAmplitudeDataIM**2 + BeamAmplitudeDataReal**2))
+        
+        print(gaintx)
+#        BeamAmplitudeData = fileID.variables['BeamAmplitudeData'][:]
         soundvelocity = fileID.variables['soundvelocity'][:]
         sampleinterval = fileID.variables['sampleinterval'][:]
         absorptioncoefficient = fileID.variables['absorptioncoefficient'][:]
         dirx = fileID.variables['dirx'][:]
         diry = fileID.variables['diry'][:]
         dirz = fileID.variables['dirz'][:]
-        frequency = fileID.variables['frequency'][:]
-        transmitpower = fileID.variables['transmitpower'][:]
-        pulslength = fileID.variables['pulslength'][:]
-        gaintx = fileID.variables['gaintx'][:]
-        gainrx = fileID.variables['gainrx'][:]
+#        frequency = fileID.variables['frequency'][:]
+#        transmitpower = fileID.variables['transmitpower'][:]
+#        pulslength = fileID.variables['pulslength'][:]
+#        gaintx = fileID.variables['gaintx'][:]
+#        gainrx = fileID.variables['gainrx'][:]
         equivalentbeamangle = fileID.variables['equivalentbeamangle'][:]
         sacorrection = fileID.variables['sacorrection'][:]
         Longitude = fileID.variables['Longitude'][:]

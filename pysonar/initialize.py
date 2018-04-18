@@ -19,8 +19,66 @@ import platform
 from tools import tools
 import scipy.io as sc
 from MakeSearch import MakeSearch
+from netCDF4 import Dataset
 
 
+
+def GetShortListOfFiles(CompleteListOfFiles,startTime,endTime): 
+    
+    ShortListOfFiles = []
+    for i in range(len(CompleteListOfFiles[:,0])): 
+        
+        start = SecondsBetweenTransect(startTime,int(CompleteListOfFiles[i,0]))
+        end = SecondsBetweenTransect(endTime,int(CompleteListOfFiles[i,0]))
+            
+#                        print(start,end)
+        if start<0: 
+            if end >0: 
+                if ShortListOfFiles == []: 
+                    ShortListOfFiles = CompleteListOfFiles[i,:]
+                else: 
+                    ShortListOfFiles = np.vstack((ShortListOfFiles,CompleteListOfFiles[i,:]))
+                                    
+    return ShortListOfFiles
+                                    
+def ComListOfFiles(directory2Data): 
+    
+                    
+#        
+    ListOfFiles = np.sort(os.listdir(directory2Data.dir_rawdata))
+    
+    CompleteListOfFiles = []
+    stopper = 0
+    for i in range(len(ListOfFiles)): 
+        fid_nc = Dataset(os.path.join(directory2Data.dir_rawdata, ListOfFiles[i]),'r')
+        beam_data = fid_nc.groups['Sonar'].groups['Beam_group2']
+        for ii in range(len(beam_data.variables['ping_time'])): 
+            
+            A = np.array((beam_data.variables['ping_time'][ii],ListOfFiles[i],ii))
+            if CompleteListOfFiles == []:
+                CompleteListOfFiles = A
+            else: 
+                CompleteListOfFiles = np.vstack((CompleteListOfFiles,A))
+        stopper = stopper+1
+        if stopper > 25: 
+            break
+    return CompleteListOfFiles
+        
+
+def SecondsBetweenTransect(startTime,unixtime): 
+
+    import datetime
+    
+    fulldate = datetime.datetime.strptime('1601-01-01 00:00:00.000',"%Y-%m-%d %H:%M:%S.%f")
+
+    starten =  datetime.datetime.strptime(startTime,"%Y%m%d%H%M%S")
+
+
+    fulldate = (starten-fulldate).total_seconds() #datetime.timedelta(milliseconds=int(startTime))
+
+    seconds = fulldate-unixtime/10000000
+                           
+    return seconds
 
 def ListOfFiles(dir2file,dir2nc): 
     if os.path.exists(dir2file+'/'+'listOfFiles.mat')==False: 
@@ -146,7 +204,7 @@ def main():
         
         
         #Organise and copy the data from tapeserver to scratch
-        print('    *Orginizing data      ',end='\r')
+        print('    *Organise data      ',end='\r')
         directory2Data =tools.OrginizeData(CruiceIndex,WorkDirectory,OS)
 
         
@@ -171,53 +229,54 @@ def main():
                     filename =  os.path.abspath(os.path.join(dirpath, f))
                     TimeIDX = AlternativTransectTime(filename,str(CruiceIndex.getAttribute('code')))
         
-            
                     
-#        from netCDF4 import Dataset
-#        
-#        ListOfFiles = os.listdir(directory2Data.dir_rawdata)
-#        
-#        CompleteListOfFiles = []
-#        for i in range(len(ListOfFiles)): 
-#            fid_nc = Dataset(ListOfFiles[i],'r')
-#            print(fid_nc.groups['Sonar'])
-#            beam_data = fid_nc.groups['Sonar'].groups['Beamgroup_2']
-#            print(ListOfFiles[i])
-##        print(directory2Data.dir_rawdata)        
+                    
+    
+    
+    
+                    
+        CompleteListOfFiles = ComListOfFiles(directory2Data)
+              
 #
 #        #Get list of files in cruice
 #        ListOfFilesInFolder = ListOfFiles(directory2Data.dir_src,directory2Data.dir_nc)
         
         
-#        
-#        
-#        #Loop through each transect in a randomized maner
-#        NumTransect = np.arange(len(TimeIDX))
-#        for Transect in NumTransect: 
-#            print('    -Start on transect: '+ TimeIDX[Transect,0])
-#        
-#            
-#            #Go through each equipment
-#            for eqip in ['SU90','SX90','SH90']: 
-#                if eqip == CruiceIndex.getAttribute("Equipment"): 
-#                    
-#                    
-#                    #Get list of files
-#                    #Need to fix the equipment stuff.
-#                    #Try ListOfFilesInFolder[0][:4]
-#                   
-#                    startTime = TimeIDX[Transect,1].replace('T','')
-#                    endTime = TimeIDX[Transect,2].replace('T','')
-#
+        
+        
+        #Loop through each transect in a randomized maner
+        NumTransect = np.arange(len(TimeIDX))
+        for Transect in NumTransect: 
+            print('    -Start on transect: '+ TimeIDX[Transect,0])
+        
+            
+            #Go through each equipment
+            for eqip in ['SU90','SX90','SH90']: 
+                if eqip == CruiceIndex.getAttribute("Equipment"): 
+                    
+                    
+                    #Get list of files
+                    #Need to fix the equipment stuff.
+                    #Try ListOfFilesInFolder[0][:4]
+                   
+                    startTime = TimeIDX[Transect,1].replace('T','')
+                    endTime = TimeIDX[Transect,2].replace('T','')
+                    
+                    startTime = '20170503163600'
+                    endTime = '20170503163900'
+                    
+                    ShortListOfFiles = GetShortListOfFiles(CompleteListOfFiles,startTime,endTime)
+                    
+
 #                    ListOfFilesWithinTimeInterval = [eqip+'-'+str(i)+'.nc' for i in np.sort(ListOfFilesInFolder) if int(startTime)*1E6 <= int(i) <=int(endTime)*1E6]
 #                                                     
-#                    #Make the search matrix
+                    #Make the search matrix
 #                    if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
-#                        MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_nc)
+#                        MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata)
 #                        print('    *Make New Search',end='\r')
 #                    elif recompute == True: 
 #                        print('    *Make New Search',end='\r')
-#                        MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_nc)
+#                        MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata)
 #                        
 #                        
 #                        
