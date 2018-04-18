@@ -186,12 +186,6 @@ def GetDistanceMatrix(DistanceMatrix,RangeMatrix,BeamDirectionMatrix,svMatrix,th
         tools.printProgressBar(r_ind_stbex+1,int(BananaTool[2]), prefix = 'Make Distance:', suffix = 'Complete', length = 50)
         
         
-        #Display progress for the user, as this is time consuming
-        
-#        print('        Progress:  ' +str((r_ind_stbex+1)/int(BananaTool[2])*100 ),end='\r')
-        
-        
-        
         #Get the minimum range to sonar trajectory
         r_0 = RangeMatrix[r_ind_stbex,0,0]
 
@@ -362,7 +356,6 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
         gainrx = fileID.variables['gainrx'][:]
         equivalentbeamangle = fileID.variables['equivalentbeamangle'][:]
         sacorrection = fileID.variables['sacorrection'][:]
-#                            Time = fileID.variables['Time'][:]
         Longitude = fileID.variables['Longitude'][:]
         Latitude = fileID.variables['Latitude'][:]
         fileID.close()

@@ -162,75 +162,82 @@ def main():
         
         
         #Get list of transect with start and stop times
-        TimeIDX=tools.TransectTimeIDX(CruiceIndex)
-        
-        if TimeIDX == []: 
-            
-            for dirpath,_,filenames in os.walk(directory2Data.dir_src + '/EKLUF20/'):
-                for f in filenames:
-                    filename =  os.path.abspath(os.path.join(dirpath, f))
-                    TimeIDX = AlternativTransectTime(filename,str(CruiceIndex.getAttribute('code')))
-        
-            
-        
-        
-        #Get list of files in cruice
-        ListOfFilesInFolder = ListOfFiles(directory2Data.dir_src,directory2Data.dir_nc)
-        
-        
-        
-        
-        #Loop through each transect in a randomized maner
-        NumTransect = np.arange(len(TimeIDX))
-#        np.random.shuffle(NumTransect)
-        for Transect in NumTransect: 
-            print('    -Start on transect: '+ TimeIDX[Transect,0])
+#        TimeIDX=tools.TransectTimeIDX(CruiceIndex)
+#        
+#        if TimeIDX == []: 
+#            
+#            for dirpath,_,filenames in os.walk(directory2Data.dir_src + '/EKLUF20/'):
+#                for f in filenames:
+#                    filename =  os.path.abspath(os.path.join(dirpath, f))
+#                    TimeIDX = AlternativTransectTime(filename,str(CruiceIndex.getAttribute('code')))
         
             
-            #Go through each equipment
-            for eqip in ['SU90','SX90','SH90']: 
-                if eqip == CruiceIndex.getAttribute("Equipment"): 
-                    
-                    
-                    #Get list of files
-                    #Need to fix the equipment stuff.
-                    #Try ListOfFilesInFolder[0][:4]
-                   
-                    startTime = TimeIDX[Transect,1].replace('T','')
-                    endTime = TimeIDX[Transect,2].replace('T','')
-
-                    ListOfFilesWithinTimeInterval = [eqip+'-'+str(i)+'.nc' for i in np.sort(ListOfFilesInFolder) if int(startTime)*1E6 <= int(i) <=int(endTime)*1E6]
-                    #Make the search matrix
-                    if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
-                        MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_nc)
-                        print('    *Make New Search',end='\r')
-                    elif recompute == True: 
-                        print('    *Make New Search',end='\r')
-                        MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_nc)
-                        
-                        
-                        
-#                    #Make the work stuff    
-#                    if os.path.isfile(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt') == False: 
-#                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == True: 
-#                            print('    *Make Work',end='\r')
-#                            MakeWork()
-#                            f = open(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt','w')
-#                            f.write('0')
-#                            f.close()
+        
+#        ListOfFiles = os.listdir(directory2Data.dir_rawdata)
+#        for i in range(len(ListOfFiles)): 
+#            print(ListOfFiles[i])
+##        print(directory2Data.dir_rawdata)        
+#
+#        #Get list of files in cruice
+#        ListOfFilesInFolder = ListOfFiles(directory2Data.dir_src,directory2Data.dir_nc)
+        
+        
+#        
+#        
+#        #Loop through each transect in a randomized maner
+#        NumTransect = np.arange(len(TimeIDX))
+#        for Transect in NumTransect: 
+#            print('    -Start on transect: '+ TimeIDX[Transect,0])
+#        
+#            
+#            #Go through each equipment
+#            for eqip in ['SU90','SX90','SH90']: 
+#                if eqip == CruiceIndex.getAttribute("Equipment"): 
+#                    
+#                    
+#                    #Get list of files
+#                    #Need to fix the equipment stuff.
+#                    #Try ListOfFilesInFolder[0][:4]
+#                   
+#                    startTime = TimeIDX[Transect,1].replace('T','')
+#                    endTime = TimeIDX[Transect,2].replace('T','')
+#
+#                    ListOfFilesWithinTimeInterval = [eqip+'-'+str(i)+'.nc' for i in np.sort(ListOfFilesInFolder) if int(startTime)*1E6 <= int(i) <=int(endTime)*1E6]
+#                                                     
+#                    #Make the search matrix
+#                    if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
+#                        MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_nc)
+#                        print('    *Make New Search',end='\r')
 #                    elif recompute == True: 
-#                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == True: 
-#                            print('    *Make Work',end='\r')
-#                            MakeWork()
-#                            f = open(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt','w')
-#                            f.write('0')
-#                            f.close()
+#                        print('    *Make New Search',end='\r')
+#                        MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_nc)
+#                        
+#                        
+#                        
+##                    #Make the work stuff    
+##                    if os.path.isfile(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt') == False: 
+##                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == True: 
+##                            print('    *Make Work',end='\r')
+##                            MakeWork()
+##                            f = open(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt','w')
+##                            f.write('0')
+##                            f.close()
+##                    elif recompute == True: 
+##                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == True: 
+##                            print('    *Make Work',end='\r')
+##                            MakeWork()
+##                            f = open(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt','w')
+##                            f.write('0')
+##                            f.close()
+##                            
 #                            
-                            
-                        
-                    
-        print('    *Make LUF20',end='\r')
-                    
+#                        
+#                    
+#        print('    *Make LUF20',end='\r')
+#                    
+        
+        
+        
                     
                     
                     

@@ -112,36 +112,45 @@ def MakeNewFolders(directory2Data):
 def DataConverter(CruiceIndex,WorkDirectory,current_dir,maxPingInFile,
                   MaxNumberOfFilesInNC,directory2Data) :
     
-#    from Raw2NetcdfConverter 
+    #Protocol to convert the data
+
     
+    #Vessel and platform information
     vessel_name = CruiceIndex.getAttribute('vessel')
     platform_type = CruiceIndex.getAttribute('platform_type')
     platform_code = CruiceIndex.getAttribute('platform_code')
     
-    PreferedNMEA = CruiceIndex.getAttribute('PreferedNMEA')
-    PreferedHeading = CruiceIndex.getAttribute('PreferedHeading')
     
     
     
-    #get the directory of the data
+    #gLoop through each fishery sonar type
     for i in ['SU90','SX90','SH90']: 
         
-        if not os.path.exists(directory2Data.dir_NCconvertProgress + '/finished.txt'):
-            Raw2NetcdfConverter_old.Raw2NetcdfConverter2(directory2Data.dir_originalrawdata,
-                                                     directory2Data.dir_nc,
-                                                     directory2Data.dir_NCconvertProgress)
-            f = open(directory2Data.dir_NCconvertProgress + '/finished.txt','w')
-            f.write('0')
-            f.close()
-       
+        
+        #Do the old nc convertion. 
+        #When the search matrix function are addapted for the new nc format, this will be redundant. 
+#        if not os.path.exists(directory2Data.dir_NCconvertProgress + '/finished.txt'):
+#            Raw2NetcdfConverter_old.Raw2NetcdfConverter2(directory2Data.dir_originalrawdata,
+#                                                     directory2Data.dir_nc,
+#                                                     directory2Data.dir_NCconvertProgress)
+#            
+#            
+#            #When convertion is finnished, make a txt file to indicate this
+#            f = open(directory2Data.dir_NCconvertProgress + '/finished.txt','w')
+#            f.write('0')
+#            f.close()
+#       
             
             
+        #Convert the .raw data to nc. 
         if not os.path.exists(directory2Data.dir_NCconvertProgress + '/finishedNC.txt'):
             os.chdir(current_dir)
-            
             Raw2NetcdfConverter.convert.Raw2NetcdfConverter(directory2Data.dir_originalrawdata,vessel_name,platform_type,
                         platform_code,maxPingInFile,MaxNumberOfFilesInNC,
                         directory2Data.dir_rawdata)
+            
+            
+            #When convertion is finnished, make a txt file to indicate this
             f = open(directory2Data.dir_NCconvertProgress + '/finishedNC.txt','w')
             f.write('0')
             f.close()
@@ -173,24 +182,39 @@ def TransectTimeIDX(CruiceIndex):
         
 def OrginizeData(CruiceIndex,WorkDirectory,OS): 
     
+    
+    #Get the vessel, cruice and equipment information
     vesselCode = CruiceIndex.getAttribute("vesselCode")
     cruiceCode = CruiceIndex.getAttribute("code")
     equipment =  CruiceIndex.getAttribute("Equipment")
     
     
-    #get the directory of the data
+    #Loop through each fishery sonar type
     for i in ['SU90','SX90','SH90']: 
+        
+        
         if i == equipment: 
-            print('    -Making folder structure',end='\r')
+            
+            
+            #Make a correct sonar folder structure
             directory2Data =FolderStructure(WorkDirectory+'/'+cruiceCode[:4]+'/S'+cruiceCode+'_P'+vesselCode,i)        
             MakeNewFolders(directory2Data)
         
+            
+            #Get list of files that has not been copied to the correct structure
             print('    -Get files from server  ',end='\r')
             ListFromServer = os.listdir(OS+CruiceIndex.getAttribute('CruicePath'))
             ListOfFilesNotcopied = list(set(ListFromServer)-set(os.listdir(directory2Data.dir_originalrawdata)))
+            
+            
+            #Go through each file
             for i in np.arange(len(ListOfFilesNotcopied)): 
+                
+                #Print a progressbar
                 printProgressBar(i, len(ListOfFilesNotcopied), prefix = 'Copy files', suffix = 'Files left: '+
                                  str(len(ListOfFilesNotcopied)-i) , decimals = 1, length = 50)
+                
+                #Copy the files
                 try:  
                     try:
                         copyfile(OS+CruiceIndex.getAttribute('CruicePath')+'/'+ListOfFilesNotcopied[i], 
@@ -199,5 +223,7 @@ def OrginizeData(CruiceIndex,WorkDirectory,OS):
                         print(' ')
                 except IsADirectoryError:  
                     print('')
+                    
+    
     return(directory2Data)
    
