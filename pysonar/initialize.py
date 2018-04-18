@@ -162,19 +162,26 @@ def main():
         
         
         #Get list of transect with start and stop times
-#        TimeIDX=tools.TransectTimeIDX(CruiceIndex)
-#        
-#        if TimeIDX == []: 
-#            
-#            for dirpath,_,filenames in os.walk(directory2Data.dir_src + '/EKLUF20/'):
-#                for f in filenames:
-#                    filename =  os.path.abspath(os.path.join(dirpath, f))
-#                    TimeIDX = AlternativTransectTime(filename,str(CruiceIndex.getAttribute('code')))
+        TimeIDX=tools.TransectTimeIDX(CruiceIndex)
+        
+        if TimeIDX == []: 
+            
+            for dirpath,_,filenames in os.walk(directory2Data.dir_src + '/EKLUF20/'):
+                for f in filenames:
+                    filename =  os.path.abspath(os.path.join(dirpath, f))
+                    TimeIDX = AlternativTransectTime(filename,str(CruiceIndex.getAttribute('code')))
         
             
-        
+                    
+#        from netCDF4 import Dataset
+#        
 #        ListOfFiles = os.listdir(directory2Data.dir_rawdata)
+#        
+#        CompleteListOfFiles = []
 #        for i in range(len(ListOfFiles)): 
+#            fid_nc = Dataset(ListOfFiles[i],'r')
+#            print(fid_nc.groups['Sonar'])
+#            beam_data = fid_nc.groups['Sonar'].groups['Beamgroup_2']
 #            print(ListOfFiles[i])
 ##        print(directory2Data.dir_rawdata)        
 #
