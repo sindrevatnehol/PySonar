@@ -25,14 +25,11 @@ from netCDF4 import Dataset
 
 
 def GetShortListOfFiles(CompleteListOfFiles,startTime,endTime): 
-    
     ShortListOfFiles = []
     for i in range(len(CompleteListOfFiles[:,0])): 
-        
-        start = SecondsBetweenTransect(startTime,int(CompleteListOfFiles[i,0]))
-        end = SecondsBetweenTransect(endTime,int(CompleteListOfFiles[i,0]))
+        start = SecondsBetweenTransect(startTime,float(CompleteListOfFiles[i,0]))
+        end = SecondsBetweenTransect(endTime,float(CompleteListOfFiles[i,0]))
             
-#                        print(start,end)
         if start<0: 
             if end >0: 
                 if ShortListOfFiles == []: 
@@ -47,27 +44,60 @@ def GetShortListOfFiles(CompleteListOfFiles,startTime,endTime):
         
 def ComListOfFiles(directory2Data,beam_mode): 
     ListOfFiles = np.sort(os.listdir(directory2Data.dir_rawdata))
-    
+    fd = open('pingtime.csv','w')    
+    fd2 = open('FileList.csv','w')
+    fd3 = open('IDX.csv','w')
+
+    oldFileName = ''
+
+
     CompleteListOfFiles = []
     for i in range(len(ListOfFiles)): 
-        fid_nc = Dataset(os.path.join(directory2Data.dir_rawdata, ListOfFiles[i]),'r')
+
+
+    #    tools.printProgressBar(i+1,len(ListOfFiles),prefix = 'Stacking: ', suffix = 'Compmleted', length = 50)
+
+        if ListOfFiles[i]!=oldFileName:
+            try: 
+                fid_nc.close()
+            except: 
+                k=1
+            fid_nc = Dataset(os.path.join(directory2Data.dir_rawdata, ListOfFiles[i]),'r')
+            oldFileName = ListOfFiles[i]
         
         if fid_nc.groups['Sonar'].groups['Beam_group1'].beam_mode == beam_mode: 
             beamgrp = 'Beam_group1'
             
-        elif fid_nc.groups['Sonar'].groups['Beam_group2'].beam_mode == beam_mode: 
-            beamgrp = 'Beam_group1'
+        elif fid_nc.groups['Sonar'].groups['Beam_group2'].beam_mode == beam_mode:
+            beamgrp = 'Beam_group2'
         
         
         beam_data = fid_nc.groups['Sonar'].groups[beamgrp]
         for ii in range(len(beam_data.variables['ping_time'])): 
             
             A = np.array((beam_data.variables['ping_time'][ii],ListOfFiles[i],ii))
-            if CompleteListOfFiles == []:
-                CompleteListOfFiles = A
-            else: 
-                CompleteListOfFiles = np.vstack((CompleteListOfFiles,A))
-        fid_nc.close()
+            
+            fd.write(str(beam_data.variables['ping_time'][ii])+',')
+            fd2.write(ListOfFiles[i]+',')
+            fd3.write(str(ii)+',')
+
+
+#            if CompleteListOfFiles == []:
+ #               CompleteListOfFiles = A
+ #           else: 
+ #               CompleteListOfFiles = np.vstack((CompleteListOfFiles,A))
+    fd.close()
+    fd2.close()
+    fd3.close()
+    fd=open('pingtime.csv','r')
+    fd2=open('FileList.csv','r')
+    fd3=open('IDX.csv','r')
+
+    A = np.asarray(fd.read().split(','))[:-1].astype(np.float)
+    B = np.asarray(fd2.read().split(','))[:-1]
+    C = np.asarray(fd3.read().split(','))[:-1].astype(np.int)
+    CompleteListOfFiles = np.array((A.T,B.T,C.T)).T
+        #fid_nc.close()
     return CompleteListOfFiles, beamgrp
         
 
@@ -86,6 +116,8 @@ def SecondsBetweenTransect(startTime,unixtime):
                            
     return seconds
 
+
+#This function is redundant
 def ListOfFiles(dir2file,dir2nc): 
     if os.path.exists(dir2file+'/'+'listOfFiles.mat')==False: 
         print('    *Making ListOfFiles',end='\r')
@@ -168,7 +200,6 @@ def GetTransectTimes(filename,code):
     
 def main(TS = 0): 
     
-    print(TS)
     
     #Clear the terminal window and display a welcome screen.
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -246,8 +277,9 @@ def main(TS = 0):
                 TimeIDX = GetTransectTimes(filename,str(CruiceIndex.getAttribute('code')))
         
                     
-                    
         
+        #tools.DataConverter(CruiceIndex,WorkDirectory,os.getcwd(),maxPingInFile,
+         #         MaxNumberOfFilesInNC,directory2Data)
     
     
                     
@@ -276,13 +308,13 @@ def main(TS = 0):
                     
 
                     #Make the search matrix
-                    try: 
-                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
-                            MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)
-                        elif recompute == True: 
-                            MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)
-                    except: 
-                        SendMail.send_email('failed to make search matrix for transect '+ TimeIDX[Transect,0])
+                #    try: 
+                    if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
+                        MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)
+                    elif recompute == True: 
+                         MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)
+                 #   except: 
+                  #      SendMail.send_email('failed to make search matrix for transect '+ TimeIDX[Transect,0])
 #                        
 #                        
 ##                    #Make the work stuff    

@@ -61,8 +61,8 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
         
         
         #Stack the nmea position data
-        NMEA_idx = np.where(abs(variables.NMEA_time[:]-int(ListOfFilesWithinTimeInterval[filename_index,0])) == 
-                            np.min(abs(variables.NMEA_time[:]-int(ListOfFilesWithinTimeInterval[filename_index,0]))))
+        NMEA_idx = np.where(abs(variables.NMEA_time[:]-float(ListOfFilesWithinTimeInterval[filename_index,0])) == 
+                            np.min(abs(variables.NMEA_time[:]-float(ListOfFilesWithinTimeInterval[filename_index,0]))))
         
         lat = np.hstack((lat,variables.Latitude[NMEA_idx]))
         lon = np.hstack((lat,variables.Longitude[NMEA_idx]))
@@ -219,7 +219,7 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
             #Start making the buffer matrix
             svMatrix = sv
             DistanceMatrix = np.ones((len(sv),64))*DistanceTraveled[-1]
-            BeamDirectionMatrix = np.repeat(variables.diry.T,len(sv),axis=0)
+            BeamDirectionMatrix = np.repeat(variables.diry[:,np.newaxis].T,len(sv),axis=0)
             RangeMatrix=np.repeat(RangeOut[:,np.newaxis],64,axis=1) 
             
             
@@ -247,7 +247,7 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                                                          RangeMatrix,
                                                          BeamDirectionMatrix,
                                                          svMatrix,
-                                                         int(variables.variables.dirx[0]+90)
+                                                         int(variables.dirx[0]+90)
                                                          ,BananaTool)
                 
                 
@@ -407,9 +407,8 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
             
             svMatrix = np.dstack((svMatrix,sv))
             DistanceMatrix = np.dstack((DistanceMatrix, np.ones((len(sv),64))*DistanceTraveled[-1]))
-            BeamDirectionMatrix = np.dstack((BeamDirectionMatrix, np.repeat(variables.diry.T,len(sv),axis=0)))
+            BeamDirectionMatrix = np.dstack((BeamDirectionMatrix, np.repeat(variables.diry[:,np.newaxis].T,len(sv),axis=0)))
             RangeMatrix = np.dstack((RangeMatrix, np.repeat(RangeOut[:,np.newaxis],64,axis=1)))
-            
             
 
     #Save the data
