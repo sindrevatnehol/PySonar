@@ -40,18 +40,25 @@ def GetShortListOfFiles(CompleteListOfFiles,startTime,endTime):
                     ShortListOfFiles = np.vstack((ShortListOfFiles,CompleteListOfFiles[i,:]))
                                     
     return ShortListOfFiles
-                                    
-def ComListOfFiles(directory2Data): 
-    
-                    
-#        
+                            
+
+
+        
+def ComListOfFiles(directory2Data,beam_mode): 
     ListOfFiles = np.sort(os.listdir(directory2Data.dir_rawdata))
     
     CompleteListOfFiles = []
-    stopper = 0
     for i in range(len(ListOfFiles)): 
         fid_nc = Dataset(os.path.join(directory2Data.dir_rawdata, ListOfFiles[i]),'r')
-        beam_data = fid_nc.groups['Sonar'].groups['Beam_group2']
+        
+        if fid_nc.groups['Sonar'].groups['Beam_group1'].beam_mode == beam_mode: 
+            beamgrp = 'Beam_group1'
+            
+        elif fid_nc.groups['Sonar'].groups['Beam_group2'].beam_mode == beam_mode: 
+            beamgrp = 'Beam_group1'
+        
+        
+        beam_data = fid_nc.groups['Sonar'].groups[beamgrp]
         for ii in range(len(beam_data.variables['ping_time'])): 
             
             A = np.array((beam_data.variables['ping_time'][ii],ListOfFiles[i],ii))
@@ -59,10 +66,8 @@ def ComListOfFiles(directory2Data):
                 CompleteListOfFiles = A
             else: 
                 CompleteListOfFiles = np.vstack((CompleteListOfFiles,A))
-        stopper = stopper+1
-        if stopper > 25: 
-            break
-    return CompleteListOfFiles
+        fid_nc.close()
+    return CompleteListOfFiles, beamgrp
         
 
 def SecondsBetweenTransect(startTime,unixtime): 
@@ -107,8 +112,7 @@ def ListOfFiles(dir2file,dir2nc):
     return mat
     
     
-def AlternativTransectTime(filename,code): 
-
+def GetTransectTimes(filename,code): 
         
     from lxml import etree
     doc2 = etree.parse(filename)
@@ -119,6 +123,8 @@ def AlternativTransectTime(filename,code):
     transect_IDX = []
     transect_i = 1
     new_start = False
+    
+    print('start')
     for i in distance_list:
         
         start_time = i.get('start_time').replace(' ','T').replace('-','').replace(':','')
@@ -134,10 +140,21 @@ def AlternativTransectTime(filename,code):
             transect_IDX = np.hstack((transect_IDX,code + '_'+str(transect_i)))
             transect_i = transect_i+1
             
-        if old_stop!=start_time: 
-            End = np.hstack((End,stop_time))
-            new_start = True
+        if old_stop!='':
+            if old_stop != start_time: 
+                End = np.hstack((End,stop_time))
+                new_start = True
+            
+            
+#        print('start_time: '+str(start_time))
+#        print('stop_time: '+str(stop_time))
+#        print('old_stop: '+str(old_stop))
+#        print('____________________________')
+        
+        
         old_stop = stop_time
+        
+#        time.sleep(1)
       
     #add last time
     End = np.hstack((End,stop_time))
@@ -148,10 +165,11 @@ def AlternativTransectTime(filename,code):
     return TimeIDX
     
     
-def main(): 
+def main(TS = 0): 
     
-    #Get the instruction file
-    #The instruction file includes the location of each survey.
+    print(TS)
+    
+    #Clear the terminal window and display a welcome screen.
     os.system('cls' if os.name == 'nt' else 'clear')
     tools.WelcomeScreen('PySonar.py')
     
@@ -168,8 +186,9 @@ def main():
     maxPingInFile = 2000
     MaxNumberOfFilesInNC  = 100
     recompute = False
-    current_dir = os.getcwd()
+#    current_dir = os.getcwd()
     
+    SonarEquipment = ['SU90','SX90','SH90']
     
     
     #Something to adapt for data organization at the IMR
@@ -183,6 +202,12 @@ def main():
         
     #Get the work directory to where all the files is stoored
     WorkDirectory = OS+ '/mea/2018_Redus'
+    
+    
+    
+    #Timeseries = GetTimeSeriesInfoFromNMDAPI()
+    
+    #for Cruice in Timeseries: 
     
     
     
@@ -210,24 +235,11 @@ def main():
         
         
         
-        #Convert data to netcdf
-        print('    *Convert data         ',end='\r')
-        os.chdir(current_dir)
-        tools.DataConverter(CruiceIndex,WorkDirectory,current_dir,
-                            maxPingInFile,MaxNumberOfFilesInNC,directory2Data)
-        
-        
-        
-        
-        #Get list of transect with start and stop times
-        TimeIDX=tools.TransectTimeIDX(CruiceIndex)
-        
-        if TimeIDX == []: 
-            
-            for dirpath,_,filenames in os.walk(directory2Data.dir_src + '/EKLUF20/'):
-                for f in filenames:
-                    filename =  os.path.abspath(os.path.join(dirpath, f))
-                    TimeIDX = AlternativTransectTime(filename,str(CruiceIndex.getAttribute('code')))
+        #Get transecttimes from Luf20
+        for dirpath,_,filenames in os.walk(directory2Data.dir_src + '/EKLUF20/'):
+            for f in filenames:
+                filename =  os.path.abspath(os.path.join(dirpath, f))
+                TimeIDX = GetTransectTimes(filename,str(CruiceIndex.getAttribute('code')))
         
                     
                     
@@ -235,11 +247,8 @@ def main():
     
     
                     
-        CompleteListOfFiles = ComListOfFiles(directory2Data)
+        CompleteListOfFiles, beamgrp = ComListOfFiles(directory2Data,'Horizontal')
               
-#
-#        #Get list of files in cruice
-#        ListOfFilesInFolder = ListOfFiles(directory2Data.dir_src,directory2Data.dir_nc)
         
         
         
@@ -251,32 +260,22 @@ def main():
         
             
             #Go through each equipment
-            for eqip in ['SU90','SX90','SH90']: 
+            for eqip in SonarEquipment: 
                 if eqip == CruiceIndex.getAttribute("Equipment"): 
                     
                     
-                    #Get list of files
-                    #Need to fix the equipment stuff.
-                    #Try ListOfFilesInFolder[0][:4]
                    
                     startTime = TimeIDX[Transect,1].replace('T','')
                     endTime = TimeIDX[Transect,2].replace('T','')
                     
-                    startTime = '20170503163600'
-                    endTime = '20170503163900'
-                    
                     ShortListOfFiles = GetShortListOfFiles(CompleteListOfFiles,startTime,endTime)
                     
 
-#                    ListOfFilesWithinTimeInterval = [eqip+'-'+str(i)+'.nc' for i in np.sort(ListOfFilesInFolder) if int(startTime)*1E6 <= int(i) <=int(endTime)*1E6]
-#                                                     
                     #Make the search matrix
-#                    if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
-#                        MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata)
-#                        print('    *Make New Search',end='\r')
-#                    elif recompute == True: 
-#                        print('    *Make New Search',end='\r')
-#                        MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata)
+                    if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
+                        MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)
+                    elif recompute == True: 
+                        MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)
 #                        
 #                        
 #                        
@@ -510,5 +509,14 @@ def main():
 
 #        print('    *Cruice is finnished')
 if __name__ == '__main__':    
-    main()
+    import sys
+    
+#    first_arg = sys.argv[1]
+#
+#    print(first_arg)
+#    second_arg = sys.argv[2]
+
+    print('ok')
+    
+    main(TS = 0)
     

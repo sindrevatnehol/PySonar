@@ -20,27 +20,39 @@ g.format = 'tiff'
 
 
 
+
+with g.subgraph(name='cluster_00') as c:
+    c.attr(style='filled')
+    c.attr(color='lightgrey')
+    c.node_attr.update(style='filled', color='white')
+    
+    c.node('Initialize')
+    c.node('Load timeseries info \n from NMDAPI',color = 'red')
+    c.node('Make folder structure',color = 'green')
+    c.node('Copy .raw/.dat data',color = 'green')
+    c.node('Copy LUF20',color = 'red')
+    
+    
+    
+    
+    c.attr(label='Initialization')
+
+    
+    
+    
+
 with g.subgraph(name='cluster_0') as c:
     c.attr(style='filled')
     c.attr(color='lightgrey')
     c.node_attr.update(style='filled', color='white')
     
-    c.node('.raw data',url = 'http://bt.no')
-    c.node('.dat data')
     c.node('read .raw',color = 'green')
     c.node('read .dat',color = 'red')
     
     c.node('convert to .nc',color = 'green')
     c.node('.nc',color = 'green')
-    c.node('.nc (single ping)')
     
     
-    c.edges([('read .raw','convert to .nc')])
-    c.edges([('convert to .nc','.nc')])
-    c.edges([('convert to .nc','.nc (single ping)')])
-    c.edges([('.raw data','read .raw')])
-    c.edges([('.dat data','read .dat')])
-    c.edges([('read .dat','convert to .nc')])
     
     c.attr(label='RawToNetcdfConverter.py')
 
@@ -52,29 +64,24 @@ with g.subgraph(name='cluster_1') as c:
     c.attr(color='lightgrey')
     c.node_attr.update(style='filled', color='white')
     
-    c.node('ACOUSTIC_DATA/SX/ORIGINAL_RAWDATA',color = 'green')
-    c.node('ACOUSTIC_DATA/SX/RAWDATA',color = 'green')
-    c.node('ACOUSTIC_DATA/SX/temp')
+    c.node('.../ORIGINAL_RAWDATA',color = 'green')
+    c.node('.../RAWDATA',color = 'green')
+    c.node('.../psonar/ekluf20',color = 'green')
+    c.node('.../psonar/result',color = 'green')
     
-    
-    c.attr(label='Structuring data')
+    c.attr(label='Folder structure')
 
     
-    
-    
-
 with g.subgraph(name='cluster_2') as c:
     c.attr(style='filled')
     c.attr(color='lightgrey')
     c.node_attr.update(style='filled', color='white')
     
-    c.node('Make Search Matrix',color = 'yellow')
-    c.node('Make Work Files',color = 'yellow')
-    c.node('Echo integrate -> nc',color = 'yellow')
-    c.node('nc -> LUF20',color = 'green')
+    c.node('Get list of files on each transect',color = 'green')
+    c.node('pysonar.makesearch()',color = 'yellow')
+    c.node('serchmatrix.mat',color = 'yellow')
     
-    
-    c.attr(label='Data Processing')
+    c.attr(label='Make Search Matrix')
 
     
     
@@ -83,18 +90,44 @@ with g.subgraph(name='cluster_2') as c:
     
     
     
+    
+    
+g.edges([('Initialize','Load timeseries info \n from NMDAPI')])
+g.edges([('Load timeseries info \n from NMDAPI','Make folder structure')])
 
+g.edges([('.../psonar/ekluf20','Get list of files on each transect')])
+g.edges([('Get list of files on each transect','pysonar.makesearch()')])
+g.edges([('.../RAWDATA','pysonar.makesearch()')])
+g.edges([('pysonar.makesearch()','serchmatrix.mat')])
+    
+    
+    
+g.edges([('read .raw','convert to .nc')])
+g.edges([('convert to .nc','.nc')])
+g.edges([('.../ORIGINAL_RAWDATA','read .raw')])
+g.edges([('.../ORIGINAL_RAWDATA','read .dat')])
+g.edges([('read .dat','convert to .nc')])
+    
+    
 
-g.edges([('.raw data','ACOUSTIC_DATA/SX/ORIGINAL_RAWDATA')])
-g.edges([('.nc','ACOUSTIC_DATA/SX/RAWDATA')])
-g.edges([('.nc (single ping)','ACOUSTIC_DATA/SX/temp')])
+g.edges([('Make folder structure','Copy .raw/.dat data')])
+g.edges([('Make folder structure','Copy LUF20')])
+g.edges([('Copy LUF20','.../psonar/ekluf20')])
 
-g.edges([('ACOUSTIC_DATA/SX/temp','Make Search Matrix')])
-g.edges([('ACOUSTIC_DATA/SX/RAWDATA','Make Search Matrix')])
-g.edges([('Make Search Matrix','Make Work Files')])
+g.edges([('Copy .raw/.dat data','.../ORIGINAL_RAWDATA')])
+g.edges([('.nc','.../RAWDATA')])
+
+g.edges([('serchmatrix.mat','.../psonar/result')])
 g.edges([('Make Work Files','Echo integrate -> nc')])
 g.edges([('Make Work Files','.nc')])
+
+
+g.edges([('.../psonar/result','Make Work Files')])
+g.edges([('.../RAWDATA','Make Work Files')])
+
+
 g.edges([('Echo integrate -> nc','nc -> LUF20')])
+g.edges([('.../RAWDATA','nc -> LUF20')])
 
 
     

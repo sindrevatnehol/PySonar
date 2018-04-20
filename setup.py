@@ -15,7 +15,6 @@ setup(name='PySonar',
       author_email='sindre.vatnehol@hi.no',
       license='IMR',
       packages=['PySonar'],
-      package_data={'PySonar': ['PythonProject/*.xml','PythonProject/*.nc']},
      # install_requires=['markdown','pynmea2','pytz'],
       
       zip_safe=False)
