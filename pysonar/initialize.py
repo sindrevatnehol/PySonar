@@ -17,6 +17,7 @@ import numpy as np
 #from SendMail import send_email
 import platform
 from tools import tools
+from tools import SendMail
 import scipy.io as sc
 from MakeSearch import MakeSearch
 from netCDF4 import Dataset
@@ -225,13 +226,16 @@ def main(TS = 0):
     for CruiceIndex in CruiceCode:
         print('Start on survey: '+CruiceIndex.getAttribute('code'))
         
-        
+#        SendMail.send_email('Start on survey: '+CruiceIndex.getAttribute('code'))
         
         
         #Organise and copy the data from tapeserver to scratch
         print('    *Organise data      ',end='\r')
-        directory2Data =tools.OrginizeData(CruiceIndex,WorkDirectory,OS)
-
+        
+        try: 
+            directory2Data =tools.OrginizeData(CruiceIndex,WorkDirectory,OS)
+        except: 
+            SendMail.send_email('Failed to organize '+CruiceIndex.getAttribute('code'))
         
         
         
@@ -243,7 +247,7 @@ def main(TS = 0):
         
                     
                     
-    
+        
     
     
                     
@@ -272,11 +276,13 @@ def main(TS = 0):
                     
 
                     #Make the search matrix
-                    if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
-                        MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)
-                    elif recompute == True: 
-                        MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)
-#                        
+                    try: 
+                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
+                            MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)
+                        elif recompute == True: 
+                            MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)
+                    except: 
+                        SendMail.send_email('failed to make search matrix for transect '+ TimeIDX[Transect,0])
 #                        
 #                        
 ##                    #Make the work stuff    
