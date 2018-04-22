@@ -209,36 +209,34 @@ def OrginizeData(CruiceIndex,WorkDirectory,OS):
         
         
         if i == equipment: 
-            
-            
             #Make a correct sonar folder structure
             directory2Data =FolderStructure(WorkDirectory+'/'+cruiceCode[:4]+'/S'+cruiceCode+'_P'+vesselCode,i)        
             MakeNewFolders(directory2Data)
         
             
             #Get list of files that has not been copied to the correct structure
-            print('    -Get files from server  ',end='\r')
-            ListFromServer = os.listdir(OS+CruiceIndex.getAttribute('CruicePath'))
-            ListOfFilesNotcopied = list(set(ListFromServer)-set(os.listdir(directory2Data.dir_originalrawdata)))
-            
-            
-            #Go through each file
-            for i in np.arange(len(ListOfFilesNotcopied)): 
-                
-                #Print a progressbar
-                printProgressBar(i, len(ListOfFilesNotcopied), prefix = 'Copy files', suffix = 'Files left: '+
-                                 str(len(ListOfFilesNotcopied)-i) , decimals = 1, length = 50)
-                
-                #Copy the files
-                try:  
-                    try:
-                        copyfile(OS+CruiceIndex.getAttribute('CruicePath')+'/'+ListOfFilesNotcopied[i], 
-                             directory2Data.dir_originalrawdata+'/'+ListOfFilesNotcopied[i])
-                    except PermissionError: 
-                        print('', end = '\r')
-                except IsADirectoryError:  
-                    print('', end = '\r')
-                    
+#            print('    -Get files from server  ',end='\r')
+#            ListFromServer = os.listdir(OS+CruiceIndex.getAttribute('CruicePath'))
+#            ListOfFilesNotcopied = list(set(ListFromServer)-set(os.listdir(directory2Data.dir_originalrawdata)))
+#            
+#            
+#            #Go through each file
+#            for i in np.arange(len(ListOfFilesNotcopied)): 
+#                
+#                #Print a progressbar
+#                printProgressBar(i, len(ListOfFilesNotcopied), prefix = 'Copy files', suffix = 'Files left: '+
+#                                 str(len(ListOfFilesNotcopied)-i) , decimals = 1, length = 50)
+#                
+#                #Copy the files
+#                try:  
+#                    try:
+#                        copyfile(OS+CruiceIndex.getAttribute('CruicePath')+'/'+ListOfFilesNotcopied[i], 
+#                             directory2Data.dir_originalrawdata+'/'+ListOfFilesNotcopied[i])
+#                    except PermissionError: 
+#                        print('', end = '\r')
+#                except IsADirectoryError:  
+#                    print('', end = '\r')
+#                    
     
     return(directory2Data)
    

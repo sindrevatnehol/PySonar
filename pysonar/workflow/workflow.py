@@ -85,11 +85,25 @@ with g.subgraph(name='cluster_2') as c:
 
     
     
+with g.subgraph(name='cluster_3') as c:
+    c.attr(style='filled')
+    c.attr(color='lightgrey')
+    c.node_attr.update(style='filled', color='white')
     
+    c.node('Get File IDX',color = 'green')
+    c.node('Get Search Matrix',color = 'yellow')
+    c.node('Cluster and identify aggregations',color = 'yellow')
+    c.node('Convert to multi-polygon')
     
+    c.attr(label='Make Work Info')
+
     
-    
-    
+g.edges([('Make IDX of files','Get File IDX')])
+g.edges([('.../psonar/result','Get Search Matrix')])
+g.edges([('Get File IDX','Cluster and identify aggregations')])
+g.edges([('Get Search Matrix','Cluster and identify aggregations')])
+g.edges([('Cluster and identify aggregations','Convert to multi-polygon')])
+g.edges([('Convert to multi-polygon','.nc')])
     
     
 g.edges([('Initialize','Load timeseries info \n from NMDAPI')])
@@ -97,6 +111,8 @@ g.edges([('Load timeseries info \n from NMDAPI','Make folder structure')])
 
 g.edges([('.../psonar/ekluf20','Get list of files on each transect')])
 g.edges([('Get list of files on each transect','pysonar.makesearch()')])
+g.edges([('Get list of files on each transect','Make IDX of files')])
+g.edges([('Make IDX of files','Get list of files on each transect')])
 g.edges([('.../RAWDATA','pysonar.makesearch()')])
 g.edges([('pysonar.makesearch()','serchmatrix.mat')])
     
@@ -121,9 +137,6 @@ g.edges([('serchmatrix.mat','.../psonar/result')])
 g.edges([('Make Work Files','Echo integrate -> nc')])
 g.edges([('Make Work Files','.nc')])
 
-
-g.edges([('.../psonar/result','Make Work Files')])
-g.edges([('.../RAWDATA','Make Work Files')])
 
 
 g.edges([('Echo integrate -> nc','nc -> LUF20')])

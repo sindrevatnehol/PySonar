@@ -81,13 +81,14 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
         
            
         #A bug fix
-        if len(lat)>5: 
-            DT,td = tools.ComputeDistance(travelDist,
-                                    np.array(lat[:1],lat[-1]),
-                                    np.array(lon[:1],lon[-1]))
-            DistanceTraveled = np.linspace(0,np.max(DT),len(lat))
+#        if len(lat)>5: 
+#            DT,td = tools.ComputeDistance(travelDist,
+#                                    np.array(lat[:1],lat[-1]),
+#                                    np.array(lon[:1],lon[-1]))
+#            DistanceTraveled = np.linspace(0,np.max(DT),len(lat))
             
         
+        print(DistanceTraveled)
         
         #Get the calibration gain and add it to the data
         #ADD calibration cain is not jet avaliable. 
@@ -257,13 +258,6 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                 Wdist_portGhost,Wdist_stbGhost = tools.GetDistanceMatrix(DistanceMatrix,RangeMatrix,BeamDirectionMatrix+90,svMatrix,int(variables.dirx[0]+90),BananaTool)
 
 
-
-
-                #This will make the program to stopp 
-                #increasing the buffer 
-
-
-
                 
                 
             #Correct the size of the sv and range
@@ -282,14 +276,6 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
 
 
 
-            
-            
-            #Give a progress report for the user
-            #ADD should also include transect number
-            print('        Progress:  '+ 
-                  str(((filename_index+1)/len(ListOfFilesWithinTimeInterval))*100)+' %',end='\r')
-            
-            
             
             
             
@@ -384,6 +370,15 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                 SVres_stbGhost = np.hstack((SVres_stbGhost,sV_stbGhost))
            
                   
+                import matplotlib.pyplot as plt
+                plt.figure(1)
+                plt.clf()
+                plt.imshow(SVres_port,aspect = 'auto')
+                plt.draw()
+                plt.pause(20)
+        
+        
+        
                # print(DirectoryToRESULT+'/SearchMatrix'+str(transectCode)+'.mat')
                # scipy.io.savemat(DirectoryToRESULT+'/SearchMatrix'+str(transectCode)+'.mat',
                #                    mdict={'SVres_port': (SVres_port),
@@ -415,7 +410,6 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
     try: 
         scipy.io.savemat(directory2Data, 
                      mdict={'SVres_port': (SVres_port),
-
                      'SVres_stb':(SVres_stb),'R_s':R_s,'res':res,
                      'SVres_portGhost':(SVres_portGhost),
                      'SVres_stbGhost':(SVres_stbGhost),

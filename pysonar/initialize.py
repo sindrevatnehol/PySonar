@@ -20,6 +20,7 @@ from tools import tools
 from tools import SendMail
 import scipy.io as sc
 from MakeSearch import MakeSearch
+from MakeWork import MakeWork
 from netCDF4 import Dataset
 
 
@@ -82,10 +83,6 @@ def ComListOfFiles(directory2Data,beam_mode):
             fd3.write(str(ii)+',')
 
 
-#            if CompleteListOfFiles == []:
- #               CompleteListOfFiles = A
- #           else: 
- #               CompleteListOfFiles = np.vstack((CompleteListOfFiles,A))
     fd.close()
     fd2.close()
     fd3.close()
@@ -178,16 +175,9 @@ def GetTransectTimes(filename,code):
                 End = np.hstack((End,stop_time))
                 new_start = True
             
-            
-#        print('start_time: '+str(start_time))
-#        print('stop_time: '+str(stop_time))
-#        print('old_stop: '+str(old_stop))
-#        print('____________________________')
-        
         
         old_stop = stop_time
         
-#        time.sleep(1)
       
     #add last time
     End = np.hstack((End,stop_time))
@@ -217,7 +207,7 @@ def main(TS = 0):
 
     maxPingInFile = 2000
     MaxNumberOfFilesInNC  = 100
-    recompute = False
+    recompute = True
 #    current_dir = os.getcwd()
     
     SonarEquipment = ['SU90','SX90','SH90']
@@ -277,9 +267,8 @@ def main(TS = 0):
                 TimeIDX = GetTransectTimes(filename,str(CruiceIndex.getAttribute('code')))
         
                     
-        
-        #tools.DataConverter(CruiceIndex,WorkDirectory,os.getcwd(),maxPingInFile,
-         #         MaxNumberOfFilesInNC,directory2Data)
+#        tools.DataConverter(CruiceIndex,WorkDirectory,os.getcwd(),maxPingInFile,
+#                  MaxNumberOfFilesInNC,directory2Data)
     
     
                     
@@ -308,33 +297,35 @@ def main(TS = 0):
                     
 
                     #Make the search matrix
-                #    try: 
+#                    try: 
                     if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
                         MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)
                     elif recompute == True: 
                          MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)
-                 #   except: 
-                  #      SendMail.send_email('failed to make search matrix for transect '+ TimeIDX[Transect,0])
-#                        
-#                        
-##                    #Make the work stuff    
-##                    if os.path.isfile(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt') == False: 
-##                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == True: 
-##                            print('    *Make Work',end='\r')
-##                            MakeWork()
-##                            f = open(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt','w')
-##                            f.write('0')
-##                            f.close()
-##                    elif recompute == True: 
-##                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == True: 
-##                            print('    *Make Work',end='\r')
-##                            MakeWork()
-##                            f = open(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt','w')
-##                            f.write('0')
-##                            f.close()
-##                            
-#                            
-#                        
+#                    except: 
+#                        SendMail.send_email('failed to make search matrix for transect '+ TimeIDX[Transect,0])
+                        
+                        
+                    #Make the work stuff    
+                    if os.path.isfile(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt') == False: 
+                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == True: 
+                            print('    *Make Work',end='\r')
+                            MakeWork(True, directory2Data,'',
+             '','',1,3)
+                            f = open(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt','w')
+                            f.write('0')
+                            f.close()
+                    elif recompute == True: 
+                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == True: 
+                            print('    *Make Work',end='\r')
+                            MakeWork(True, directory2Data,'',
+             '','',1,3)
+                            f = open(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt','w')
+                            f.write('0')
+                            f.close()
+                            
+                            
+                        
 #                    
 #        print('    *Make LUF20',end='\r')
 #                    
