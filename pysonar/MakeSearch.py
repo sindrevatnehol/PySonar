@@ -86,8 +86,9 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
 #                                    np.array(lat[:1],lat[-1]),
 #                                    np.array(lon[:1],lon[-1]))
 #            DistanceTraveled = np.linspace(0,np.max(DT),len(lat))
-            
-        
+        print('staarart')
+        print(lat)
+        print(lon)
         print(DistanceTraveled)
         
         #Get the calibration gain and add it to the data

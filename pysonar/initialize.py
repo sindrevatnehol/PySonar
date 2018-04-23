@@ -44,19 +44,63 @@ def GetShortListOfFiles(CompleteListOfFiles,startTime,endTime):
 
         
 def ComListOfFiles(directory2Data,beam_mode): 
+    #This function makes an idx of all files
+    
+    
+    #Sort all the .nc files
     ListOfFiles = np.sort(os.listdir(directory2Data.dir_rawdata))
-    fd = open('pingtime.csv','w')    
-    fd2 = open('FileList.csv','w')
-    fd3 = open('IDX.csv','w')
-
+    
+    
+    
+    #Open the IDX files, and get the info of last .nc file 
+    try: 
+        fd = open(directory2Data.dir_rawdata+'\\'+'pingtime.csv','r')    
+        fd2 = open(directory2Data.dir_rawdata+'\\'+'FileList.csv','r')
+        fd3 = open(directory2Data.dir_rawdata+'\\'+'IDX.csv','r')
+    
+        
+        #Read the previosly stoored data
+        pingtime = np.asarray(fd.read().split(','))[:-1].astype(np.float)
+        FileList = np.asarray(fd2.read().split(','))[:-1]
+        IDXlist = np.asarray(fd3.read().split(','))[:-1].astype(np.int)
+#        print(pingtime)
+#        print(FileList)
+#        print(IDXlist)
+#        print(FileList[np.where(pingtime==np.nanmax(pingtime))])
+        
+        
+        #Close files
+        fd.close()
+        fd2.close()
+        fd3.close()
+        
+        
+        #open files for appending
+        fd = open(directory2Data.dir_rawdata+'\\'+'pingtime.csv','a')    
+        fd2 = open(directory2Data.dir_rawdata+'\\'+'FileList.csv','a')
+        fd3 = open(directory2Data.dir_rawdata+'\\'+'IDX.csv','a')
+        
+        
+    except FileNotFoundError: 
+        #open and rewrite files
+        fd = open(directory2Data.dir_rawdata+'\\'+'pingtime.csv','w')    
+        fd2 = open(directory2Data.dir_rawdata+'\\'+'FileList.csv','w')
+        fd3 = open(directory2Data.dir_rawdata+'\\'+'IDX.csv','w')
+    
+        
+        
+    #This helps to prevent opening and closing the same file multiple times
     oldFileName = ''
 
 
+    
     CompleteListOfFiles = []
+    print(ListOfFiles)
     for i in range(len(ListOfFiles)): 
-
-
-    #    tools.printProgressBar(i+1,len(ListOfFiles),prefix = 'Stacking: ', suffix = 'Compmleted', length = 50)
+        print(ListOfFiles[i])
+#        if ListOFFiles[i] >= LastFile: 
+            #append this
+        tools.printProgressBar(i+1,len(ListOfFiles),prefix = 'Stacking: ', suffix = 'Compmleted', length = 50)
 
         if ListOfFiles[i]!=oldFileName:
             try: 
@@ -74,21 +118,23 @@ def ComListOfFiles(directory2Data,beam_mode):
         
         
         beam_data = fid_nc.groups['Sonar'].groups[beamgrp]
+
         for ii in range(len(beam_data.variables['ping_time'])): 
-            
+            #if ii>IDXlist[-1]: 
             A = np.array((beam_data.variables['ping_time'][ii],ListOfFiles[i],ii))
             
             fd.write(str(beam_data.variables['ping_time'][ii])+',')
             fd2.write(ListOfFiles[i]+',')
             fd3.write(str(ii)+',')
-
+            print(ii)
+        break
 
     fd.close()
     fd2.close()
     fd3.close()
-    fd=open('pingtime.csv','r')
-    fd2=open('FileList.csv','r')
-    fd3=open('IDX.csv','r')
+    fd=open(directory2Data.dir_rawdata+'\\'+'pingtime.csv','r')
+    fd2=open(directory2Data.dir_rawdata+'\\'+'FileList.csv','r')
+    fd3=open(directory2Data.dir_rawdata+'\\'+'IDX.csv','r')
 
     A = np.asarray(fd.read().split(','))[:-1].astype(np.float)
     B = np.asarray(fd2.read().split(','))[:-1]
@@ -98,6 +144,8 @@ def ComListOfFiles(directory2Data,beam_mode):
     return CompleteListOfFiles, beamgrp
         
 
+    
+    
 def SecondsBetweenTransect(startTime,unixtime): 
 
     import datetime
@@ -114,6 +162,10 @@ def SecondsBetweenTransect(startTime,unixtime):
     return seconds
 
 
+    
+    
+    
+    
 #This function is redundant
 def ListOfFiles(dir2file,dir2nc): 
     if os.path.exists(dir2file+'/'+'listOfFiles.mat')==False: 
@@ -148,7 +200,7 @@ def GetTransectTimes(filename,code):
     doc2 = etree.parse(filename)
     distance_list = doc2.find('distance_list')
     old_stop = ''
-    Start = []
+    Start = 0
     End = []
     transect_IDX = []
     transect_i = 1
@@ -160,7 +212,7 @@ def GetTransectTimes(filename,code):
         start_time = i.get('start_time').replace(' ','T').replace('-','').replace(':','')
         stop_time = i.find('stop_time').text.replace(' ','T').replace('-','').replace(':','')
 
-        if Start == []:
+        if Start == 0:
             Start = np.hstack((Start,start_time))
             transect_IDX = np.hstack((transect_IDX,code + '_'+str(transect_i)))
             transect_i = transect_i+1
@@ -186,6 +238,9 @@ def GetTransectTimes(filename,code):
     TimeIDX  = np.vstack((transect_IDX.T,Start.T,End.T)).T    
     
     return TimeIDX
+    
+    
+    
     
     
 def main(TS = 0): 

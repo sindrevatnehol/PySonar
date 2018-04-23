@@ -488,8 +488,6 @@ def ComputeDistance(travelDist,lat,lon):
         
         
     elif len(lat)>=20:
-#        print(lat)
-#        print(lon) 
         #find the delta in longitude and latitude
         delta_lat = lat[-1]-lat[-2]
         delta_lon = lon[-1]-lon[-2]
