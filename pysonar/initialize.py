@@ -47,102 +47,120 @@ def ComListOfFiles(directory2Data,beam_mode):
     #This function makes an idx of all files
     
     
-    #Sort all the .nc files
-    ListOfFiles = np.sort(os.listdir(directory2Data.dir_rawdata))
-    
-    
-    
-    #Open the IDX files, and get the info of last .nc file 
+    #Open the IDX files
     try: 
-        fd = open(directory2Data.dir_rawdata+'\\'+'pingtime.csv','r')    
-        fd2 = open(directory2Data.dir_rawdata+'\\'+'FileList.csv','r')
-        fd3 = open(directory2Data.dir_rawdata+'\\'+'IDX.csv','r')
+        fd = open(directory2Data.dir_src+'\\'+'pingtime.csv','r')    
+        fd2 = open(directory2Data.dir_src+'\\'+'FileList.csv','r')
+        fd3 = open(directory2Data.dir_src+'\\'+'IDX.csv','r')
+        fd4 = open(directory2Data.dir_src+'\\'+'BeamIDX.csv','r')
     
         
-        #Read the previosly stoored data
-        pingtime = np.asarray(fd.read().split(','))[:-1].astype(np.float)
-        FileList = np.asarray(fd2.read().split(','))[:-1]
-        IDXlist = np.asarray(fd3.read().split(','))[:-1].astype(np.int)
-#        print(pingtime)
-#        print(FileList)
-#        print(IDXlist)
-#        print(FileList[np.where(pingtime==np.nanmax(pingtime))])
+        A = np.asarray(fd.read().split(','))[:-1].astype(np.float)
+        B = np.asarray(fd2.read().split(','))[:-1]
+        C = np.asarray(fd3.read().split(','))[:-1].astype(np.int)
+        D = np.asarray(fd4.read().split(','))[:-1]
+        CompleteListOfFiles = np.array((A.T,B.T,C.T)).T
+
+        
+
+    # If the files don't exist, create them
+    except FileNotFoundError: 
         
         
+        #Sort all the .nc files
+        ListOfFiles = np.sort(os.listdir(directory2Data.dir_rawdata))
+    
+    
+    
+    
+        #open and rewrite IDX files
+        fd = open(directory2Data.dir_src+'\\'+'pingtime.csv','w')    
+        fd2 = open(directory2Data.dir_src+'\\'+'FileList.csv','w')
+        fd3 = open(directory2Data.dir_src+'\\'+'IDX.csv','w')
+        fd4 = open(directory2Data.dir_src+'\\'+'BeamIDX.csv','w')
+        
+            
+            
+        #This helps to prevent opening and closing the same file multiple times
+        oldFileName = ''
+    
+    
+        
+        #Loop through each file
+        CompleteListOfFiles = []
+        for i in range(len(ListOfFiles)): 
+            
+            #Print progress
+            tools.printProgressBar(i+1,len(ListOfFiles),prefix = 'Stacking: ', suffix = 'Completed', length = 50)
+    
+            
+            
+            #If this is a new file, close the last and open this
+            if ListOfFiles[i]!=oldFileName:
+                try: 
+                    fid_nc.close()
+                except: 
+                    k=1
+                    
+                fid_nc = Dataset(os.path.join(directory2Data.dir_rawdata, ListOfFiles[i]),'r')
+                oldFileName = ListOfFiles[i]
+            
+
+            #Get the correct beam group
+            if fid_nc.groups['Sonar'].groups['Beam_group1'].beam_mode == beam_mode: 
+                beamgrp = 'Beam_group1'
+                
+            elif fid_nc.groups['Sonar'].groups['Beam_group2'].beam_mode == beam_mode:
+                beamgrp = 'Beam_group2'
+            
+            
+                
+            #Get the beam data
+            beam_data = fid_nc.groups['Sonar'].groups[beamgrp]
+    
+    
+            #Loop through each ping
+            for ii in range(len(beam_data.variables['ping_time'])): 
+                fd.write(str(beam_data.variables['ping_time'][ii])+',')
+                fd2.write(ListOfFiles[i]+',')
+                fd3.write(str(ii)+',')
+                fd4.write(beamgrp+',')
+    
         #Close files
         fd.close()
         fd2.close()
         fd3.close()
+        fd4.close()
         
         
-        #open files for appending
-        fd = open(directory2Data.dir_rawdata+'\\'+'pingtime.csv','a')    
-        fd2 = open(directory2Data.dir_rawdata+'\\'+'FileList.csv','a')
-        fd3 = open(directory2Data.dir_rawdata+'\\'+'IDX.csv','a')
+        #Reopen the files
+        fd=open(directory2Data.dir_src+'\\'+'pingtime.csv','r')
+        fd2=open(directory2Data.dir_src+'\\'+'FileList.csv','r')
+        fd3=open(directory2Data.dir_src+'\\'+'IDX.csv','r')
+        fd4 = open(directory2Data.dir_src+'\\'+'BeamIDX.csv','r')
         
         
-    except FileNotFoundError: 
-        #open and rewrite files
-        fd = open(directory2Data.dir_rawdata+'\\'+'pingtime.csv','w')    
-        fd2 = open(directory2Data.dir_rawdata+'\\'+'FileList.csv','w')
-        fd3 = open(directory2Data.dir_rawdata+'\\'+'IDX.csv','w')
+        #Get the IDX information
+        A = np.asarray(fd.read().split(','))[:-1].astype(np.float)
+        B = np.asarray(fd2.read().split(','))[:-1]
+        C = np.asarray(fd3.read().split(','))[:-1].astype(np.int)
+        D = np.asarray(fd4.read().split(','))[:-1]
+        CompleteListOfFiles = np.array((A.T,B.T,C.T)).T
+
+
+
+        #Close the files
+        fd.close()
+        fd2.close()
+        fd3.close()
+        fd4.close()
+        
+        
+        
+    return CompleteListOfFiles, D
+        
     
-        
-        
-    #This helps to prevent opening and closing the same file multiple times
-    oldFileName = ''
-
-
     
-    CompleteListOfFiles = []
-    print(ListOfFiles)
-    for i in range(len(ListOfFiles)): 
-        print(ListOfFiles[i])
-#        if ListOFFiles[i] >= LastFile: 
-            #append this
-        tools.printProgressBar(i+1,len(ListOfFiles),prefix = 'Stacking: ', suffix = 'Compmleted', length = 50)
-
-        if ListOfFiles[i]!=oldFileName:
-            try: 
-                fid_nc.close()
-            except: 
-                k=1
-            fid_nc = Dataset(os.path.join(directory2Data.dir_rawdata, ListOfFiles[i]),'r')
-            oldFileName = ListOfFiles[i]
-        
-        if fid_nc.groups['Sonar'].groups['Beam_group1'].beam_mode == beam_mode: 
-            beamgrp = 'Beam_group1'
-            
-        elif fid_nc.groups['Sonar'].groups['Beam_group2'].beam_mode == beam_mode:
-            beamgrp = 'Beam_group2'
-        
-        
-        beam_data = fid_nc.groups['Sonar'].groups[beamgrp]
-
-        for ii in range(len(beam_data.variables['ping_time'])): 
-            #if ii>IDXlist[-1]: 
-            A = np.array((beam_data.variables['ping_time'][ii],ListOfFiles[i],ii))
-            
-            fd.write(str(beam_data.variables['ping_time'][ii])+',')
-            fd2.write(ListOfFiles[i]+',')
-            fd3.write(str(ii)+',')
-            print(ii)
-        break
-
-    fd.close()
-    fd2.close()
-    fd3.close()
-    fd=open(directory2Data.dir_rawdata+'\\'+'pingtime.csv','r')
-    fd2=open(directory2Data.dir_rawdata+'\\'+'FileList.csv','r')
-    fd3=open(directory2Data.dir_rawdata+'\\'+'IDX.csv','r')
-
-    A = np.asarray(fd.read().split(','))[:-1].astype(np.float)
-    B = np.asarray(fd2.read().split(','))[:-1]
-    C = np.asarray(fd3.read().split(','))[:-1].astype(np.int)
-    CompleteListOfFiles = np.array((A.T,B.T,C.T)).T
-        #fid_nc.close()
-    return CompleteListOfFiles, beamgrp
-        
 
     
     
@@ -162,36 +180,6 @@ def SecondsBetweenTransect(startTime,unixtime):
     return seconds
 
 
-    
-    
-    
-    
-#This function is redundant
-def ListOfFiles(dir2file,dir2nc): 
-    if os.path.exists(dir2file+'/'+'listOfFiles.mat')==False: 
-        print('    *Making ListOfFiles',end='\r')
-        
-        ListOfFiles = os.listdir(dir2nc)
-        
-        mat = []
-#        f=open(DirectoryToRESULT+'/'+'listOfFiles.txt' ,'w')
-        for i in range(len(ListOfFiles)): 
-            tools.printProgressBar(i + 1, len(ListOfFiles), prefix = 'Progress:', suffix = 'Complete', length = 50)
-#            f.write(str(ListOfFiles[i])+'\n')
-            fileIndex = ListOfFiles[i]
-
-            try: 
-                Test = (fileIndex[5:-4]+(20-len(fileIndex[5:-4]))*'0')
-                mat=np.hstack((mat,Test))#int(fileIndex[5:-4]+(20-len(fileIndex[5:-4]))*'0')))
-            except ValueError: 
-                print('Bad file name', end='\r')   
-            
-#        f.close()
-        sc.savemat(dir2file+'/'+'listOfFiles.mat',mdict={'mat':mat})
-    else: 
-        mat = sc.loadmat(dir2file+'/'+'listOfFiles.mat')['mat']
-
-    return mat
     
     
 def GetTransectTimes(filename,code): 
@@ -314,6 +302,9 @@ def main(TS = 0):
             SendMail.send_email('Failed to organize '+CruiceIndex.getAttribute('code'))
         
         
+                    
+        CompleteListOfFiles, beamgrp = ComListOfFiles(directory2Data,'Horizontal')
+              
         
         #Get transecttimes from Luf20
         for dirpath,_,filenames in os.walk(directory2Data.dir_src + '/EKLUF20/'):
@@ -326,9 +317,6 @@ def main(TS = 0):
 #                  MaxNumberOfFilesInNC,directory2Data)
     
     
-                    
-        CompleteListOfFiles, beamgrp = ComListOfFiles(directory2Data,'Horizontal')
-              
         
         
         
@@ -351,6 +339,9 @@ def main(TS = 0):
                     ShortListOfFiles = GetShortListOfFiles(CompleteListOfFiles,startTime,endTime)
                     
 
+#                    DoVertical()
+                    
+                    
                     #Make the search matrix
 #                    try: 
                     if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
@@ -360,26 +351,33 @@ def main(TS = 0):
 #                    except: 
 #                        SendMail.send_email('failed to make search matrix for transect '+ TimeIDX[Transect,0])
                         
+
+                    #Do vertical
+                    
+
+
+
+
                         
                     #Make the work stuff    
-                    if os.path.isfile(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt') == False: 
-                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == True: 
-                            print('    *Make Work',end='\r')
-                            MakeWork(True, directory2Data,'',
-             '','',1,3)
-                            f = open(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt','w')
-                            f.write('0')
-                            f.close()
-                    elif recompute == True: 
-                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == True: 
-                            print('    *Make Work',end='\r')
-                            MakeWork(True, directory2Data,'',
-             '','',1,3)
-                            f = open(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt','w')
-                            f.write('0')
-                            f.close()
-                            
-                            
+#                    if os.path.isfile(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt') == False: 
+#                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == True: 
+#                            print('    *Make Work',end='\r')
+#                            MakeWork(True, directory2Data,'',
+#             '','',1,3)
+#                            f = open(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt','w')
+#                            f.write('0')
+#                            f.close()
+#                    elif recompute == True: 
+#                        if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == True: 
+#                            print('    *Make Work',end='\r')
+#                            MakeWork(True, directory2Data,'',
+#             '','',1,3)
+#                            f = open(directory2Data.dir_work+'/'+TimeIDX[Transect,0]+'.txt','w')
+#                            f.write('0')
+#                            f.close()
+#                            
+#                            
                         
 #                    
 #        print('    *Make LUF20',end='\r')
