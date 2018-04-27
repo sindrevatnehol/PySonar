@@ -573,8 +573,8 @@ class GetVariablesFromNC(object):
         
         
         #Get NMEA data
-        self.Longitude = fileID.groups['Platform'].variables['longitude']
-        self.Latitude = fileID.groups['Platform'].variables['latitude']
+        self.Longitude = fileID.groups['Platform'].variables['longitude'][:]
+        self.Latitude = fileID.groups['Platform'].variables['latitude'][:]
         self.NMEA_time = fileID.groups['Platform'].variables[fileID.groups['Platform'].variables['longitude'].dimensions[0]][:]/100
         
         

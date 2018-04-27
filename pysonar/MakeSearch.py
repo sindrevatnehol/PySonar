@@ -64,8 +64,9 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
         NMEA_idx = np.where(abs(variables.NMEA_time[:]-float(ListOfFilesWithinTimeInterval[filename_index,0])) == 
                             np.min(abs(variables.NMEA_time[:]-float(ListOfFilesWithinTimeInterval[filename_index,0]))))
         
+        
         lat = np.hstack((lat,variables.Latitude[NMEA_idx]))
-        lon = np.hstack((lat,variables.Longitude[NMEA_idx]))
+        lon = np.hstack((lon,variables.Longitude[NMEA_idx]))
         
         
         #close the nc file
@@ -86,9 +87,6 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
 #                                    np.array(lat[:1],lat[-1]),
 #                                    np.array(lon[:1],lon[-1]))
 #            DistanceTraveled = np.linspace(0,np.max(DT),len(lat))
-        print('staarart')
-        print(lat)
-        print(lon)
         print(DistanceTraveled)
         
         #Get the calibration gain and add it to the data

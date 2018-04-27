@@ -105,7 +105,7 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,
         
         plt.figure(1)
         plt.clf()
-        plt.imshow(temp,aspect='auto')
+        plt.imshow(10*np.log10(temp),aspect='auto')
         plt.colorbar()
         plt.draw()
         plt.pause(0.001)

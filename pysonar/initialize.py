@@ -20,7 +20,7 @@ from tools import tools
 from tools import SendMail
 import scipy.io as sc
 from MakeSearch import MakeSearch
-#from MakeVerticalIndex import MakeVerticalIndex
+from MakeVerticalIndex import MakeVerticalIndex
 #from MakeWork import MakeWork
 from netCDF4 import Dataset
 
@@ -336,7 +336,7 @@ def main(TS = 0):
                     
 
                     
-                    #Get fish from vertical fan of beams
+#                    Get fish from vertical fan of beams
 #                    MakeVerticalIndex(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data,directory2Data.dir_rawdata,beamgrp)                    
                     
                     
