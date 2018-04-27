@@ -4,7 +4,7 @@ Created on Wed Apr 25 15:55:04 2018
 
 @author: sindrev
 """
-import tools
+from tools import tools
 import os
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
@@ -23,7 +23,7 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,
         
         
         #Print the progression
-        tools.printProgressBar(filename_index + 1, len(ListOfFilesWithinTimeInterval[:,0]), prefix = 'Make SearchMatrix:', suffix = 'Complete', length = 50)
+        tools.printProgressBar(filename_index + 1, len(ListOfFilesWithinTimeInterval[:,0]), prefix = 'Make Vertical:', suffix = 'Complete', length = 50)
         
         
         #Get the full path name
@@ -34,6 +34,15 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,
         fileID = Dataset(filename,'r',format = 'NETCDF4')
         
         
+        #Get the group with the vertical fan data
+        if fileID.groups['Sonar'].groups['Beam_group1'].beam_mode == 'Vertical': 
+            beamgrp = 'Beam_group1'
+        elif fileID.groups['Sonar'].groups['Beam_group2'].beam_mode == 'Vertical':
+            beamgrp = 'Beam_group2'
+        
+            
+            
+            
         #Get the vertical beam data
         #FIKS slik at den henter vertikal data
         variables = tools.GetVariablesFromNC(fileID,beamgrp,ListOfFilesWithinTimeInterval,filename_index)
@@ -55,42 +64,63 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,
             
         #Compute the sv and TS 
         #ADD TS are not used here !!!
-        sv, RangeOut= tools.ApplyTVG(variables.BeamAmplitudeData,
-                                variables.soundvelocity,
+        sv, RangeOut= tools.ApplyTVG(10*np.log10(variables.BeamAmplitudeData),
+                                variables.soundvelocity[0],
                                 variables.sampleinterval,
                                 variables.transmitpower,
-                                variables.absorptioncoefficient,
+                                variables.absorptioncoefficient[0],
                                 variables.frequency,
                                 variables.pulslength,
-                                gain,
+                                0,
                                 variables.equivalentbeamangle,
                                 variables.sacorrection,
                                 variables.dirx)
             
-        plt.figure(1)
+        
+        
+        sv[np.where(RangeOut<=RemoveToCloseValues)] = np.nan
+           
+           
+        #Stack the vertical beam data
+        if DataMatrix == []:
+            DataMatrix = 10**(variables.BeamAmplitudeData[:,:,np.newaxis]/10)
+        else: 
+            DataMatrix = np.dstack((DataMatrix,10**(variables.BeamAmplitudeData[:,:,np.newaxis]/10)))
+#        
+
+        Medianen = np.nanmedian(DataMatrix,axis=2)
+        
+        
+        plt.figure(3)
         plt.clf()
-        plt.imshow(sv,aspect='auto')
+        plt.imshow(Medianen,aspect='auto')
+        plt.colorbar()
         plt.draw()
         plt.pause(0.001)
         
         
-        #Set data below 40 degree tilt to nan
-        sv[np.where(variables.dirx <40)] = np.nan
-
+        temp = 10**(sv/10)
         
-        #Stack the vertical beam data
-        DataMatrix = np.dtack((DataMatrix,sv[:,:,np.newaxis]))
+        temp[np.where(temp<= Medianen*2)] = np.nan
+        
+        plt.figure(1)
+        plt.clf()
+        plt.imshow(temp,aspect='auto')
+        plt.colorbar()
+        plt.draw()
+        plt.pause(0.001)
+        
         
         
         
         
     #Out of loop
-    
-    BinaryIDX = np.where(DataMatrix >= (np.nanmedian(DataMatrix,axis=2)*1.1))
-    
-    
-    #Remove everything below a median
-    DataMatrix[np.where(DataMatrix <= np.nanmedian(DataMatrix,axis=2)*1.1)] = np.nan
+#    
+#    BinaryIDX = np.where(DataMatrix >= (np.nanmedian(DataMatrix,axis=2)*1.1))
+#    
+#    
+#    #Remove everything below a median
+#    DataMatrix[np.where(DataMatrix <= np.nanmedian(DataMatrix,axis=2)*1.1)] = np.nan
 
 
 

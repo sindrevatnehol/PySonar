@@ -20,7 +20,8 @@ from tools import tools
 from tools import SendMail
 import scipy.io as sc
 from MakeSearch import MakeSearch
-from MakeWork import MakeWork
+#from MakeVerticalIndex import MakeVerticalIndex
+#from MakeWork import MakeWork
 from netCDF4 import Dataset
 
 
@@ -49,10 +50,10 @@ def ComListOfFiles(directory2Data,beam_mode):
     
     #Open the IDX files
     try: 
-        fd = open(directory2Data.dir_src+'\\'+'pingtime.csv','r')    
-        fd2 = open(directory2Data.dir_src+'\\'+'FileList.csv','r')
-        fd3 = open(directory2Data.dir_src+'\\'+'IDX.csv','r')
-        fd4 = open(directory2Data.dir_src+'\\'+'BeamIDX.csv','r')
+        fd = open(directory2Data.dir_src+'/'+'pingtime.csv','r')    
+        fd2 = open(directory2Data.dir_src+'/'+'FileList.csv','r')
+        fd3 = open(directory2Data.dir_src+'/'+'IDX.csv','r')
+        fd4 = open(directory2Data.dir_src+'/'+'BeamIDX.csv','r')
     
         
         A = np.asarray(fd.read().split(','))[:-1].astype(np.float)
@@ -74,10 +75,10 @@ def ComListOfFiles(directory2Data,beam_mode):
     
     
         #open and rewrite IDX files
-        fd = open(directory2Data.dir_src+'\\'+'pingtime.csv','w')    
-        fd2 = open(directory2Data.dir_src+'\\'+'FileList.csv','w')
-        fd3 = open(directory2Data.dir_src+'\\'+'IDX.csv','w')
-        fd4 = open(directory2Data.dir_src+'\\'+'BeamIDX.csv','w')
+        fd = open(directory2Data.dir_src+'/'+'pingtime.csv','w')    
+        fd2 = open(directory2Data.dir_src+'/'+'FileList.csv','w')
+        fd3 = open(directory2Data.dir_src+'/'+'IDX.csv','w')
+        fd4 = open(directory2Data.dir_src+'/'+'BeamIDX.csv','w')
         
             
             
@@ -134,10 +135,10 @@ def ComListOfFiles(directory2Data,beam_mode):
         
         
         #Reopen the files
-        fd=open(directory2Data.dir_src+'\\'+'pingtime.csv','r')
-        fd2=open(directory2Data.dir_src+'\\'+'FileList.csv','r')
-        fd3=open(directory2Data.dir_src+'\\'+'IDX.csv','r')
-        fd4 = open(directory2Data.dir_src+'\\'+'BeamIDX.csv','r')
+        fd=open(directory2Data.dir_src+'/'+'pingtime.csv','r')
+        fd2=open(directory2Data.dir_src+'/'+'FileList.csv','r')
+        fd3=open(directory2Data.dir_src+'/'+'IDX.csv','r')
+        fd4 = open(directory2Data.dir_src+'/'+'BeamIDX.csv','r')
         
         
         #Get the IDX information
@@ -194,14 +195,12 @@ def GetTransectTimes(filename,code):
     transect_i = 1
     new_start = False
     
-    print('start')
     for i in distance_list:
-        
         start_time = i.get('start_time').replace(' ','T').replace('-','').replace(':','')
         stop_time = i.find('stop_time').text.replace(' ','T').replace('-','').replace(':','')
 
         if Start == 0:
-            Start = np.hstack((Start,start_time))
+            Start = start_time
             transect_IDX = np.hstack((transect_IDX,code + '_'+str(transect_i)))
             transect_i = transect_i+1
         elif new_start == True: 
@@ -221,10 +220,7 @@ def GetTransectTimes(filename,code):
       
     #add last time
     End = np.hstack((End,stop_time))
-    
-    
     TimeIDX  = np.vstack((transect_IDX.T,Start.T,End.T)).T    
-    
     return TimeIDX
     
     
@@ -302,15 +298,18 @@ def main(TS = 0):
             SendMail.send_email('Failed to organize '+CruiceIndex.getAttribute('code'))
         
         
-                    
-        CompleteListOfFiles, beamgrp = ComListOfFiles(directory2Data,'Horizontal')
-              
-        
+            
         #Get transecttimes from Luf20
         for dirpath,_,filenames in os.walk(directory2Data.dir_src + '/EKLUF20/'):
             for f in filenames:
                 filename =  os.path.abspath(os.path.join(dirpath, f))
                 TimeIDX = GetTransectTimes(filename,str(CruiceIndex.getAttribute('code')))
+        
+                
+                
+                    
+        CompleteListOfFiles, beamgrp = ComListOfFiles(directory2Data,'Horizontal')
+              
         
                     
 #        tools.DataConverter(CruiceIndex,WorkDirectory,os.getcwd(),maxPingInFile,
@@ -332,14 +331,14 @@ def main(TS = 0):
                 if eqip == CruiceIndex.getAttribute("Equipment"): 
                     
                     
-                   
-                    startTime = TimeIDX[Transect,1].replace('T','')
-                    endTime = TimeIDX[Transect,2].replace('T','')
-                    
-                    ShortListOfFiles = GetShortListOfFiles(CompleteListOfFiles,startTime,endTime)
+                    #Get list of files in one transect
+                    ShortListOfFiles = GetShortListOfFiles(CompleteListOfFiles,TimeIDX[Transect,1].replace('T',''),TimeIDX[Transect,2].replace('T',''))
                     
 
-#                    DoVertical()
+                    
+                    #Get fish from vertical fan of beams
+#                    MakeVerticalIndex(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data,directory2Data.dir_rawdata,beamgrp)                    
+                    
                     
                     
                     #Make the search matrix
@@ -591,14 +590,12 @@ def main(TS = 0):
 
 #        print('    *Cruice is finnished')
 if __name__ == '__main__':    
-    import sys
     
 #    first_arg = sys.argv[1]
 #
 #    print(first_arg)
 #    second_arg = sys.argv[2]
 
-    print('ok')
     
     main(TS = 0)
     

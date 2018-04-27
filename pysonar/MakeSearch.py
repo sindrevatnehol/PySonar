@@ -117,7 +117,7 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
             
         #Compute the sv and TS 
         #ADD TS are not used here !!!
-        sv, RangeOut= tools.ApplyTVG(variables.BeamAmplitudeData,
+        sv, RangeOut= tools.ApplyTVG(10*np.log10(variables.BeamAmplitudeData),
                                 variables.soundvelocity,
                                 variables.sampleinterval,
                                 variables.transmitpower,

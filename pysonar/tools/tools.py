@@ -295,16 +295,17 @@ def ApplyTVG(AmplitudeData,soundvelocity,sampleinterval,transmitpower,
                       
                       
     #Remove bad values  
-    Range[np.where(Range<0)] = 1E-200
+    Range[np.where(Range<=0)] = 1E-200
                
+
     #Make the TVG function (20 log) as a vector
     tvg20 = np.repeat(20*np.log10(Range[:, np.newaxis]) + 2*absorptioncoefficient*Range[:, np.newaxis], AmplitudeData[:].shape[1], axis=1)
                          
                       
+    tvg20[np.where(tvg20<0)] = 0
     
     #Correction function for the loss off energy when steering the beam
     tiltcorr =40*np.log10(abs(np.cos(np.deg2rad(-tiltAngle))))
-    
     
     
     #compute the wavelength of the signal
@@ -313,8 +314,10 @@ def ApplyTVG(AmplitudeData,soundvelocity,sampleinterval,transmitpower,
     
     
     #compute the correction function used when computing the SV
-    svconstSV =10*np.log10(transmitpower*wavelength**2*soundvelocity*effective_pulselength/(32*np.pi**2))+tiltcorr+gain+equivalentbeamangle+sacorrection
+    svconstSV =10*np.log10(transmitpower*wavelength**2*soundvelocity*effective_pulselength/(32*np.pi**2))+tiltcorr+gain+10*np.log10(equivalentbeamangle)+sacorrection
     
+        
+        
     #Compute the volume backscattering coefficient
     sv= AmplitudeData+tvg20-np.repeat(svconstSV[:,np.newaxis],AmplitudeData.shape[0],axis=1).transpose()
 
@@ -529,15 +532,21 @@ def ComputeDistance(travelDist,lat,lon):
 class GetVariablesFromNC(object):
     
     def __init__(self,fileID,beamgrp,Files,fileIDX):
-    
+        
+        if type(beamgrp) == np.str: 
+            bmgrp = beamgrp
+        else:
+            bmgrp = beamgrp[fileIDX]
+        
+        
         #Get beam sonar configuration info   
-        self.frequency = fileID.groups['Sonar'].groups[beamgrp].variables['transmit_frequency_start'][int(Files[fileIDX,2])]
-        self.transmitpower = fileID.groups['Sonar'].groups[beamgrp].variables['transmit_power'][int(Files[fileIDX,2])]
-        self.pulslength = fileID.groups['Sonar'].groups[beamgrp].variables['transmit_duration_nominal'][int(Files[fileIDX,2])]
-        self.gaintx = fileID.groups['Sonar'].groups[beamgrp].variables['transmit_source_level'][int(Files[fileIDX,2])]
-        self.gainrx = fileID.groups['Sonar'].groups[beamgrp].variables['receiver_sensitivity'][int(Files[fileIDX,2])]
-        self.sampleinterval = fileID.groups['Sonar'].groups[beamgrp].variables['sample_interval'][int(Files[fileIDX,2])]
-        self.equivalentbeamangle=fileID.groups['Sonar'].groups[beamgrp].variables['equivalent_beam_angle'][int(Files[fileIDX,2]),:]
+        self.frequency = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_frequency_start'][int(Files[fileIDX,2])]
+        self.transmitpower = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_power'][int(Files[fileIDX,2])]
+        self.pulslength = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_duration_nominal'][int(Files[fileIDX,2])]
+        self.gaintx = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_source_level'][int(Files[fileIDX,2])]
+        self.gainrx = fileID.groups['Sonar'].groups[bmgrp].variables['receiver_sensitivity'][int(Files[fileIDX,2])]
+        self.sampleinterval = fileID.groups['Sonar'].groups[bmgrp].variables['sample_interval'][int(Files[fileIDX,2])]
+        self.equivalentbeamangle=fileID.groups['Sonar'].groups[bmgrp].variables['equivalent_beam_angle'][int(Files[fileIDX,2]),:]
         self.sacorrection = 0
 
 
@@ -548,17 +557,17 @@ class GetVariablesFromNC(object):
 
         
         #Get beam configuration
-        beam_direction_x=fileID.groups['Sonar'].groups[beamgrp].variables['beam_direction_x'][int(Files[fileIDX,2]),:]
-        beam_direction_y=fileID.groups['Sonar'].groups[beamgrp].variables['beam_direction_y'][int(Files[fileIDX,2]),:]
-        beam_direction_z=fileID.groups['Sonar'].groups[beamgrp].variables['beam_direction_z'][int(Files[fileIDX,2]),:]
+        beam_direction_x=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_x'][int(Files[fileIDX,2]),:]
+        beam_direction_y=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_y'][int(Files[fileIDX,2]),:]
+        beam_direction_z=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_z'][int(Files[fileIDX,2]),:]
         self.dirx = np.arcsin(beam_direction_z)/np.pi*180
         self.diry = np.arctan2(beam_direction_y,beam_direction_x)*180/np.pi
         
 
 
         #Unpack and write beam data        
-        BeamAmplitudeDataIM=UnpackBeam(fileID.groups['Sonar'].groups[beamgrp].variables['backscatter_i'][int(Files[fileIDX,2]),:])
-        BeamAmplitudeDataReal=UnpackBeam(fileID.groups['Sonar'].groups[beamgrp].variables['backscatter_r'][int(Files[fileIDX,2]),:])
+        BeamAmplitudeDataIM=UnpackBeam(fileID.groups['Sonar'].groups[bmgrp].variables['backscatter_i'][int(Files[fileIDX,2]),:])
+        BeamAmplitudeDataReal=UnpackBeam(fileID.groups['Sonar'].groups[bmgrp].variables['backscatter_r'][int(Files[fileIDX,2]),:])
         self.BeamAmplitudeData =np.sqrt((BeamAmplitudeDataIM**2 + BeamAmplitudeDataReal**2))
         
         

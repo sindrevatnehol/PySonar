@@ -61,7 +61,7 @@ with g.subgraph(name='cluster_0') as c:
 
 with g.subgraph(name='cluster_1') as c:
     c.attr(style='filled')
-    c.attr(color='lightgrey')
+    c.attr(color='lightblue')
     c.node_attr.update(style='filled', color='white')
     
     c.node('.../ORIGINAL_RAWDATA',color = 'green')
