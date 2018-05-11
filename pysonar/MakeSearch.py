@@ -87,17 +87,16 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
 #                                    np.array(lat[:1],lat[-1]),
 #                                    np.array(lon[:1],lon[-1]))
 #            DistanceTraveled = np.linspace(0,np.max(DT),len(lat))
-        print(DistanceTraveled)
         
         #Get the calibration gain and add it to the data
         #ADD calibration cain is not jet avaliable. 
         #the function may be chainged once tis is ready#
         if not NominalCalibraitonGain: 
             gain,FrequencyGain,PulslengthGain = tools.GainAdjustment(variables.pulslength*1E3,variables.frequency/1E3,variables.gaintx+variables.gainrx) 
-            gain = variables.gaintx+variables.gainrx+PulslengthGain
+            gain = variables.gaintx+PulslengthGain
         else: 
             gain,FrequencyGain,PulslengthGain = tools.GainAdjustment(variables.pulslength*1E3,variables.frequency/1E3,NominalCalibraitonGain) 
-            
+            gain = variables.gaintx+PulslengthGain
             
             
             
@@ -128,12 +127,21 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                                 variables.dirx)
             
         
+                  
+                
+        
         
         
         #Remove data too close to the vessel
         sv[np.where(RangeOut<=RemoveToCloseValues)] = np.nan
 
-        
+        import matplotlib.pyplot as plt
+        plt.figure(2)
+        plt.clf()
+        plt.imshow((sv),aspect = 'auto')
+        plt.colorbar()
+        plt.draw()
+        plt.pause(0.0001)
            
         
         #ADD Temporary filter that will be deleted once checked !!!
@@ -373,8 +381,9 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                 plt.figure(1)
                 plt.clf()
                 plt.imshow(SVres_port,aspect = 'auto')
+                plt.colorbar()
                 plt.draw()
-                plt.pause(20)
+                plt.pause(0.0001)
         
         
         

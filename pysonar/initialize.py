@@ -10,6 +10,7 @@ Created on Tue Oct 24 13:47:24 2017
 
 import xml.dom.minidom as minidom
 import os
+import random
 ##from shutil import copyfile
 
 #import MakeSearchMatrix, makePingWork, MakeSearchMatrixVert 
@@ -221,6 +222,7 @@ def GetTransectTimes(filename,code):
     #add last time
     End = np.hstack((End,stop_time))
     TimeIDX  = np.vstack((transect_IDX.T,Start.T,End.T)).T    
+
     return TimeIDX
     
     
@@ -246,7 +248,7 @@ def main(TS = 0):
 
     maxPingInFile = 2000
     MaxNumberOfFilesInNC  = 100
-    recompute = True
+    recompute = False
 #    current_dir = os.getcwd()
     
     SonarEquipment = ['SU90','SX90','SH90']
@@ -264,7 +266,7 @@ def main(TS = 0):
     #Get the work directory to where all the files is stoored
     WorkDirectory = OS+ '/mea/2018_Redus'
     
-    
+    WorkDirectory = 'F:/'
     
     #Timeseries = GetTimeSeriesInfoFromNMDAPI()
     
@@ -276,12 +278,11 @@ def main(TS = 0):
     doc = minidom.parse(os.getcwd()+'/src/DataStructure.xml')
     
     
-    
     #Prepare to go through all cruices
     CruiceCode = doc.getElementsByTagName("CruiceCode") 
     
-    
-    
+
+        
     #Loop through each cruice
     for CruiceIndex in CruiceCode:
         print('Start on survey: '+CruiceIndex.getAttribute('code'))
@@ -298,19 +299,34 @@ def main(TS = 0):
             SendMail.send_email('Failed to organize '+CruiceIndex.getAttribute('code'))
         
         
-            
-        #Get transecttimes from Luf20
-        for dirpath,_,filenames in os.walk(directory2Data.dir_src + '/EKLUF20/'):
-            for f in filenames:
-                filename =  os.path.abspath(os.path.join(dirpath, f))
-                TimeIDX = GetTransectTimes(filename,str(CruiceIndex.getAttribute('code')))
+#            
+#        TransectID = []
+#        StartTime = []
+#        EndTime = []
+#        for transect_num in CruiceIndex.getElementsByTagName("transect"):   
+#            TransectID=np.hstack((TransectID,transect_num.getAttribute('num')))
+#            StartTime=np.hstack((StartTime,transect_num.getAttribute('startTime')))
+#            EndTime=np.hstack((EndTime,transect_num.getAttribute('endTime')))
+#            
+#            
+#        TimeIDX  = np.vstack((TransectID.T,StartTime.T,EndTime.T)).T   
+
+        TimeIDX = []
+        if TimeIDX == []: 
+            #Get transecttimes from Luf20
+            for dirpath,_,filenames in os.walk(directory2Data.dir_src + '/EKLUF20/'):
+                for f in filenames:
+                    filename =  os.path.abspath(os.path.join(dirpath, f))
+                    TimeIDX = GetTransectTimes(filename,str(CruiceIndex.getAttribute('code')))
         
                 
+                    
                 
                     
         CompleteListOfFiles, beamgrp = ComListOfFiles(directory2Data,'Horizontal')
               
-        
+
+
                     
 #        tools.DataConverter(CruiceIndex,WorkDirectory,os.getcwd(),maxPingInFile,
 #                  MaxNumberOfFilesInNC,directory2Data)
@@ -322,6 +338,7 @@ def main(TS = 0):
         
         #Loop through each transect in a randomized maner
         NumTransect = np.arange(len(TimeIDX))
+        print(random.shuffle(NumTransect))
         for Transect in NumTransect: 
             print('    -Start on transect: '+ TimeIDX[Transect,0])
         
@@ -334,16 +351,21 @@ def main(TS = 0):
                     #Get list of files in one transect
                     ShortListOfFiles = GetShortListOfFiles(CompleteListOfFiles,TimeIDX[Transect,1].replace('T',''),TimeIDX[Transect,2].replace('T',''))
                     
+                    
+                    # Get fish from vertical fan of beams
+                    if not os.path.isfile(directory2Data.dir_work+'/'+'Vertical_T'+str(TimeIDX[Transect,0])+'.mat'):
+                        if ShortListOfFiles != []: 
+                            MakeVerticalIndex(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data,directory2Data.dir_rawdata,beamgrp,TimeIDX[Transect,0])        
+                    elif recompute == True: 
+                        if ShortListOfFiles != []: 
+                            MakeVerticalIndex(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data,directory2Data.dir_rawdata,beamgrp,TimeIDX[Transect,0])        
+                    
 
-                    
-#                    Get fish from vertical fan of beams
-#                    MakeVerticalIndex(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data,directory2Data.dir_rawdata,beamgrp)                    
-                    
-                    
+
                     
                     #Make the search matrix
 #                    try: 
-                    if os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat') == False: 
+                    if not os.path.isfile(directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat'): 
                         MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)
                     elif recompute == True: 
                          MakeSearch(ShortListOfFiles,RemoveToCloseValues,R_s,res,directory2Data.dir_search+'/'+TimeIDX[Transect,0]+'.mat',directory2Data.dir_rawdata,beamgrp)

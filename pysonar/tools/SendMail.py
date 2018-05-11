@@ -8,7 +8,7 @@ def send_email(data):
     SMTP_server = 'smtp.gmail.com'
     SMTP_port = 587
     SMTP_username = 'ReportStatusOfAnalysis@gmail.com'
-    SMTP_psw = 'HurraForDegSomFyller100'
+    SMTP_psw = 'DetVarEnGang'
 
     email_to = ['sindre.vatnehol@gmail.com','sindre.vatnehol@hi.no']
     email_from = 'sindre.vatnehol@gmail.com'

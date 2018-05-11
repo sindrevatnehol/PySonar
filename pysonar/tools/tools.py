@@ -64,13 +64,13 @@ def WelcomeScreen(projectName):
     
     
 
-def UnpackBeam(BeamAmplitudeDataIM):
+def UnpackBeam(BeamAmplitudeData):
     '''Unpack the beam data from the nc structure'''
     
-    BeamAmplitude = np.zeros((len(BeamAmplitudeDataIM[0]),64))
+    BeamAmplitude = np.zeros((len(BeamAmplitudeData[0]),64))
     
     for i in range(len(BeamAmplitude[0,:])):
-        BeamAmplitude[:,i] = BeamAmplitudeDataIM[i]
+        BeamAmplitude[:,i] = BeamAmplitudeData[i]
 
     return BeamAmplitude
 
@@ -307,7 +307,6 @@ def ApplyTVG(AmplitudeData,soundvelocity,sampleinterval,transmitpower,
     #Correction function for the loss off energy when steering the beam
     tiltcorr =40*np.log10(abs(np.cos(np.deg2rad(-tiltAngle))))
     
-    
     #compute the wavelength of the signal
     wavelength = soundvelocity/frequency
 
@@ -317,12 +316,9 @@ def ApplyTVG(AmplitudeData,soundvelocity,sampleinterval,transmitpower,
     svconstSV =10*np.log10(transmitpower*wavelength**2*soundvelocity*effective_pulselength/(32*np.pi**2))+tiltcorr+gain+10*np.log10(equivalentbeamangle)+sacorrection
     
         
-        
     #Compute the volume backscattering coefficient
     sv= AmplitudeData+tvg20-np.repeat(svconstSV[:,np.newaxis],AmplitudeData.shape[0],axis=1).transpose()
 
-    
-    
     #Return the SV the range and the TS from the data.
     return sv, Range; 
 
@@ -393,11 +389,6 @@ def GetDistanceMatrix(DistanceMatrix,RangeMatrix,BeamDirectionMatrix,svMatrix,th
     travelDistance = np.max(travelDistance)/len(travelDistance)*np.arange(len(travelDistance))
     
     travelDistance=travelDistance-np.max(travelDistance)/2
-
-    
-    print(theta_tilt)
-    print(BeamDirectionMatrix.shape)
-    print(RangeMatrix.shape)
 
     #Compute the location of all points in cartesian coordinates
     x_pixel = RangeMatrix*np.sin(theta_tilt)*np.cos(BeamDirectionMatrix*np.pi/180)
@@ -472,7 +463,25 @@ def GetDistanceMatrix(DistanceMatrix,RangeMatrix,BeamDirectionMatrix,svMatrix,th
 
     return Wdist_port,Wdist_stb
 
+from math import radians, cos, sin, asin, sqrt
 
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points 
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians 
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    r = 6371*1000 # Radius of earth in meters. Use 3956 for miles
+    return c * r
+    
+    
 
     
 def ComputeDistance(travelDist,lat,lon): 
@@ -483,44 +492,47 @@ def ComputeDistance(travelDist,lat,lon):
     Parts of the code is awkward due to bugs in the files. Will be changed later. 
     '''
     
-    
     #We need some points to evaluate the distanc traveled. 
     if len(lat)==1: 
-        travelDist=np.hstack((travelDist,np.nan))
+        travelDist = 0
+    else: 
+        travelDist = np.hstack((travelDist,haversine(lon[-1], lat[-1], lon[-2], lat[-2])))
+    DistanceTraveled = np.cumsum(travelDist)
+#        travelDist=np.hstack((travelDist,np.nan))
         
         
         
-    elif len(lat)>=20:
-        #find the delta in longitude and latitude
-        delta_lat = lat[-1]-lat[-2]
-        delta_lon = lon[-1]-lon[-2]
-
-
-
-        #Computing the distance using hammersine fucntion
-        a = (np.sin(delta_lat/2*np.pi/180))**2 + np.cos(lat[-2]*np.pi/180) * np.cos(lat[-1]*np.pi/180) * (np.sin(delta_lon/2*np.pi/180)**2)
-        c = 2 * np.arctan2(np.sqrt(a),np.sqrt(1-a))
-        
-        
-        #Compute the distance to meter and stack the variable
-        travelDist = np.hstack((travelDist,6371000*c))
-        
-        
-        
-        #Correct for some bug in the software. 
-        #if the travelDistance is not a number compute the meidan distance
-        if len(travelDist)>=4:
-            if travelDist[-2]==np.nan:
-                travelDist[-2]== (travelDist[-1]+travelDist[-3])/2
-    
-
-
-    #travelDist = distance between each point
-    #DistanceTraveled is the total length traveled for each ping
-    DistanceTraveled = travelDist
-
-    DistanceTraveled[np.where(np.isnan(DistanceTraveled))] = 0
-    DistanceTraveled = np.cumsum(DistanceTraveled)
+#    elif len(lat)>=20:
+#        #find the delta in longitude and latitude
+#        delta_lat = lat[-1]-lat[-2]
+#        delta_lon = lon[-1]-lon[-2]
+#
+#
+#
+#        #Computing the distance using hammersine fucntion
+#        a = (np.sin(delta_lat/2*np.pi/180))**2 + np.cos(lat[-2]*np.pi/180) * np.cos(lat[-1]*np.pi/180) * (np.sin(delta_lon/2*np.pi/180)**2)
+#        c = 2 * np.arctan2(np.sqrt(a),np.sqrt(1-a))
+#        
+#        
+#        #Compute the distance to meter and stack the variable
+#        travelDist = np.hstack((travelDist,6371000*c))
+#        
+#        
+#        
+#        #Correct for some bug in the software. 
+#        #if the travelDistance is not a number compute the meidan distance
+#        if len(travelDist)>=4:
+#            if travelDist[-2]==np.nan:
+#                travelDist[-2]== (travelDist[-1]+travelDist[-3])/2
+#    
+#
+#
+#    #travelDist = distance between each point
+#    #DistanceTraveled is the total length traveled for each ping
+#    DistanceTraveled = travelDist
+#
+#    DistanceTraveled[np.where(np.isnan(DistanceTraveled))] = 0
+#    DistanceTraveled = np.cumsum(DistanceTraveled)
         
     
     return DistanceTraveled, travelDist;
@@ -532,7 +544,6 @@ def ComputeDistance(travelDist,lat,lon):
 class GetVariablesFromNC(object):
     
     def __init__(self,fileID,beamgrp,Files,fileIDX):
-        
         if type(beamgrp) == np.str: 
             bmgrp = beamgrp
         else:
@@ -540,46 +551,59 @@ class GetVariablesFromNC(object):
         
         
         #Get beam sonar configuration info   
-        self.frequency = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_frequency_start'][int(Files[fileIDX,2])]
-        self.transmitpower = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_power'][int(Files[fileIDX,2])]
-        self.pulslength = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_duration_nominal'][int(Files[fileIDX,2])]
-        self.gaintx = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_source_level'][int(Files[fileIDX,2])]
-        self.gainrx = fileID.groups['Sonar'].groups[bmgrp].variables['receiver_sensitivity'][int(Files[fileIDX,2])]
-        self.sampleinterval = fileID.groups['Sonar'].groups[bmgrp].variables['sample_interval'][int(Files[fileIDX,2])]
-        self.equivalentbeamangle=fileID.groups['Sonar'].groups[bmgrp].variables['equivalent_beam_angle'][int(Files[fileIDX,2]),:]
-        self.sacorrection = 0
+        try: 
+            pingtime = fileID.groups['Sonar'].groups[bmgrp].variables['ping_time'][int(Files[fileIDX,2])]
+            self.time = pingtime
+            self.frequency = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_frequency_start'][int(Files[fileIDX,2])]
+            
+            self.transmitpower = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_power'][int(Files[fileIDX,2])]
+            self.pulslength = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_duration_nominal'][int(Files[fileIDX,2])]
+            self.gaintx = fileID.groups['Sonar'].groups[bmgrp].variables['transducer_gain'][int(Files[fileIDX,2])]
+            self.gainrx = fileID.groups['Sonar'].groups[bmgrp].variables['receiver_sensitivity'][int(Files[fileIDX,2])]
+            self.sampleinterval = fileID.groups['Sonar'].groups[bmgrp].variables['sample_interval'][int(Files[fileIDX,2])]
+            self.equivalentbeamangle=fileID.groups['Sonar'].groups[bmgrp].variables['equivalent_beam_angle'][int(Files[fileIDX,2]),:]
+            self.sacorrection = 0
+    
+    
+            #Get environment data
+            self.soundvelocity = fileID.groups['Environment'].variables['sound_speed_indicative'][:]
+            self.absorptioncoefficient = fileID.groups['Environment'].variables['absorption_indicative'][:]
+    
+          
+            
+            #Get beam configuration
+            beam_direction_x=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_x'][int(Files[fileIDX,2]),:]
+            beam_direction_y=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_y'][int(Files[fileIDX,2]),:]
+            beam_direction_z=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_z'][int(Files[fileIDX,2]),:]
 
 
-        #Get environment data
-        self.soundvelocity = fileID.groups['Environment'].variables['sound_speed_indicative'][:]
-        self.absorptioncoefficient = fileID.groups['Environment'].variables['absorption_indicative'][:]
+            self.dirx = np.arcsin(beam_direction_z)/np.pi*180
+            self.diry = np.arctan2(beam_direction_y,beam_direction_x)*180/np.pi
+            
+    
+            #Unpack and write beam data  
+            BeamIM = fileID.groups['Sonar'].groups[bmgrp].variables['backscatter_i']
+            BeamReal = fileID.groups['Sonar'].groups[bmgrp].variables['backscatter_r']
+            BeamAmplitudeDataIM=UnpackBeam(BeamIM[int(Files[fileIDX,2]),:])
+            BeamAmplitudeDataReal=UnpackBeam(BeamReal[int(Files[fileIDX,2]),:])
+            
+            self.BeamAmplitudeData =np.sqrt((BeamAmplitudeDataIM**2 + BeamAmplitudeDataReal**2))
+            
+            
+            NMEA_time= fileID.groups['Platform'].variables[fileID.groups['Platform'].variables['longitude'].dimensions[0]][:]/100
+            Latitude = fileID.groups['Platform'].variables['latitude'][:]
+            Longitude = fileID.groups['Platform'].variables['longitude'][:]
+            
+            NMEA_idx = np.where(abs(NMEA_time-pingtime)==np.min(abs(NMEA_time-pingtime)))
+            
+            #Get NMEA data
+            self.Longitude = Longitude[NMEA_idx]
+            self.Latitude = Latitude[NMEA_idx]
+            self.NMEA_time = NMEA_time[NMEA_idx]
+            
 
-
-        
-        #Get beam configuration
-        beam_direction_x=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_x'][int(Files[fileIDX,2]),:]
-        beam_direction_y=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_y'][int(Files[fileIDX,2]),:]
-        beam_direction_z=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_z'][int(Files[fileIDX,2]),:]
-        self.dirx = np.arcsin(beam_direction_z)/np.pi*180
-        self.diry = np.arctan2(beam_direction_y,beam_direction_x)*180/np.pi
-        
-
-
-        #Unpack and write beam data        
-        BeamAmplitudeDataIM=UnpackBeam(fileID.groups['Sonar'].groups[bmgrp].variables['backscatter_i'][int(Files[fileIDX,2]),:])
-        BeamAmplitudeDataReal=UnpackBeam(fileID.groups['Sonar'].groups[bmgrp].variables['backscatter_r'][int(Files[fileIDX,2]),:])
-        self.BeamAmplitudeData =np.sqrt((BeamAmplitudeDataIM**2 + BeamAmplitudeDataReal**2))
-        
-        
-        
-        #Get NMEA data
-        self.Longitude = fileID.groups['Platform'].variables['longitude'][:]
-        self.Latitude = fileID.groups['Platform'].variables['latitude'][:]
-        self.NMEA_time = fileID.groups['Platform'].variables[fileID.groups['Platform'].variables['longitude'].dimensions[0]][:]/100
-        
-        
-
-
+        except IndexError: 
+            k=1
 
 
 
