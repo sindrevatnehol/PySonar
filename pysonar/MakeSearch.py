@@ -40,7 +40,6 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
     
     
     
-    
     #Loop through all files within the time interval
     for filename_index in range(0,len(ListOfFilesWithinTimeInterval[:,0])):
         
@@ -135,13 +134,13 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
         #Remove data too close to the vessel
         sv[np.where(RangeOut<=RemoveToCloseValues)] = np.nan
 
-        import matplotlib.pyplot as plt
-        plt.figure(2)
-        plt.clf()
-        plt.imshow((sv),aspect = 'auto')
-        plt.colorbar()
-        plt.draw()
-        plt.pause(0.0001)
+#        import matplotlib.pyplot as plt
+#        plt.figure(2)
+#        plt.clf()
+#        plt.imshow((sv),aspect = 'auto')
+#        plt.colorbar()
+#        plt.draw()
+#        plt.pause(0.0001)
            
         
         #ADD Temporary filter that will be deleted once checked !!!
@@ -297,7 +296,6 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
 
             
 
-            #print(np.nanmax(DistanceTraveled))                               
 
             #Transform into a 1D array, and make it linear
             sv_mat = 10**(np.reshape(svMatrix,(-1,1))/10)

@@ -112,16 +112,9 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,
             #Remove data too close to the vessel
             sv[np.where(RangeOut<=RemoveToCloseValues)] = np.nan
                
-            
-#            X= np.cos(np.deg2rad(variables.dirx))*np.sin(np.deg2rad(variables.diry))
-#            X = (X[:,np.newaxis]*RangeOut[:,np.newaxis].T).T
-#    
-#            Y= np.sin(np.deg2rad(variables.dirx))*np.sin(np.deg2rad(variables.diry))
-#            Y = -(abs(Y[:,np.newaxis]*RangeOut[:,np.newaxis].T)).T
+           
     
-    
-    
-            sv[:,np.where(variables.dirx>=40)] = np.nan
+            sv[:,np.where(variables.dirx>=60)] = np.nan
     
             #Stack the vertical beam data
             if DataMatrix == []:
@@ -161,7 +154,7 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,
             
             Medianen = np.nanmedian(DataMatrix,axis=2)
             
-            [r_mask0,b_mask0,ping_mask0] = np.where(DataMatrix>=4*np.repeat(Medianen[:,:,np.newaxis],len(DataMatrix[0,0,:]),axis=2))
+            [r_mask0,b_mask0,ping_mask0] = np.where(DataMatrix>=5*np.repeat(Medianen[:,:,np.newaxis],len(DataMatrix[0,0,:]),axis=2))
             
             if ping_mask0 != []: 
                 ping_mask0 = time0[ping_mask0]

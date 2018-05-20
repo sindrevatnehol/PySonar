@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<list xmlns="http://www.imr.no/formats/nmdcommon/v2">
-    <row>
-        <element name="missiontype">Forskningsfartøy</element>
-    </row>
-    <row>
-        <element name="missiontype">Leiefartøy</element>
-    </row>
-</list>

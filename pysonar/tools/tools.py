@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar 15 09:26:07 2018
+Created on Mon May  7 10:39:10 2018
 
 @author: sindrev
 """
@@ -9,8 +9,6 @@ import os, scipy
 import numpy as np
 from shutil import copyfile
 import Raw2NetcdfConverter
-
-
 
 
 
@@ -549,21 +547,24 @@ class GetVariablesFromNC(object):
         else:
             bmgrp = beamgrp[fileIDX]
         
+        if Files == False:
+            fIDX = int(fileIDX)
+        else: 
+            fIDX = int(Files[fileIDX,2])
         
         #Get beam sonar configuration info   
         try: 
-            pingtime = fileID.groups['Sonar'].groups[bmgrp].variables['ping_time'][int(Files[fileIDX,2])]
+            pingtime = fileID.groups['Sonar'].groups[bmgrp].variables['ping_time'][fIDX]
+
             self.time = pingtime
-            self.frequency = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_frequency_start'][int(Files[fileIDX,2])]
-            
-            self.transmitpower = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_power'][int(Files[fileIDX,2])]
-            self.pulslength = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_duration_nominal'][int(Files[fileIDX,2])]
-            self.gaintx = fileID.groups['Sonar'].groups[bmgrp].variables['transducer_gain'][int(Files[fileIDX,2])]
-            self.gainrx = fileID.groups['Sonar'].groups[bmgrp].variables['receiver_sensitivity'][int(Files[fileIDX,2])]
-            self.sampleinterval = fileID.groups['Sonar'].groups[bmgrp].variables['sample_interval'][int(Files[fileIDX,2])]
-            self.equivalentbeamangle=fileID.groups['Sonar'].groups[bmgrp].variables['equivalent_beam_angle'][int(Files[fileIDX,2]),:]
+            self.frequency = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_frequency_start'][fIDX]
+            self.transmitpower = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_power'][fIDX]
+            self.pulslength = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_duration_nominal'][fIDX]
+            self.gaintx = fileID.groups['Sonar'].groups[bmgrp].variables['transducer_gain'][fIDX]
+            self.gainrx = fileID.groups['Sonar'].groups[bmgrp].variables['receiver_sensitivity'][fIDX]
+            self.sampleinterval = fileID.groups['Sonar'].groups[bmgrp].variables['sample_interval'][fIDX]
+            self.equivalentbeamangle=fileID.groups['Sonar'].groups[bmgrp].variables['equivalent_beam_angle'][fIDX,:]
             self.sacorrection = 0
-    
     
             #Get environment data
             self.soundvelocity = fileID.groups['Environment'].variables['sound_speed_indicative'][:]
@@ -572,9 +573,9 @@ class GetVariablesFromNC(object):
           
             
             #Get beam configuration
-            beam_direction_x=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_x'][int(Files[fileIDX,2]),:]
-            beam_direction_y=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_y'][int(Files[fileIDX,2]),:]
-            beam_direction_z=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_z'][int(Files[fileIDX,2]),:]
+            beam_direction_x=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_x'][fIDX,:]
+            beam_direction_y=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_y'][fIDX,:]
+            beam_direction_z=fileID.groups['Sonar'].groups[bmgrp].variables['beam_direction_z'][fIDX,:]
 
 
             self.dirx = np.arcsin(beam_direction_z)/np.pi*180
@@ -584,10 +585,10 @@ class GetVariablesFromNC(object):
             #Unpack and write beam data  
             BeamIM = fileID.groups['Sonar'].groups[bmgrp].variables['backscatter_i']
             BeamReal = fileID.groups['Sonar'].groups[bmgrp].variables['backscatter_r']
-            BeamAmplitudeDataIM=UnpackBeam(BeamIM[int(Files[fileIDX,2]),:])
-            BeamAmplitudeDataReal=UnpackBeam(BeamReal[int(Files[fileIDX,2]),:])
+            BeamAmplitudeDataIM=UnpackBeam(BeamIM[fIDX,:])
+            BeamAmplitudeDataReal=UnpackBeam(BeamReal[fIDX,:])
             
-            self.BeamAmplitudeData =np.sqrt((BeamAmplitudeDataIM**2 + BeamAmplitudeDataReal**2))
+            self.BeamAmplitudeData =(BeamAmplitudeDataIM**2 + BeamAmplitudeDataReal**2)
             
             
             NMEA_time= fileID.groups['Platform'].variables[fileID.groups['Platform'].variables['longitude'].dimensions[0]][:]/100
