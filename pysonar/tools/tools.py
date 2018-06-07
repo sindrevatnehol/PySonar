@@ -212,7 +212,7 @@ def OrginizeData(CruiceIndex,WorkDirectory,OS):
             MakeNewFolders(directory2Data)
         
             
-            #Get list of files that has not been copied to the correct structure
+#            #Get list of files that has not been copied to the correct structure
 #            print('    -Get files from server  ',end='\r')
 #            ListFromServer = os.listdir(OS+CruiceIndex.getAttribute('CruicePath'))
 #            ListOfFilesNotcopied = list(set(ListFromServer)-set(os.listdir(directory2Data.dir_originalrawdata)))
@@ -555,7 +555,6 @@ class GetVariablesFromNC(object):
         #Get beam sonar configuration info   
         try: 
             pingtime = fileID.groups['Sonar'].groups[bmgrp].variables['ping_time'][fIDX]
-
             self.time = pingtime
             self.frequency = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_frequency_start'][fIDX]
             self.transmitpower = fileID.groups['Sonar'].groups[bmgrp].variables['transmit_power'][fIDX]
@@ -596,7 +595,6 @@ class GetVariablesFromNC(object):
             Longitude = fileID.groups['Platform'].variables['longitude'][:]
             
             NMEA_idx = np.where(abs(NMEA_time-pingtime)==np.min(abs(NMEA_time-pingtime)))
-            
             #Get NMEA data
             self.Longitude = Longitude[NMEA_idx]
             self.Latitude = Latitude[NMEA_idx]

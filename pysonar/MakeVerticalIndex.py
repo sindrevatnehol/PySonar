@@ -31,9 +31,9 @@ def haversine(lon1, lat1, lon2, lat2):
     
     
 
-def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data,dirnc,beamgrp,transectID): 
+def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data,dirnc,beamgrp,start_time,log_start,stop_time,lat_start,lat_stop,lon_start,lon_stop): 
 
-    
+    transectID = log_start
     DataMatrix = []
     XMatrix = []
     YMatrix = []
@@ -53,7 +53,7 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,
     #Loop through all files within the time interval
     for filename_index in range(0,len(ListOfFilesWithinTimeInterval[:,0])):
         
-        
+#        print(ListOfFilesWithinTimeInterval[filename_index])
         #Print the progression
         tools.printProgressBar(filename_index + 1, len(ListOfFilesWithinTimeInterval[:,0]), prefix = 'Make Vertical:', suffix = 'Complete', length = 50)
         
@@ -113,9 +113,11 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,
             sv[np.where(RangeOut<=RemoveToCloseValues)] = np.nan
                
            
-    
+#    
             sv[:,np.where(variables.dirx>=60)] = np.nan
-    
+#            sv[np.where(sv<-65)] = np.nan
+               
+               
             #Stack the vertical beam data
             if DataMatrix == []:
                 sv_x,sv_y = sv.shape
@@ -150,27 +152,29 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,
             k=1
         
             
-        if ping_counter>=ping_counter_max: 
+#        if ping_counter>=ping_counter_max: 
             
-            Medianen = np.nanmedian(DataMatrix,axis=2)
-            
-            [r_mask0,b_mask0,ping_mask0] = np.where(DataMatrix>=5*np.repeat(Medianen[:,:,np.newaxis],len(DataMatrix[0,0,:]),axis=2))
-            
-            if ping_mask0 != []: 
-                ping_mask0 = time0[ping_mask0]
-
-            r_mask = np.hstack((r_mask,r_mask0))
-            b_mask = np.hstack((b_mask,b_mask0))
-            ping_mask = np.hstack((ping_mask,ping_mask0))
-
-            DataMatrix = []
-            ping_counter = 0
-            
-            
-
+    Medianen = np.nanmedian(DataMatrix,axis=2)
     
-    scp.savemat(directory2Data.dir_work+'/'+'Vertical_T'+str(transectID)+'.mat',mdict = {'r_mask':r_mask,'b_mask':b_mask,'ping_mask':ping_mask})
+    [r_mask0,b_mask0,ping_mask0] = np.where(DataMatrix>=4*np.repeat(Medianen[:,:,np.newaxis],len(DataMatrix[0,0,:]),axis=2))
     
+    if ping_mask0 != []: 
+        ping_mask0 = time0[ping_mask0]
+
+    r_mask = np.hstack((r_mask,r_mask0))
+    b_mask = np.hstack((b_mask,b_mask0))
+    ping_mask = np.hstack((ping_mask,ping_mask0))
+
+    DataMatrix = []
+    ping_counter = 0
+        
+        
+
+    try: 
+        scp.savemat(directory2Data.dir_work+'/'+'Vertical_T'+str(transectID)+'.mat',mdict = {'r_mask':r_mask,'b_mask':b_mask,'ping_mask':ping_mask,
+                    'start_time':start_time,'log_start':log_start,'stop_time':stop_time,'lat_start':lat_start,'lat_stop':lat_stop,'lon_start':lon_start,'lon_stop':lon_stop})
+    except TypeError: 
+        print(start_time,log_start,stop_time,lat_start,lat_stop,lon_start,lon_stop)
     
     
 #    DataMatrix2 = DataMatrix
