@@ -186,12 +186,15 @@ def GetSpikesFromEchogram(SVres,threshold,S):
     CathegorizationMatrix = np.zeros(SVres.shape)
     
 
-    median = np.nanmedian(10**(SVres/10),axis=1)
+#    median = np.nanmedian(10**(SVres/10),axis=1)
+    median = np.nanmedian(SVres,axis=1)
     
-    median_filter = 10*np.log10(np.repeat(median[:,np.newaxis],SVres.shape[1],axis=1))
+#    median_filter = 10*np.log10(np.repeat(median[:,np.newaxis],SVres.shape[1],axis=1))
+    median_filter = (np.repeat(median[:,np.newaxis],SVres.shape[1],axis=1))
+    
     #Find all pixels likly to have fish inside it (larger then background noise)
 #    CathegorizationMatrix[np.where(SVres>(10*np.log10(PP)+threshold))] = 1
-    CathegorizationMatrix[np.where(SVres>(median_filter+threshold))] = 1
+    CathegorizationMatrix[np.where(SVres>(median_filter*threshold))] = 1
     
     
     x_i,y_i = np.where(CathegorizationMatrix>0)
@@ -236,7 +239,7 @@ def MakeWork(makeNewWork, data_directory,SearchMatrixName,
     
     
     #Sjekk om dett er cluster TH eller Threshold
-    CatThr = 0
+    CatThr = 1
 
     
     #Loop through each search matrix (transect)
@@ -247,10 +250,6 @@ def MakeWork(makeNewWork, data_directory,SearchMatrixName,
         #Load search matrix
         SearchMatrix = sc.loadmat(data_directory.dir_search+'/'+SearchMatrixName)
     
-        
-        print('')
-        print(SearchMatrixName)
-        print(SearchMatrix)
         
         #Get the data from the files
         SVres_port = SearchMatrix['SVres_port']
@@ -284,7 +283,7 @@ def MakeWork(makeNewWork, data_directory,SearchMatrixName,
             plt.imshow(SVres_port,aspect = 'auto')
             plt.colorbar()
             plt.draw()
-            plt.savefig(data_directory.dir_search+'/'+SearchMatrixName.replace('mat','jpg'))
+            plt.savefig(data_directory.dir_search+'/'+SearchMatrixName.replace('.mat','2.jpg'))
         except: 
             k=1
             

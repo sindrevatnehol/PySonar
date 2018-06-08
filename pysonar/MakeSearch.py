@@ -10,7 +10,8 @@ from netCDF4 import Dataset
 import scipy, os
 import numpy as np
 from tools import tools
-
+import platform
+from joblib import Parallel, delayed
 
 
 
@@ -303,15 +304,33 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
             #sV_port = (Parallel(n_jobs=1)(delayed(ConvertToechogram)(Wdist_port[indeks],sv_mat) for indeks in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
          
             #sV_port2 = np.asarray(sV_port)
-            sV_stb = []
-            sV_port = []
-            sV_portGhost = []
-            sV_stbGhost = []
-            for indeks in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3])))): 
-                sV_port = np.hstack((sV_port,tools.ConvertToechogram(Wdist_port[indeks],sv_mat)))
-                sV_stb = np.hstack((sV_stb,tools.ConvertToechogram(Wdist_stb[indeks],sv_mat)))
-                sV_portGhost = np.hstack((sV_portGhost,tools.ConvertToechogram(Wdist_portGhost[indeks],sv_mat)))
-                sV_stbGhost = np.hstack((sV_stbGhost,tools.ConvertToechogram(Wdist_stbGhost[indeks],sv_mat)))
+            
+            if platform.system() == 'Linux':
+                print('start port')
+                sV_port = Parallel(n_jobs = 10)(delayed(tools.ConvertToechogram)(Wdist_port[i],sv_mat,2) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3])))))
+                print('start stb')
+                sV_stb = Parallel(n_jobs = 10)(delayed(tools.ConvertToechogram)(Wdist_stb[i],sv_mat,2) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3])))))
+                print('str gport')
+                sV_portGhost = Parallel(n_jobs = 10)(delayed(tools.ConvertToechogram)(Wdist_portGhost[i],sv_mat,2) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3])))))
+                print('str gstb')
+                sV_stbGhost = Parallel(n_jobs = 10)(delayed(tools.ConvertToechogram)(Wdist_stbGhost[i],sv_mat,2) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3])))))
+                
+            else: 
+                
+            
+                
+                sV_stb = []
+                sV_port = []
+                sV_portGhost = []
+                sV_stbGhost = []
+    
+    
+    
+                for indeks in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3])))): 
+                    sV_port = np.hstack((sV_port,tools.ConvertToechogram(Wdist_port[indeks],sv_mat)))
+                    sV_stb = np.hstack((sV_stb,tools.ConvertToechogram(Wdist_stb[indeks],sv_mat)))
+                    sV_portGhost = np.hstack((sV_portGhost,tools.ConvertToechogram(Wdist_portGhost[indeks],sv_mat)))
+                    sV_stbGhost = np.hstack((sV_stbGhost,tools.ConvertToechogram(Wdist_stbGhost[indeks],sv_mat)))
            # print(sV_port-sV_port2)
             #sV_port = np.asarray(sV_port)
             #sV_stb = (Parallel(n_jobs=1)(delayed(ConvertToechogram)(Wdist_stb[indeks],sv_mat) for indeks in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
