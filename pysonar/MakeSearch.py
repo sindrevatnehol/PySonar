@@ -312,18 +312,14 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                 print('start port')
                 sV_port =  np.asarray(Parallel(n_jobs = multiprocessing.cpu_count())(delayed(tools.ConvertToechogram)(Wdist_port[i],sv_mat) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
                 
-                print(time.time()-t)
                 
                 sV_stb =  np.asarray(Parallel(n_jobs = multiprocessing.cpu_count())(delayed(tools.ConvertToechogram)(Wdist_stb[i],sv_mat) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
                 
-                print(time.time()-t)
                 
                 sV_portGhost =  np.asarray(Parallel(n_jobs = multiprocessing.cpu_count())(delayed(tools.ConvertToechogram)(Wdist_portGhost[i],sv_mat) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
                 
-                print(time.time()-t)
                 
                 sV_stbGhost =  np.asarray(Parallel(n_jobs = multiprocessing.cpu_count())(delayed(tools.ConvertToechogram)(Wdist_stbGhost[i],sv_mat) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
-                print('finnished')
                 print(time.time()-t)
             else: 
                 
@@ -344,11 +340,6 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
   
             
             
-            #sV_stbGhost = np.asarray(Parallel(n_jobs=1)(delayed(ConvertToechogram)(Wdist_stbGhost[indeks],sv_mat) for indeks in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
-           
-            
-            print(type(sV_port))
-            print(sV_port.shape)
 
             #Add dimension on the data, a bug fix
             #ADD also add the ghost school   !!!
