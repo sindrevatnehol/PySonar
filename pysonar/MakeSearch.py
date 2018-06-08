@@ -306,7 +306,7 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
          
             #sV_port2 = np.asarray(sV_port)
             
-            if platform.system() == 'Linux':
+            if platform.system() == 'Linux1':
                 import time
                 t  =time.time()
                 print('start port')
