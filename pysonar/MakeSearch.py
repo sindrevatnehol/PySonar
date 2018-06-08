@@ -311,11 +311,17 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                 t  =time.time()
                 print('start port')
                 sV_port =  np.asarray(Parallel(n_jobs = multiprocessing.cpu_count())(delayed(tools.ConvertToechogram)(Wdist_port[i],sv_mat) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
-                print('start stb')
+                
+                print(time.time()-t)
+                
                 sV_stb =  np.asarray(Parallel(n_jobs = multiprocessing.cpu_count())(delayed(tools.ConvertToechogram)(Wdist_stb[i],sv_mat) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
-                print('str gport')
+                
+                print(time.time()-t)
+                
                 sV_portGhost =  np.asarray(Parallel(n_jobs = multiprocessing.cpu_count())(delayed(tools.ConvertToechogram)(Wdist_portGhost[i],sv_mat) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
-                print('str gstb')
+                
+                print(time.time()-t)
+                
                 sV_stbGhost =  np.asarray(Parallel(n_jobs = multiprocessing.cpu_count())(delayed(tools.ConvertToechogram)(Wdist_stbGhost[i],sv_mat) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
                 print('finnished')
                 print(time.time()-t)
