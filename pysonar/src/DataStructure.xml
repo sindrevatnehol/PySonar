@@ -10,24 +10,6 @@
 
 <CruiceList> 
 	<CruiceCode 
-	code = '2018105' 
-	vessel = 'GOSARS' 
-	vesselCode = 'GOSARS_4174' 
-	platform_type = 'ship, research' 
-	platform_code = '????' 
-	CruicePath = '/cruise_data/2018/S2018105_PGO
-	SARS_4174\ACOUSTIC\SU90' 
-	PreferedNMEA = '$INGLL'
-	PreferedHeading = '$INHDT'
-	CruiceNewDirection ='//ces.imr.no/cruise_data/2018/S2018105_PGOSARS_4174\ACOUSTIC\SU90' 
-	Equipment = 'SU90'>
-	</CruiceCode> 
-</CruiceList> 
-
-
-
-<CruiceList> 
-	<CruiceCode 
 	code = '2017107' 
 	vessel = 'GOSARS' 
 	vesselCode = 'GOSARS_4174' 
@@ -40,6 +22,10 @@
 	Equipment = 'SU90'>	
 	</CruiceCode> 
 </CruiceList> 
+
+
+
+
 
 
 <CruiceList> 
@@ -72,6 +58,26 @@
 	Equipment = 'SH90'>
 	</CruiceCode> 
 </CruiceList> 
+
+
+
+<CruiceList> 
+	<CruiceCode 
+	code = '2018105' 
+	vessel = 'GOSARS' 
+	vesselCode = 'GOSARS_4174' 
+	platform_type = 'ship, research' 
+	platform_code = '????' 
+	CruicePath = '/cruise_data/2018/S2018105_PGO
+	SARS_4174\ACOUSTIC\SU90' 
+	PreferedNMEA = '$INGLL'
+	PreferedHeading = '$INHDT'
+	CruiceNewDirection ='//ces.imr.no/cruise_data/2018/S2018105_PGOSARS_4174\ACOUSTIC\SU90' 
+	Equipment = 'SU90'>
+	</CruiceCode> 
+</CruiceList> 
+
+
 
 
 

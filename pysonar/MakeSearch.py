@@ -78,15 +78,11 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
         #a similar function is avaliable to be downloaded
         DistanceTraveled, travelDist = tools.ComputeDistance(travelDist,lat,lon)
         
-        
            
-        #A bug fix
-#        if len(lat)>5: 
-#            DT,td = tools.ComputeDistance(travelDist,
-#                                    np.array(lat[:1],lat[-1]),
-#                                    np.array(lon[:1],lon[-1]))
-#            DistanceTraveled = np.linspace(0,np.max(DT),len(lat))
-        
+
+
+
+
         #Get the calibration gain and add it to the data
         #ADD calibration cain is not jet avaliable. 
         #the function may be chainged once tis is ready#
@@ -99,6 +95,8 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
             
             
             
+            
+            
         #The sonar data often includes corrputed value of 
         #the transmit power that destroys the analysis. 
         #This will fix this problum, but the sv values are not
@@ -107,6 +105,9 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
         #so the user can now that it is corrupted.
         if variables.transmitpower == 0: 
             variables.transmitpower = 4633
+            
+            
+            
             
             
             
@@ -134,21 +135,17 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
         #Remove data too close to the vessel
         sv[np.where(RangeOut<=RemoveToCloseValues)] = np.nan
 
-#        import matplotlib.pyplot as plt
-#        plt.figure(2)
-#        plt.clf()
-#        plt.imshow((sv),aspect = 'auto')
-#        plt.colorbar()
-#        plt.draw()
-#        plt.pause(0.0001)
-           
-        
+
+
         #ADD Temporary filter that will be deleted once checked !!!
         if np.nanmean(sv)>0: 
             sv = np.nan*np.ones(sv.shape)
            
         
-                   
+
+
+
+
                    
         #Protocoll to identify if the batch of data is 
         #finished loaded
@@ -161,14 +158,7 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
 
                 
         
-        #Some vertical pings are labeled as horizontal
-        #This solution is a temporarly fix that check the 
-        #direction of the beams. 
-        #ADD it does not always work this part of the sonar
-        #data are quite unstable. Find a better fix if 
-        #possible !!!
-#        if dirx[0][0]>3:       
-            
+                
             
         #Get the timestamp of the ping
         #Needed when generating work file
@@ -176,14 +166,22 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
         TiltVec = np.hstack((TiltVec,variables.dirx[0]))
         
         
+        
+        
+        
         if variables.dirx[0]<np.nanmedian(TiltVec):
             print('Tilt ble endret',end='\r')
             sv = np.nan*np.ones(sv.shape)
         
+            
+            
+        #Remove vessel wake
         sv[:,np.where(abs(variables.diry)>165)]=np.nan 
-		#Remov noise from vessel vake  
-        #sv[np.where(1)]
+           
+           
         
+
+
         #Implement the inteferance removal filter
         #ADD it is still under development and must be 
         #properly tested !!!
@@ -202,22 +200,15 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
 #                                    
             
         
-        
-        #Start the protocol for making the search matrix
-#                if filename_index == 0 or filename_index == 1: 
-            
-            
-            
-            
-            #Set the variable size to define the 
-            #trajectory lines
-        
-        #print(np.nanmax(RangeOut))#MaximumDetectionRange) 
+
+
+
+
+
             
             
         #If the first file of the transect
         if len(svMatrix) == 0: 
-            
             
             BananaTool = [R_s,0,len(RangeOut),res]
             MaximumDetectionRange = 2*np.nanmax(RangeOut)
@@ -230,7 +221,9 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
             RangeMatrix=np.repeat(RangeOut[:,np.newaxis],64,axis=1) 
             
             
-        
+            
+            
+            
             
         #If the buffer size is large enough 
         elif filename_index >= NumberOfPingsInBatch:
@@ -243,6 +236,8 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
             #Only have the makeWdiststuff !!!
 #                    if ((filename_index == NumberOfPingsInBatch) or (filename_index == (NumberOfPingsInBatch+1)))and MakeWdistStuff == True: 
             if MakeWdistStuff == True: 
+                
+                
                 
                 #Start making the distance matrix for 
                 #the transect
@@ -261,9 +256,13 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                 
                 #Start making the ghost school matrix
                 print('Generating Distance Matrix for ghost: ',end='\r')
-                Wdist_portGhost,Wdist_stbGhost = tools.GetDistanceMatrix(DistanceMatrix,RangeMatrix,BeamDirectionMatrix+90,svMatrix,int(variables.dirx[0]+90),BananaTool)
+                Wdist_portGhost,Wdist_stbGhost = tools.GetDistanceMatrix(DistanceMatrix,
+                                                        RangeMatrix,BeamDirectionMatrix+90,
+                                                        svMatrix,int(variables.dirx[0]+90)
+                                                        ,BananaTool)
 
 
+                
                 
                 
             #Correct the size of the sv and range
@@ -290,7 +289,7 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
             svMatrix = np.dstack((svMatrix,sv))[:,:,1:]
 
             #ADD sjekk om dette er nødvendig !!!
-            DistanceMatrix = np.dstack((DistanceMatrix, np.ones((len(sv),64))*DistanceTraveled[-1]))[:,:,1:]
+#            DistanceMatrix = np.dstack((DistanceMatrix, np.ones((len(sv),64))*DistanceTraveled[-1]))[:,:,1:]
 #                BeamDirectionMatrix = np.dstack((BeamDirectionMatrix, np.repeat(diry.T,len(sv),axis=0)))[:,:,1:]
 #                RangeMatrix = np.dstack((RangeMatrix, np.repeat(RangeOut,64,axis=1)))[:,:,1:]
 
@@ -375,16 +374,20 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                 SVres_stbGhost = np.hstack((SVres_stbGhost,sV_stbGhost))
            
                   
-                import matplotlib.pyplot as plt
-                plt.figure(1)
-                plt.clf()
-                plt.imshow(SVres_port,aspect = 'auto')
-                plt.colorbar()
-                plt.draw()
-                plt.pause(0.0001)
+                try: 
+                    import matplotlib.pyplot as plt
+                    plt.figure(1)
+                    plt.clf()
+                    plt.imshow(10*np.log10(SVres_port),aspect = 'auto')
+                    plt.colorbar()
+                    plt.draw()
+                    plt.savefig(directory2Data.replace('mat','jpg'))
+                except: 
+                    k=1
         
         
-        
+                    
+                    
                # print(DirectoryToRESULT+'/SearchMatrix'+str(transectCode)+'.mat')
                # scipy.io.savemat(DirectoryToRESULT+'/SearchMatrix'+str(transectCode)+'.mat',
                #                    mdict={'SVres_port': (SVres_port),
@@ -393,10 +396,24 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                #                   'SVres_stbGhost':(SVres_stbGhost), 
                #                   'DistanceTraveled':DistanceTraveled,
                #                   'ListOfFilesWithinTimeInterval':ListOfFilesWithinTimeInterval})
+ 
+               
+               
+               
+               
+               
+               
+               
+               
+               
         #If the buffer size is insufficient, keep stacking
         else:
            
+            
+            
             AddNaN = len(svMatrix[:,0])-len(RangeOut)
+            
+            
             
             if AddNaN >0:
                 sv = np.vstack((sv,np.nan*np.ones((AddNaN,64))))
@@ -406,12 +423,18 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                 RangeOut = RangeOut[:svMatrix.shape[0],np.newaxis]
 
             
+
             svMatrix = np.dstack((svMatrix,sv))
             DistanceMatrix = np.dstack((DistanceMatrix, np.ones((len(sv),64))*DistanceTraveled[-1]))
             BeamDirectionMatrix = np.dstack((BeamDirectionMatrix, np.repeat(variables.diry[:,np.newaxis].T,len(sv),axis=0)))
             RangeMatrix = np.dstack((RangeMatrix, np.repeat(RangeOut[:,np.newaxis],64,axis=1)))
             
 
+            
+            
+            
+            
+            
     #Save the data
     try: 
         scipy.io.savemat(directory2Data, 

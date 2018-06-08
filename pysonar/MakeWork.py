@@ -43,7 +43,6 @@ from glob import glob
 #from MakeFigures import plotFigure
 #from PySonTools import MakeIntegrationLine,GetSpikesFromEchogram,FindLocationOfSchool
 from MakeIndex import MakeIndex
-import matplotlib.pyplot as plt
 
 
 
@@ -72,6 +71,8 @@ def ComputePearsonR(SA_profos,SA_profos2,SA_AutoWithoutGhost):
     
     
     
+    
+    
         
 
 def WaveRemover(dim,pitch,roll,limit):
@@ -87,6 +88,9 @@ def WaveRemover(dim,pitch,roll,limit):
     return WaveRemover
 
 
+    
+    
+    
 
 def ProtocolForCluster(X_port,X_port_ghost,X_stb,X_stb_ghost,Bananatool,
                       MakeDist,Cat_port,min_samples):
@@ -170,6 +174,9 @@ def ProtocolForCluster(X_port,X_port_ghost,X_stb,X_stb_ghost,Bananatool,
     return X_db,dB_
             
      
+    
+    
+    
 def GetSpikesFromEchogram(SVres,threshold,S): 
     '''Purpose: 
         Threshold the data, and get index of the leftover
@@ -220,11 +227,10 @@ def GetSpikesFromEchogramGhost(SVres,threshold):
     
 
 
-import matplotlib.pyplot as plt
-
     
     
 #The main function    
+#MakeWork(True, directory2Data,'','','',1,3)
 def MakeWork(makeNewWork, data_directory,SearchMatrixName,
              prefix,compensate,clusterTH,Threshold):
     
@@ -236,9 +242,15 @@ def MakeWork(makeNewWork, data_directory,SearchMatrixName,
     #Loop through each search matrix (transect)
     for SearchMatrixName in os.listdir(data_directory.dir_search): 
         
+        
+        
         #Load search matrix
         SearchMatrix = sc.loadmat(data_directory.dir_search+'/'+SearchMatrixName)
     
+        
+        print('')
+        print(SearchMatrixName)
+        print(SearchMatrix)
         
         #Get the data from the files
         SVres_port = SearchMatrix['SVres_port']
@@ -251,7 +263,7 @@ def MakeWork(makeNewWork, data_directory,SearchMatrixName,
         ListOfFilesWithinTimeInterval = SearchMatrix['ListOfFilesWithinTimeInterval']
     
 
-
+#        print(ListOfFilesWithinTimeInterval)
         
         # Finding the location of the schools in the search matrix
         # ADD may be replaced with an other function
@@ -263,12 +275,19 @@ def MakeWork(makeNewWork, data_directory,SearchMatrixName,
                                     np.reshape(SVres_stb,(-1,)))))
     
         
-        plt.figure(1)
-        plt.clf()
-        plt.imshow(SVres_port,aspect = 'auto')
-        plt.draw()
-        plt.pause(20)
         
+        try: 
+            import matplotlib.pyplot as plt
+    
+            plt.figure(1)
+            plt.clf()
+            plt.imshow(SVres_port,aspect = 'auto')
+            plt.colorbar()
+            plt.draw()
+            plt.savefig(data_directory.dir_search+'/'+SearchMatrixName.replace('mat','jpg'))
+        except: 
+            k=1
+            
         print(SVres_port)
         print(X_stb)
         

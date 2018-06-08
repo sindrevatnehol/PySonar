@@ -10,7 +10,7 @@ import time, datetime, os, urllib
 from xml.etree import ElementTree as ET
 import scipy.io as scp
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from tools import tools
 from netCDF4 import Dataset
 import random
@@ -29,20 +29,20 @@ def TimeConverter(time0):
     
     
 def GetBottomDepth(maxlat,minlat,maxlon,minlon,delta_lat,delta_lon):
-    
-    try:  
-        response = urllib.request.urlopen('http://coastwatch.pfeg.noaa.gov/erddap/griddap/usgsCeSrtm30v6.csv?topo[(' \
-                                    +str(maxlat+delta_lat)+'):1:('+str(minlat-delta_lat)+')][('+str(minlon-delta_lon)+'):1:('+str(maxlon+delta_lon)+')]').read().decode("utf-8")
-    
-        Depth = []
-        for i in response.split('\n'): 
-            try:  
-                Depth = np.hstack((Depth,int(i.split(',')[2])))
-            except: 
-                k=1
-        return np.min(Depth)
-    except urllib.error.HTTPError: 
-        return 1000
+    print(str(maxlat+delta_lat)+'):1:('+str(minlat-delta_lat)+')][('+str(minlon-delta_lon)+'):1:('+str(maxlon+delta_lon)+')]')
+#    try:  
+    response = urllib.request.urlopen('http://coastwatch.pfeg.noaa.gov/erddap/griddap/usgsCeSrtm30v6.csv?topo[(' \
+                                +str(maxlat+delta_lat)+'):1:('+str(minlat-delta_lat)+')][('+str(minlon-delta_lon)+'):1:('+str(maxlon+delta_lon)+')]').read().decode("utf-8")
+
+    Depth = []
+    for i in response.split('\n'): 
+        try:  
+            Depth = np.hstack((Depth,int(i.split(',')[2])))
+        except: 
+            k=1
+    return np.min(Depth)
+#    except urllib.error.HTTPError: 
+#        return 1000
         
     
     
@@ -225,23 +225,23 @@ def MakeVerticalLuf20(CompleteListOfFiles_vertical,directory2Data, logdist):
                 workfile =  scp.loadmat(directory2Data.dir_work+'/'+work)
                 
                 
+                #Start information in the text
+                root = ET.Element("echosounder_dataset")
+                ET.SubElement(root,'report_time').text = str(datetime.datetime.fromtimestamp((time.time())).strftime('%Y-%m-%d %H:%M:%S'))
+                ET.SubElement(root,'lsss_version').text = "PNMDformats v 0.1 - vertical"
+                ET.SubElement(root,'nation').text = nation
+                ET.SubElement(root,'platform').text = platform
+                ET.SubElement(root,'cruise').text = cruice_id
+            
+                
+                #Make the distance list hirarchy
+                distance_list = ET.SubElement(root,'distance_list')
+            
                 
                 
                 try: 
                     pings = np.unique(workfile['ping_mask'])
                     
-                    #Start information in the text
-                    root = ET.Element("echosounder_dataset")
-                    ET.SubElement(root,'report_time').text = str(datetime.datetime.fromtimestamp((time.time())).strftime('%Y-%m-%d %H:%M:%S'))
-                    ET.SubElement(root,'lsss_version').text = "PNMDformats v 0.1 - vertical"
-                    ET.SubElement(root,'nation').text = nation
-                    ET.SubElement(root,'platform').text = platform
-                    ET.SubElement(root,'cruise').text = cruice_id
-                
-                    
-                    #Make the distance list hirarchy
-                    distance_list = ET.SubElement(root,'distance_list')
-                
                 
                 except: 
                     pings = []
@@ -329,12 +329,12 @@ def MakeVerticalLuf20(CompleteListOfFiles_vertical,directory2Data, logdist):
                             delta_lat = 600/111111
                             delta_lon = 600/(111111*np.cos(np.deg2rad(float(workfile['lat_start'][0]))))
                         
-                            try: 
-                                Depth_bottom = GetBottomDepth(float(workfile['lat_start'][0]),float(workfile['lat_stop'][0]),
-                                                              float(workfile['lon_start'][0]),float(workfile['lon_stop'][0]),delta_lat,delta_lon)
-                            except: 
-                                Depth_bottom = 1000
-                                print('bad bottom ')
+#                            try: 
+                            Depth_bottom = GetBottomDepth(float(workfile['lat_start'][0]),float(workfile['lat_stop'][0]),
+                                                          float(workfile['lon_start'][0]),float(workfile['lon_stop'][0]),delta_lat,delta_lon)
+#                            except: 
+#                                Depth_bottom = 1000
+#                                print('bad bottom ')
                                 
                                 
                             
@@ -468,7 +468,7 @@ def MakeVerticalLuf20(CompleteListOfFiles_vertical,directory2Data, logdist):
                                
                             sv[np.where(RangeOut<=30)] = np.nan
                             sv[:,np.where(variables.dirx>=60)] = np.nan
-                            sv[np.where(sv<-65)] = np.nan
+                            sv[np.where(sv<-70)] = np.nan
                     
                             
                             #Go linear
@@ -560,11 +560,11 @@ def MakeVerticalLuf20(CompleteListOfFiles_vertical,directory2Data, logdist):
     #                    plt.pause(0.1)
     #                except: 
     #                    print(NASC_out)
-                                        
-                    indent(root)
-                    tree = ET.ElementTree(root)
-                    tree.write(directory2Data.dir_result+outloc+work.replace('mat','xml'), xml_declaration=True, encoding='utf-8', method="xml")
-            
+                                            
+                indent(root)
+                tree = ET.ElementTree(root)
+                tree.write(directory2Data.dir_result+outloc+work.replace('mat','xml'), xml_declaration=True, encoding='utf-8', method="xml")
+                
 #            f = open(directory2Data.dir_src+'/Luf20prog/'+work.replace('mat','txt'),'w')
 #            f.close()
             
