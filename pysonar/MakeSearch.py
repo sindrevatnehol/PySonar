@@ -455,7 +455,8 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                      'SVres_portGhost':(SVres_portGhost),
                      'SVres_stbGhost':(SVres_stbGhost),
                      'DistanceTraveled':DistanceTraveled,
-                     'ListOfFilesWithinTimeInterval':ListOfFilesWithinTimeInterval})
+                     'ListOfFilesWithinTimeInterval':ListOfFilesWithinTimeInterval,
+                     'NumberOfPingsInBatch':NumberOfPingsInBatch})
     except UnboundLocalError: 
         print('empty files',end='\r')
 
