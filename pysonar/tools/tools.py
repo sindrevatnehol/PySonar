@@ -7,7 +7,7 @@ Created on Mon May  7 10:39:10 2018
 
 import os, scipy
 import numpy as np
-from shutil import copyfile
+#from shutil import copyfile
 import Raw2NetcdfConverter
 
 
