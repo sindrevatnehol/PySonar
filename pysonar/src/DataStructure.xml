@@ -5,8 +5,6 @@
 
 
 
-
-
 <CruiceList> 
 	<CruiceCode code = '2017836' 
 	vessel = 'Vendla' 
@@ -74,6 +72,12 @@
 
 
 
+
+
+
+
+
+
 <CruiceList> 
 	<CruiceCode 
 	code = '2018105' 
@@ -89,120 +93,6 @@
 	Equipment = 'SU90'>
 	</CruiceCode> 
 </CruiceList> 
-
-
-
-<CruiceList> 
-	<CruiceCode 
-	code = '2017107' 
-	vessel = 'GOSARS' 
-	vesselCode = 'GOSARS_4174' 
-	platform_type = 'ship, research' 
-	platform_code = '????' 
-	CruicePath = '/cruise_data/2017/S2017107_PGOSARS_4174/ACOUSTIC_DATA/SU90' 
-	PreferedNMEA = '$INGLL'
-	PreferedHeading = '$INHDT'
-	CruiceNewDirection ='//ces.imr.no/cruise_data/2017/S2017107_PGOSARS_4174/ACOUSTIC_DATA/SU90' 
-	Equipment = 'SU90'>	
-	</CruiceCode> 
-</CruiceList> 
-
-
-
-
-
-
-<CruiceList> 
-	<CruiceCode 
-	code = '2016205' 
-	vessel = 'JOHANHJORT' 
-	vesselCode = 'JOHANHJORT_1019' 
-	platform_type = 'ship, research' 
-	platform_code = '????' 
-	CruicePath = '/cruise_data/2016/S2016205_PJOHANHJORT_1019/ACOUSTIC_DATA/SH90/SH90_RAWDATA/SH90_SURVEY' 
-	PreferedNMEA = '$????'
-	PreferedHeading = '$????'
-	CruiceNewDirection ='//ces.imr.no/cruise_data/2016/S2016205_PJOHANHJORT_1019/ACOUSTIC_DATA/SH90/SH90_RAWDATA/SH90_SURVEY' 
-	Equipment = 'SH90'>
-	</CruiceCode> 
-</CruiceList> 
-
-
-<CruiceList> 
-	<CruiceCode 
-	code = '2016857' 
-	vessel = 'MYTTERSTAD' 
-	vesselCode = 'MYTTERSTAD_9103/' 
-	platform_type = 'ship, fishing' 
-	platform_code = '????' 
-	CruicePath = '/cruise_data/2016/S2016857_PMYTTERSTAD_9103/ACOUSTIC_DATA/SH90' 
-	PreferedNMEA = '$????'
-	PreferedHeading = '$????'
-	CruiceNewDirection ='//ces.imr.no/cruise_data/2016/S2016857_PMYTTERSTAD_9103/ACOUSTIC_DATA/SH90' 
-	Equipment = 'SH90'>
-	</CruiceCode> 
-</CruiceList> 
-
-
-
-<CruiceList> 
-	<CruiceCode 
-	code = '2015108' 
-	vessel = 'GOSARS' 
-	vesselCode = 'GOSARS_4174' 
-	platform_type = 'ship, research' 
-	platform_code = '????' 
-	CruicePath = '/cruise_data/2015/S2015108_PGOSARS_4174/ACOUSTIC_DATA/SU90/SU90_RAWDATA/SU90_SURVEY' 
-	PreferedNMEA = '$????'
-	PreferedHeading = '$????'
-	CruiceNewDirection ='//ces.imr.no/cruise_data/2015/S2015108_PGOSARS_4174/ACOUSTIC_DATA/SU90/SU90_RAWDATA/SU90_SURVEY' 
-	Equipment = 'SU90'>
-	</CruiceCode> 
-</CruiceList> 
-
-
-<CruiceList> 
-	<CruiceCode code = '2016851' 
-	vessel = 'Vendla' 
-	vesselCode = 'VENDLA_3206' 
-	platform_type = 'ship, fishing' 
-	platform_code = '58VA' 
-	CruicePath = '/cruise_data/2016/S2016851_PVENDLA_3206/SX90/SX90_RAWDATA' 
-	CruicePathOrigin = '//ces.imr.no/cruise_data/2016/S2016851_PVENDLA_3206/ACOUSTIC_DATA' 
-	maxPingInFile = "2000" 
-	MaxNumberOfFilesInNC = "50" 
-	PreferedNMEA = '$GPRMC'
-	PreferedHeading = '$HEHDT'
-	CruiceNewDirection ='//ces.imr.no/mea/2017_14809_REDUS/cruise_data/2016/S2016851_PVENDLA_3206/ACOUSTIC_DATA/SX90/survey/raw' 
-	Equipment = 'SX90'>
-	<transect num = '1' startTime = '20160212T000000' endTime = '20160212T010000'></transect>
-	<transect num = '2' startTime = '20160212T005500' endTime = '20160212T020000'></transect>
-	<transect num = '3' startTime = '20160212T015500' endTime = '20160212T030000'></transect>
-	<transect num = '4' startTime = '20160212T025500' endTime = '20160212T040000'></transect>
-	<transect num = '5' startTime = '20160212T035500' endTime = '20160212T050000'></transect>
-	<transect num = '6' startTime = '20160212T045500' endTime = '20160212T060000'></transect>
-	<transect num = '7' startTime = '20160212T055500' endTime = '20160212T070000'></transect>
-	<transect num = '8' startTime = '20160212T065500' endTime = '20160212T080000'></transect>
-	<transect num = '9' startTime = '20160212T075500' endTime = '20160212T090000'></transect>
-	<transect num = '10' startTime = '20160212T085500' endTime = '20160212T100000'></transect>
-	<transect num = '11' startTime = '20160212T095500' endTime = '20160212T110000'></transect>
-	<transect num = '12' startTime = '20160212T105500' endTime = '20160212T120000'></transect>
-	<transect num = '13' startTime = '20160212T115500' endTime = '20160212T130000'></transect>
-	<transect num = '14' startTime = '20160212T125500' endTime = '20160212T140000'></transect>
-	<transect num = '15' startTime = '20160212T135500' endTime = '20160212T150000'></transect>
-	<transect num = '16' startTime = '20160212T145500' endTime = '20160212T160000'></transect>
-	<transect num = '17' startTime = '20160212T155500' endTime = '20160212T170000'></transect>
-	<transect num = '18' startTime = '20160212T165500' endTime = '20160212T180000'></transect>
-	<transect num = '19' startTime = '20160212T175500' endTime = '20160212T190000'></transect>
-	<transect num = '20' startTime = '20160212T185500' endTime = '20160212T200000'></transect>
-	<transect num = '21' startTime = '20160212T195500' endTime = '20160212T210000'></transect>
-	<transect num = '22' startTime = '20160212T205500' endTime = '20160212T220000'></transect>
-	<transect num = '23' startTime = '20160212T215500' endTime = '20160212T230000'></transect>
-	<transect num = '24' startTime = '20160212T225500' endTime = '20160213T000000'></transect>
-	</CruiceCode> 
-</CruiceList> 
-
-
 
 
 
@@ -292,6 +182,125 @@
 	</CruiceCode> 
 	
 	
+</CruiceList> 
+
+
+
+
+
+
+
+
+
+<CruiceList> 
+	<CruiceCode 
+	code = '2017107' 
+	vessel = 'GOSARS' 
+	vesselCode = 'GOSARS_4174' 
+	platform_type = 'ship, research' 
+	platform_code = '????' 
+	CruicePath = '/cruise_data/2017/S2017107_PGOSARS_4174/ACOUSTIC_DATA/SU90' 
+	PreferedNMEA = '$INGLL'
+	PreferedHeading = '$INHDT'
+	CruiceNewDirection ='//ces.imr.no/cruise_data/2017/S2017107_PGOSARS_4174/ACOUSTIC_DATA/SU90' 
+	Equipment = 'SU90'>	
+	</CruiceCode> 
+</CruiceList> 
+
+
+
+
+
+
+<CruiceList> 
+	<CruiceCode 
+	code = '2016205' 
+	vessel = 'JOHANHJORT' 
+	vesselCode = 'JOHANHJORT_1019' 
+	platform_type = 'ship, research' 
+	platform_code = '????' 
+	CruicePath = '/cruise_data/2016/S2016205_PJOHANHJORT_1019/ACOUSTIC_DATA/SH90/SH90_RAWDATA/SH90_SURVEY' 
+	PreferedNMEA = '$????'
+	PreferedHeading = '$????'
+	CruiceNewDirection ='//ces.imr.no/cruise_data/2016/S2016205_PJOHANHJORT_1019/ACOUSTIC_DATA/SH90/SH90_RAWDATA/SH90_SURVEY' 
+	Equipment = 'SH90'>
+	</CruiceCode> 
+</CruiceList> 
+
+
+<CruiceList> 
+	<CruiceCode 
+	code = '2016857' 
+	vessel = 'MYTTERSTAD' 
+	vesselCode = 'MYTTERSTAD_9103/' 
+	platform_type = 'ship, fishing' 
+	platform_code = '????' 
+	CruicePath = '/cruise_data/2016/S2016857_PMYTTERSTAD_9103/ACOUSTIC_DATA/SH90' 
+	PreferedNMEA = '$????'
+	PreferedHeading = '$????'
+	CruiceNewDirection ='//ces.imr.no/cruise_data/2016/S2016857_PMYTTERSTAD_9103/ACOUSTIC_DATA/SH90' 
+	Equipment = 'SH90'>
+	</CruiceCode> 
+</CruiceList> 
+
+
+
+<CruiceList> 
+	<CruiceCode 
+	code = '2015108' 
+	vessel = 'GOSARS' 
+	vesselCode = 'GOSARS_4174' 
+	platform_type = 'ship, research' 
+	platform_code = '????' 
+	CruicePath = '/cruise_data/2015/S2015108_PGOSARS_4174/ACOUSTIC_DATA/SU90/SU90_RAWDATA/SU90_SURVEY' 
+	PreferedNMEA = '$????'
+	PreferedHeading = '$????'
+	CruiceNewDirection ='//ces.imr.no/cruise_data/2015/S2015108_PGOSARS_4174/ACOUSTIC_DATA/SU90/SU90_RAWDATA/SU90_SURVEY' 
+	Equipment = 'SU90'>
+	</CruiceCode> 
+</CruiceList> 
+
+
+
+<CruiceList> 
+	<CruiceCode code = '2016851' 
+	vessel = 'Vendla' 
+	vesselCode = 'VENDLA_3206' 
+	platform_type = 'ship, fishing' 
+	platform_code = '58VA' 
+	CruicePath = '/cruise_data/2016/S2016851_PVENDLA_3206/SX90/SX90_RAWDATA' 
+	CruicePathOrigin = '//ces.imr.no/cruise_data/2016/S2016851_PVENDLA_3206/ACOUSTIC_DATA' 
+	maxPingInFile = "2000" 
+	MaxNumberOfFilesInNC = "50" 
+	PreferedNMEA = '$GPRMC'
+	PreferedHeading = '$HEHDT'
+	CruiceNewDirection ='//ces.imr.no/mea/2017_14809_REDUS/cruise_data/2016/S2016851_PVENDLA_3206/ACOUSTIC_DATA/SX90/survey/raw' 
+	Equipment = 'SX90'>
+	<transect num = '1' startTime = '20160212T000000' endTime = '20160212T010000'></transect>
+	<transect num = '2' startTime = '20160212T005500' endTime = '20160212T020000'></transect>
+	<transect num = '3' startTime = '20160212T015500' endTime = '20160212T030000'></transect>
+	<transect num = '4' startTime = '20160212T025500' endTime = '20160212T040000'></transect>
+	<transect num = '5' startTime = '20160212T035500' endTime = '20160212T050000'></transect>
+	<transect num = '6' startTime = '20160212T045500' endTime = '20160212T060000'></transect>
+	<transect num = '7' startTime = '20160212T055500' endTime = '20160212T070000'></transect>
+	<transect num = '8' startTime = '20160212T065500' endTime = '20160212T080000'></transect>
+	<transect num = '9' startTime = '20160212T075500' endTime = '20160212T090000'></transect>
+	<transect num = '10' startTime = '20160212T085500' endTime = '20160212T100000'></transect>
+	<transect num = '11' startTime = '20160212T095500' endTime = '20160212T110000'></transect>
+	<transect num = '12' startTime = '20160212T105500' endTime = '20160212T120000'></transect>
+	<transect num = '13' startTime = '20160212T115500' endTime = '20160212T130000'></transect>
+	<transect num = '14' startTime = '20160212T125500' endTime = '20160212T140000'></transect>
+	<transect num = '15' startTime = '20160212T135500' endTime = '20160212T150000'></transect>
+	<transect num = '16' startTime = '20160212T145500' endTime = '20160212T160000'></transect>
+	<transect num = '17' startTime = '20160212T155500' endTime = '20160212T170000'></transect>
+	<transect num = '18' startTime = '20160212T165500' endTime = '20160212T180000'></transect>
+	<transect num = '19' startTime = '20160212T175500' endTime = '20160212T190000'></transect>
+	<transect num = '20' startTime = '20160212T185500' endTime = '20160212T200000'></transect>
+	<transect num = '21' startTime = '20160212T195500' endTime = '20160212T210000'></transect>
+	<transect num = '22' startTime = '20160212T205500' endTime = '20160212T220000'></transect>
+	<transect num = '23' startTime = '20160212T215500' endTime = '20160212T230000'></transect>
+	<transect num = '24' startTime = '20160212T225500' endTime = '20160213T000000'></transect>
+	</CruiceCode> 
 </CruiceList> 
 
 

@@ -137,7 +137,7 @@ def MakeNewFolders(directory2Data):
 
 
 def DataConverter(CruiceIndex,WorkDirectory,current_dir,maxPingInFile,
-                  MaxNumberOfFilesInNC,directory2Data) :
+                  MaxNumberOfFilesInNC,directory2Data, reconvert) :
     ''' 
     Protocoll to convert the data
     '''
@@ -155,18 +155,25 @@ def DataConverter(CruiceIndex,WorkDirectory,current_dir,maxPingInFile,
     #Denne vil endres til å bli mer generell
     for i in ['SU90','SX90','SH90']:         
             
+        
+        os.chdir(current_dir)
+        Raw2NetcdfConverter.convert.Raw2NetcdfConverter(directory2Data.dir_originalrawdata,vessel_name,platform_type,
+                    platform_code,maxPingInFile,MaxNumberOfFilesInNC,
+                    directory2Data.dir_rawdata,reconvert)
+            
+            
         #Convert the .raw data to nc. 
-        if not os.path.exists(directory2Data.dir_NCconvertProgress + '/finishedNC.txt'):
-            os.chdir(current_dir)
-            Raw2NetcdfConverter.convert.Raw2NetcdfConverter(directory2Data.dir_originalrawdata,vessel_name,platform_type,
-                        platform_code,maxPingInFile,MaxNumberOfFilesInNC,
-                        directory2Data.dir_rawdata)
-            
-            
-            #When convertion is finnished, make a txt file to indicate this
-            f = open(directory2Data.dir_NCconvertProgress + '/finishedNC.txt','w')
-            f.write('0')
-            f.close()
+#        if not os.path.exists(directory2Data.dir_NCconvertProgress + '/finishedNC.txt'):
+#            os.chdir(current_dir)
+#            Raw2NetcdfConverter.convert.Raw2NetcdfConverter(directory2Data.dir_originalrawdata,vessel_name,platform_type,
+#                        platform_code,maxPingInFile,MaxNumberOfFilesInNC,
+#                        directory2Data.dir_rawdata)
+#            
+#            
+#            #When convertion is finnished, make a txt file to indicate this
+#            f = open(directory2Data.dir_NCconvertProgress + '/finishedNC.txt','w')
+#            f.write('0')
+#            f.close()
         
        
             
@@ -207,8 +214,10 @@ def OrginizeData(CruiceIndex,WorkDirectory,OS):
         
         
         if i == equipment: 
+            
             #Make a correct sonar folder structure
-            directory2Data =FolderStructure(WorkDirectory+'/'+cruiceCode[:4]+'/S'+cruiceCode+'_P'+vesselCode,i)        
+            directory2Data =FolderStructure(WorkDirectory+'/'+cruiceCode[:4]+'/S'+cruiceCode+'_P'+vesselCode,i)       
+            
             MakeNewFolders(directory2Data)
         
             
@@ -407,7 +416,7 @@ def GetDistanceMatrix(DistanceMatrix,RangeMatrix,BeamDirectionMatrix,svMatrix,th
     index=0
     #Run through all pings and find the distance of each pixel 
     for r_ind_stbex in range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3])):
-        printProgressBar(r_ind_stbex+1,int(BananaTool[2]), prefix = 'Make Distance:', suffix = 'Complete', length = 50)
+        printProgressBar(r_ind_stbex+1,int(BananaTool[2]), prefix = 'Make Distance:', suffix = 'Completed     ', length = 50)
         
         
         #Get the minimum range to sonar trajectory
@@ -461,6 +470,16 @@ def GetDistanceMatrix(DistanceMatrix,RangeMatrix,BeamDirectionMatrix,svMatrix,th
 
     return Wdist_port,Wdist_stb
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 from math import radians, cos, sin, asin, sqrt
 
 def haversine(lon1, lat1, lon2, lat2):

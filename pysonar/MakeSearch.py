@@ -46,7 +46,7 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
     for filename_index in range(0,len(ListOfFilesWithinTimeInterval[:,0])):
         
         #Print the progression
-        tools.printProgressBar(filename_index + 1, len(ListOfFilesWithinTimeInterval[:,0]), prefix = 'Make SearchMatrix:', suffix = 'Complete', length = 50)
+        tools.printProgressBar(filename_index + 1, len(ListOfFilesWithinTimeInterval[:,0]), prefix = 'Make SearchMatrix:', suffix = 'Completed    ', length = 50)
         
         
         #Get the full path name
@@ -302,14 +302,8 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
             sv_mat = 10**(np.reshape(svMatrix,(-1,1))/10)
             
 
-            #sV_port = (Parallel(n_jobs=1)(delayed(ConvertToechogram)(Wdist_port[indeks],sv_mat) for indeks in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
-         
-            #sV_port2 = np.asarray(sV_port)
             
-            if platform.system() == 'Linux1':
-                import time
-                t  =time.time()
-                print('start port')
+            if platform.system() == 'Linux':
                 sV_port =  np.asarray(Parallel(n_jobs = multiprocessing.cpu_count())(delayed(tools.ConvertToechogram)(Wdist_port[i],sv_mat) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
                 
                 
@@ -320,7 +314,6 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                 
                 
                 sV_stbGhost =  np.asarray(Parallel(n_jobs = multiprocessing.cpu_count())(delayed(tools.ConvertToechogram)(Wdist_stbGhost[i],sv_mat) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
-                print(time.time()-t)
             else: 
                 
             
@@ -352,9 +345,6 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                             
 
             #Start making the the search matrix
-            #ADD replace the stacking rutine with 
-            #somehting nicer.  !!!
-#                    if (filename_index == NumberOfPingsInBatch) or (filename_index == (NumberOfPingsInBatch+1)):     
             if MakeWdistStuff == True: 
                 
                 
@@ -395,7 +385,7 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                     plt.draw()
                     plt.savefig(directory2Data.replace('mat','jpg'))
                 except: 
-                    k=1
+                    dummy=1
         
         
                     

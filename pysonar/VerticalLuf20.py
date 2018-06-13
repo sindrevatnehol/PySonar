@@ -6,7 +6,8 @@ Created on Sun May 13 15:32:06 2018
 """
 
  
-import time, datetime, os, urllib
+import time, datetime, os
+import urllib.request as url
 from xml.etree import ElementTree as ET
 import scipy.io as scp
 import numpy as np
@@ -29,10 +30,13 @@ def TimeConverter(time0):
     
     
 def GetBottomDepth(maxlat,minlat,maxlon,minlon,delta_lat,delta_lon):
-    print(str(maxlat+delta_lat)+'):1:('+str(minlat-delta_lat)+')][('+str(minlon-delta_lon)+'):1:('+str(maxlon+delta_lon)+')]')
 #    try:  
-    response = urllib.request.urlopen('http://coastwatch.pfeg.noaa.gov/erddap/griddap/usgsCeSrtm30v6.csv?topo[(' \
-                                +str(maxlat+delta_lat)+'):1:('+str(minlat-delta_lat)+')][('+str(minlon-delta_lon)+'):1:('+str(maxlon+delta_lon)+')]').read().decode("utf-8")
+#    response = urllib2.urlopen('http://coastwatch.pfeg.noaa.gov/erddap/griddap/usgsCeSrtm30v6.csv?topo[(' \
+#                            +str(maxlat+delta_lat)+'):1:('+str(minlat-delta_lat)+')][('+str(minlon-delta_lon)+'):1:('+str(maxlon+delta_lon)+')]')
+ 
+    
+    response = url.urlopen('http://coastwatch.pfeg.noaa.gov/erddap/griddap/usgsCeSrtm30v6.csv?topo[(' \
+                            +str(maxlat+delta_lat)+'):1:('+str(minlat-delta_lat)+')][('+str(minlon-delta_lon)+'):1:('+str(maxlon+delta_lon)+')]').read().decode("utf-8")
 
     Depth = []
     for i in response.split('\n'): 

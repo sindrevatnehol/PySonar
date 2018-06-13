@@ -30,6 +30,12 @@ def haversine(lon1, lat1, lon2, lat2):
     return c * r
     
     
+    
+    
+    
+    
+    
+    
 
 def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directory2Data,dirnc,beamgrp,start_time,log_start,stop_time,lat_start,lat_stop,lon_start,lon_stop): 
 
@@ -53,15 +59,14 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,
     #Loop through all files within the time interval
     for filename_index in range(0,len(ListOfFilesWithinTimeInterval[:,0])):
         
-#        print(ListOfFilesWithinTimeInterval[filename_index])
         #Print the progression
-        tools.printProgressBar(filename_index + 1, len(ListOfFilesWithinTimeInterval[:,0]), prefix = 'Make Vertical:', suffix = 'Complete', length = 50)
+        tools.printProgressBar(filename_index + 1, len(ListOfFilesWithinTimeInterval[:,0]), prefix = 'Make Vertical:', suffix = 'Completed', length = 50)
         
         
         #Get the full path name
         filename = os.path.join(dirnc,ListOfFilesWithinTimeInterval[filename_index,1])
         
-        
+        print(filename)
         #Load the nc file
         fileID = Dataset(filename,'r',format = 'NETCDF4')
         
@@ -149,7 +154,7 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,
                 ping_counter = ping_counter+1
             
         except AttributeError:
-            k=1
+            print('* bad file')
         
             
 #        if ping_counter>=ping_counter_max: 
