@@ -153,7 +153,8 @@ def MakeWork(makeNewWork,data_directory,SearchMatrixName,
     os.chdir(data_directory.dir_search)
     FileNames = glob('*.mat')
     
-    
+    import random
+    random.shuffle(FileNames)
     
     #Loop through each search matrix (transect)
     for SearchMatrixName in FileNames: 
@@ -240,8 +241,8 @@ def MakeWork(makeNewWork,data_directory,SearchMatrixName,
                     #Compute the pixel location with direction and range
                     X =np.reshape(np.dot(Range[:,np.newaxis], np.cos(np.deg2rad(variables.diry))[:,np.newaxis].T),(-1))
                     Y =np.reshape(np.dot(Range[:,np.newaxis], np.sin(np.deg2rad(variables.diry))[:,np.newaxis].T),(-1))
-                    Phi = np.reshape(np.dot(np.zeros(Range[:,np.newaxis].shape),(variables.diry)[:,np.newaxis].T),(-1))
-                    Range = np.reshape(np.dot(Range[:,np.newaxis],np.zeros((variables.diry)[:,np.newaxis].T.shape)),(-1))
+                    Phi = np.reshape(np.dot(np.ones(Range[:,np.newaxis].shape),(variables.diry)[:,np.newaxis].T),(-1))
+                    Range = np.reshape(np.dot(Range[:,np.newaxis],np.ones((variables.diry)[:,np.newaxis].T.shape)),(-1))
         
     
     
@@ -251,28 +252,33 @@ def MakeWork(makeNewWork,data_directory,SearchMatrixName,
                 if np.nansum([(x__school_traj_port<=np.nanmax(X)+DistanceTraveled[0,ii])&(x__school_traj_port>=np.nanmin(X)+DistanceTraveled[0,ii])]) >0: 
                     
                     
+                    
+                    
                     #go through each pixel and find if it is relevant data
                     for iik in range(len(X)): 
+                        
+                        print(len(X)-iik,end = '\r')
                         r_stb = np.sqrt((x__school_traj_stb-(X[iik]+DistanceTraveled[0,ii]))**2+(y__school_traj_stb-Y[iik])**2)
+                        r_port = np.sqrt((x__school_traj_port-(X[iik]+DistanceTraveled[0,ii]))**2+(y__school_traj_port-Y[iik])**2)
                         
                         
                         if np.min(r_stb)<=R_s[0]: 
                             if len(WorkFileOutput) == 0: 
-                                WorkFileOutput=np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),Phi[iik],Range[iik]))
+                                WorkFileOutput=np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),ListOfFilesWithinTimeInterval[ii][1],int(ListOfFilesWithinTimeInterval[ii][2]),Phi[iik],Range[iik]))
                             else: 
-                                WorkFileOutput = np.vstack((WorkFileOutput,np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),Phi[iik],Range[iik]))))
+                                WorkFileOutput = np.vstack((WorkFileOutput,np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),ListOfFilesWithinTimeInterval[ii][1],int(ListOfFilesWithinTimeInterval[ii][2]),Phi[iik],Range[iik]))))
                             
                             
-                        r_port = np.sqrt((x__school_traj_port-(X[iik]+DistanceTraveled[0,ii]))**2+(y__school_traj_port-Y[iik])**2)
                         if np.min(r_port)<=R_s[0]: 
                             
                             if len(WorkFileOutput) == 0: 
-                                WorkFileOutput=np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),Phi[iik],Range[iik]))
+                                WorkFileOutput=np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),ListOfFilesWithinTimeInterval[ii][1],int(ListOfFilesWithinTimeInterval[ii][2]),Phi[iik],Range[iik]))
                             else: 
-                                WorkFileOutput = np.vstack((WorkFileOutput,np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),Phi[iik],Range[iik]))))
-                            
-                            
-            sc.savemat(data_directory.dir_work+'/Horizontal_'+SearchMatrixName,mdict={'WorkFile':WorkFileOutput})
+                                WorkFileOutput = np.vstack((WorkFileOutput,np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),ListOfFilesWithinTimeInterval[ii][1],int(ListOfFilesWithinTimeInterval[ii][2]),Phi[iik],Range[iik]))))
+                                
+                                
+                                
+                    sc.savemat(data_directory.dir_work+'/Horizontal_'+SearchMatrixName,mdict={'WorkFile':WorkFileOutput})
             
             
             

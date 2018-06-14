@@ -30,21 +30,21 @@ def TimeConverter(time0):
     
     
 def GetBottomDepth(maxlat,minlat,maxlon,minlon,delta_lat,delta_lon):
-#    try:  
-#    response = urllib2.urlopen('http://coastwatch.pfeg.noaa.gov/erddap/griddap/usgsCeSrtm30v6.csv?topo[(' \
-#                            +str(maxlat+delta_lat)+'):1:('+str(minlat-delta_lat)+')][('+str(minlon-delta_lon)+'):1:('+str(maxlon+delta_lon)+')]')
- 
+    try: 
+        response = url.urlopen('http://coastwatch.pfeg.noaa.gov/erddap/griddap/usgsCeSrtm30v6.csv?topo[(' \
+                                +str(maxlat+delta_lat)+'):1:('+str(minlat-delta_lat)+')][('+str(minlon-delta_lon)+'):1:('+str(maxlon+delta_lon)+')]').read().decode("utf-8")
     
-    response = url.urlopen('http://coastwatch.pfeg.noaa.gov/erddap/griddap/usgsCeSrtm30v6.csv?topo[(' \
-                            +str(maxlat+delta_lat)+'):1:('+str(minlat-delta_lat)+')][('+str(minlon-delta_lon)+'):1:('+str(maxlon+delta_lon)+')]').read().decode("utf-8")
-
-    Depth = []
-    for i in response.split('\n'): 
-        try:  
-            Depth = np.hstack((Depth,int(i.split(',')[2])))
-        except: 
-            k=1
+        Depth = []
+        for i in response.split('\n'): 
+            try:  
+                Depth = np.hstack((Depth,int(i.split(',')[2])))
+            except: 
+                k=1
+    except: 
+        Depth = 1000
+        print('*    Bad Depth')
     return np.min(Depth)
+        
 #    except urllib.error.HTTPError: 
 #        return 1000
         
@@ -254,31 +254,48 @@ def MakeVerticalLuf20(CompleteListOfFiles_vertical,directory2Data, logdist):
 
 
                 if not pings == []: 
-                    tiime = workfile['start_time'][0]
-                    stime = tiime[:4]+'-'+tiime[4:6]+'-'+tiime[6:8]+' '+tiime[9:11]+':'+tiime[11:13]+':'+tiime[13:]
-                    tiime = workfile['stop_time'][0]
-                    etime = tiime[:4]+'-'+tiime[4:6]+'-'+tiime[6:8]+' '+tiime[9:11]+':'+tiime[11:13]+':'+tiime[13:]
+                    try: 
+                        tiime = workfile['start_time'][0]
+                        stime = tiime[:4]+'-'+tiime[4:6]+'-'+tiime[6:8]+' '+tiime[9:11]+':'+tiime[11:13]+':'+tiime[13:]
+                    except: 
+                        stime = ''
+                    try: 
+                        tiime = workfile['stop_time'][0]
+                        etime = tiime[:4]+'-'+tiime[4:6]+'-'+tiime[6:8]+' '+tiime[9:11]+':'+tiime[11:13]+':'+tiime[13:]
+                    except: 
+                        etime = ''
                     
                     
-                
-                    latstart=workfile['lat_start'][0]
-#                    try: 
-                    latstop = workfile['lat_stop'][0]
-#                    except: 
-#                        latstop = []
-                    lonstart = workfile['lon_start'][0]
+                    try: 
+                        latstart=workfile['lat_start'][0]
+                    except: 
+                        latstart = ''
+                    try: 
+                        latstop = workfile['lat_stop'][0]
+                    except: 
+                        latstop = ''
+                    try: 
+                        lonstart = workfile['lon_start'][0]
+                    except: 
+                        lonstart = ''
+                    try: 
+                        lonstop = workfile['lon_stop'][0]
+                    except: 
+                        lonstop = ''
 
-#                    try: 
-                    lonstop = workfile['lon_stop'][0]
-#                    except: 
-#                        lonstop = []
+                    try: 
+                        logstart = workfile['log_start'][0]
+                    except: 
+                        logstart = ''
+                    
+                        
+                        
                     distance = addLogDistanceInfo(distance_list,latstart,lonstart,
-                                                  stime,latstop,lonstop,etime,1,10,workfile['log_start'][0])
+                                                  stime,latstop,lonstop,etime,1,10,logstart)
                     
                     
                     
                     
-#                    Depth_bottom = 1000
                     
                     #Loop through each unique ping
                     for ping_idx in range(len(pings[1:])): 
@@ -288,6 +305,7 @@ def MakeVerticalLuf20(CompleteListOfFiles_vertical,directory2Data, logdist):
                         #Idx stuff
                         idx = np.where(workfile['ping_mask']==pings[ping_idx+1])
                         idx_file = np.where(Com == (pings[ping_idx+1]))
+                        
                         
                         #Get the file name of the idx file
                         filname = directory2Data.dir_rawdata+'/'+CompleteListOfFiles_vertical[idx_file[1][0],1]

@@ -41,16 +41,16 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,
 
     transectID = log_start
     DataMatrix = []
-    XMatrix = []
-    YMatrix = []
-    TravelDist = []
-    Lat0 = 0
-    Lon0=0
+#    XMatrix = []
+#    YMatrix = []
+#    TravelDist = []
+#    Lat0 = 0
+#    Lon0=0
     time0 = 0
-    IntegrationDistance = 0.1 #nmi
-    trigger = 0
+#    IntegrationDistance = 0.1 #nmi
+#    trigger = 0
     ping_counter=0
-    ping_counter_max = 300
+#    ping_counter_max = 300
     
     r_mask = 0
     b_mask = 0
