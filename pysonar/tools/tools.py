@@ -7,8 +7,16 @@ Created on Mon May  7 10:39:10 2018
 
 import os, scipy
 import numpy as np
-#from shutil import copyfile
+from xml.etree import ElementTree
+import glob
+from shutil import copyfile
+from xml.etree import ElementTree as ET
 import Raw2NetcdfConverter
+
+
+
+
+
 
 
 
@@ -35,6 +43,9 @@ def printProgressBar(iteration, total, prefix = '', suffix = '', decimals = 1, l
         
         
         
+    
+    
+    
         
         
         
@@ -54,9 +65,13 @@ def WelcomeScreen(projectName):
     print('                    Institute of Marine Research')
     print('                                          Norway')
     print('                     Mail: sindre.vatnehol@hi.no')
+    print('')
 
     
-       
+      
+    
+    
+    
     
     
     
@@ -77,32 +92,91 @@ def UnpackBeam(BeamAmplitudeData):
             
             
     
+    
+    
 class FolderStructure(object):
     '''
     Defines the folder structure used in the project.
-    the PySonar... wil probably be changed
+    the PySonar
     '''
     def __init__(self, dir_cruice,equipment):
+#        self.dir_cruice = dir_cruice+'/'
+#        self.dir_acoustic_data = dir_cruice+'/ACOUSTIC_DATA/'
+#        self.dir_su90 = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/'
+#        self.dir_PySonar = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar'
+#        self.dir_nc = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/netcdf'
+#        self.dir_work = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/WorkFiles'
+#        self.dir_search = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/Search'
+#        self.dir_result = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/Result'
+#        self.dir_rawdata = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/RAWDATA'
+#        self.dir_originalrawdata = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/ORIGINALRAWDATA'
+#        self.dir_src = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/src'
+#        self.dir_NCconvertProgress = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/src/NCconvertProgress'
+        
+        
+        
+        
         self.dir_cruice = dir_cruice+'/'
-        self.dir_acoustic_data = dir_cruice+'/ACOUSTIC_DATA/'
-        self.dir_su90 = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/'
-        self.dir_PySonar = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar'
-        self.dir_nc = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/netcdf'
-        self.dir_work = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/WorkFiles'
-        self.dir_search = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/Search'
-        self.dir_result = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/Result'
-        self.dir_rawdata = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/RAWDATA'
-        self.dir_originalrawdata = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/ORIGINALRAWDATA'
-        self.dir_src = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/src'
-        self.dir_NCconvertProgress = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/src/NCconvertProgress'
+        self.dir_acoustic_data = dir_cruice+'/ACOUSTIC/'
+        self.dir_su90 = dir_cruice+'/ACOUSTIC/'+equipment+'/'
+        self.dir_rawdata = dir_cruice+'/ACOUSTIC/'+equipment+'/'+equipment+'_RAWDATA'
+        self.dir_originalrawdata = dir_cruice+'/ACOUSTIC/'+equipment+'/'+equipment+'_ORIGINALRAWDATA'
+        self.dir_PySonar = dir_cruice+'/ACOUSTIC/PySonar/'+equipment
+        self.dir_nc = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/netcdf'
+        self.dir_work = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/WorkFiles'
+        self.dir_search = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/Search'
+        self.dir_result = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/Result'
+        self.dir_src = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/src'
             
         
         
         
     
+
+
+
+
+def mergexml(directory,res_dir): 
+    '''Protocol to merge smaller xml files into one larger'''
+
+    #Get all files
+    xml_files = glob.glob(directory +"/*.xml")
+    xml_element_tree = None
+    
+    
+    
+    #Go through each file
+    for xml_file in xml_files:
+        
+        #Get xml info
+        data = ElementTree.parse(xml_file).getroot()
+        
+        
+        for result in data.iter('echosounder_dataset'):
+            if xml_element_tree is None:
+                xml_element_tree = data 
+            else:
+                xml_element_tree.extend(result) 
+    if xml_element_tree is not None:
+        tree = str(ElementTree.tostring(xml_element_tree))[2:-1] #ET.ElementTree(root)
+        
+    fid = open(res_dir+'/ListUserFile20_SU90_vertical.txt','w')
+    fid.write(tree)
+    fid.close()
+    
+    
+    
+    
+    
+    
+    
+    
+    
         
 def MakeNewFolders(directory2Data):
     '''Process to make new folder if they do not exist'''
+    
+    
     if not os.path.exists(directory2Data.dir_cruice):
         os.makedirs(directory2Data.dir_cruice)
     if not os.path.exists(directory2Data.dir_acoustic_data):
@@ -117,6 +191,10 @@ def MakeNewFolders(directory2Data):
         os.makedirs(directory2Data.dir_search)
     if not os.path.exists(directory2Data.dir_result):
         os.makedirs(directory2Data.dir_result)
+    if not os.path.exists(directory2Data.dir_result+'\Horizontal'):
+        os.makedirs(directory2Data.dir_result+'\Horizontal')
+    if not os.path.exists(directory2Data.dir_result+'\Vertical'):
+        os.makedirs(directory2Data.dir_result+'\Vertical')
     if not os.path.exists(directory2Data.dir_nc):
         os.makedirs(directory2Data.dir_nc)
     if not os.path.exists(directory2Data.dir_originalrawdata):
@@ -127,13 +205,119 @@ def MakeNewFolders(directory2Data):
         os.makedirs(directory2Data.dir_src)
     if not os.path.exists(directory2Data.dir_work):
         os.makedirs(directory2Data.dir_work)
-    if not os.path.exists(directory2Data.dir_NCconvertProgress):
-        os.makedirs(directory2Data.dir_NCconvertProgress)
+#    if not os.path.exists(directory2Data.dir_NCconvertProgress):
+#        os.makedirs(directory2Data.dir_NCconvertProgress)
         
                
+
+    
+
+
+
+
         
-        
-        
+def indent(elem, level=0):
+  '''
+  Description: 
+       Make the xml file more readable
+  '''
+  i = "\n" + level*"  "
+  if len(elem):
+    if not elem.text or not elem.text.strip():
+      elem.text = i + "  "
+    if not elem.tail or not elem.tail.strip():
+      elem.tail = i
+    for elem in elem:
+      indent(elem, level+1)
+    if not elem.tail or not elem.tail.strip():
+      elem.tail = i
+  else:
+    if level and (not elem.tail or not elem.tail.strip()):
+      elem.tail = i
+      
+      
+      
+      
+      
+      
+      
+      
+      
+    
+def addFrequencyLevelInfo(distance,freq,tran,NumCH,TH): 
+    '''Add information in the frequency level in luf20 file'''
+    
+    
+    #Make new frequency with attributes
+    frequency = ET.SubElement(distance,'frequency')
+    frequency.set('freq',str(int(freq))  )
+    frequency.set('transceiver',str(int(tran)))
+    ET.SubElement(frequency,'quality').text = str(2)  
+    ET.SubElement(frequency,'bubble_corr').text = str(0)  
+    ET.SubElement(frequency,'threshold').text = str(TH)
+    
+    ET.SubElement(frequency,'num_pel_ch').text = str(NumCH)  
+    
+    ET.SubElement(frequency,'upper_interpret_depth').text = str(0)
+    ET.SubElement(frequency,'lower_interpret_depth').text = str(0)
+    ET.SubElement(frequency,'upper_interpret_depth').text = str(0)
+    ET.SubElement(frequency,'lower_integrator_depth').text = str(0)
+
+    
+
+    ch_type = ET.SubElement(frequency,'ch_type')
+    ch_type.set('type','P')
+    sa_by_acocat = ET.SubElement(ch_type,'sa_by_acocat')
+    sa_by_acocat.set('acocat',str(12))
+    
+    return sa_by_acocat
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+      
+      
+def addLogDistanceInfo(distance_list,LatStart,LonStart,TimeStart,LatStop,LonStop,TimeStop,
+                       integrator_dist,pel_ch_thickness,LogStart): 
+    '''Add information in the log distance level in luf20 xml'''
+    
+    
+    #Get the unix time and convert it to time string
+    correct_starttime =TimeStart# time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(TimeStart))
+    correct_stoptime = TimeStop #time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(TimeStop))
+    
+    
+    
+    #Write new log distance with its attributes
+    distance = ET.SubElement(distance_list,'distance')
+    distance.set('log_start',str(LogStart))
+    distance.set('start_time',str(correct_starttime))
+
+    
+    
+    #Add variables to the log distance
+    ET.SubElement(distance,'integrator_dist').text = str(integrator_dist)
+    ET.SubElement(distance,'pel_ch_thickness').text = str(pel_ch_thickness)
+    ET.SubElement(distance,'include_estimate').text = '1'
+    ET.SubElement(distance,'lat_start').text = str(LatStart)
+    ET.SubElement(distance,'lon_start').text = str(LonStart)
+    ET.SubElement(distance,'lat_stop').text = str(LatStop)
+    ET.SubElement(distance,'lon_stop').text = str(LonStop)
+    ET.SubElement(distance,'stop_time').text = str(correct_stoptime)
+    return distance
+    
+    
+    
+    
+    
+    
+    
 
 
 def DataConverter(CruiceIndex,WorkDirectory,current_dir,maxPingInFile,
@@ -144,6 +328,8 @@ def DataConverter(CruiceIndex,WorkDirectory,current_dir,maxPingInFile,
 
     
     #Vessel and platform information
+    #This information is taken from the recepy. 
+    #It is important that the platform name and 
     vessel_name = CruiceIndex.getAttribute('vessel')
     platform_type = CruiceIndex.getAttribute('platform_type')
     platform_code = CruiceIndex.getAttribute('platform_code')
@@ -162,20 +348,13 @@ def DataConverter(CruiceIndex,WorkDirectory,current_dir,maxPingInFile,
                     directory2Data.dir_rawdata,reconvert)
             
             
-        #Convert the .raw data to nc. 
-#        if not os.path.exists(directory2Data.dir_NCconvertProgress + '/finishedNC.txt'):
-#            os.chdir(current_dir)
-#            Raw2NetcdfConverter.convert.Raw2NetcdfConverter(directory2Data.dir_originalrawdata,vessel_name,platform_type,
-#                        platform_code,maxPingInFile,MaxNumberOfFilesInNC,
-#                        directory2Data.dir_rawdata)
-#            
-#            
-#            #When convertion is finnished, make a txt file to indicate this
-#            f = open(directory2Data.dir_NCconvertProgress + '/finishedNC.txt','w')
-#            f.write('0')
-#            f.close()
         
        
+        
+        
+        
+        
+        
             
             
         
@@ -201,6 +380,7 @@ def TransectTimeIDX(CruiceIndex):
         
         
 def OrginizeData(CruiceIndex,WorkDirectory,OS): 
+    '''Protocol to organize the data on the local server.'''
     
     
     #Get the vessel, cruice and equipment information
@@ -218,33 +398,50 @@ def OrginizeData(CruiceIndex,WorkDirectory,OS):
             #Make a correct sonar folder structure
             directory2Data =FolderStructure(WorkDirectory+'/'+cruiceCode[:4]+'/S'+cruiceCode+'_P'+vesselCode,i)       
             
+            
+            
+            #Make the folder according to standard
+            print('Make Structure')
             MakeNewFolders(directory2Data)
         
             
-#            #Get list of files that has not been copied to the correct structure
-#            print('    -Get files from server  ',end='\r')
-#            ListFromServer = os.listdir(OS+CruiceIndex.getAttribute('CruicePath'))
-#            ListOfFilesNotcopied = list(set(ListFromServer)-set(os.listdir(directory2Data.dir_originalrawdata)))
-#            
-#            
-#            #Go through each file
-#            for i in np.arange(len(ListOfFilesNotcopied)): 
-#                
-#                #Print a progressbar
-#                printProgressBar(i, len(ListOfFilesNotcopied), prefix = 'Copy files', suffix = 'Files left: '+
-#                                 str(len(ListOfFilesNotcopied)-i) , decimals = 1, length = 50)
-#                
-#                #Copy the files
-#                try:  
-#                    try:
-#                        copyfile(OS+CruiceIndex.getAttribute('CruicePath')+'/'+ListOfFilesNotcopied[i], 
-#                             directory2Data.dir_originalrawdata+'/'+ListOfFilesNotcopied[i])
-#                    except PermissionError: 
-#                        print('', end = '\r')
-#                except IsADirectoryError:  
-#                    print('', end = '\r')
-#                    
-    
+            
+            #Get list of files that has not been copied to the correct structure
+            print('    -Get files from server  ',end='\r')
+            
+            
+            
+            #Check if file exist, this is a bugfix when working localy
+            if os.path.isdir(OS+CruiceIndex.getAttribute('CruicePath')) == True: 
+            
+                
+                
+                #Get list of files on server and list that has not been copied
+                ListFromServer = os.listdir(OS+CruiceIndex.getAttribute('CruicePath'))
+                ListOfFilesNotcopied = list(set(ListFromServer)-set(os.listdir(directory2Data.dir_originalrawdata)))
+                
+                
+                
+                #Go through each file that has not been copyed
+                for i in np.arange(len(ListOfFilesNotcopied)): 
+                    
+                    
+                    
+                    #Print a progressbar for the user
+                    printProgressBar(i, len(ListOfFilesNotcopied), prefix = 'Copy files', suffix = 'Files left: '+
+                                     str(len(ListOfFilesNotcopied)-i) , decimals = 1, length = 50)
+                    
+                    
+                    
+                    #Copy the files
+                    try:
+                        copyfile(OS+CruiceIndex.getAttribute('CruicePath')+'/'+ListOfFilesNotcopied[i], 
+                             directory2Data.dir_originalrawdata+'/'+ListOfFilesNotcopied[i])
+                    except: 
+                        print('      * Bad file', end = '\r')
+                        
+                        
+                        
     return(directory2Data)
    
 

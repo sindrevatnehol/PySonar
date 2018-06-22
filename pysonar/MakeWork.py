@@ -35,14 +35,14 @@ www.redus.no
 
 
 import scipy.io as sc
-import scipy as scpy
 import numpy as np
 #from sklearn.cluster import DBSCAN
-import os
+import os, random
 from tools import tools
 from glob import glob
-from MakeIndex import MakeIndex
 from netCDF4 import Dataset
+
+
 
 
     
@@ -140,7 +140,12 @@ def MakeWork(makeNewWork,data_directory,SearchMatrixName,
              prefix,compensate,clusterTH,Threshold):
     
     
-    
+    try: 
+        import matplotlib.pyplot as plt
+    except: 
+        dummy = 1
+        
+        
     
     #Sjekk om dett er cluster TH eller Threshold
     CatThr = 3
@@ -153,14 +158,17 @@ def MakeWork(makeNewWork,data_directory,SearchMatrixName,
     os.chdir(data_directory.dir_search)
     FileNames = glob('*.mat')
     
-    import random
     random.shuffle(FileNames)
     
     #Loop through each search matrix (transect)
     for SearchMatrixName in FileNames: 
         
         
-        if not os.path.isfile(data_directory.dir_work+'/Horizontal_'+SearchMatrixName) == True:
+        ticken = 0
+            
+            
+        
+        if not os.path.isfile(data_directory.dir_work+'/Horizontal_'+str(ticken)+'_'+SearchMatrixName) == True:
             
             
             
@@ -174,14 +182,21 @@ def MakeWork(makeNewWork,data_directory,SearchMatrixName,
             SVres_stb = SearchMatrix['SVres_stb']
             R_s = SearchMatrix['R_s']
             res = SearchMatrix['res']
-            SVres_portGhost = SearchMatrix['SVres_portGhost']
-            SVres_stbGhost = SearchMatrix['SVres_stbGhost']
+#            SVres_portGhost = SearchMatrix['SVres_portGhost']
+#            SVres_stbGhost = SearchMatrix['SVres_stbGhost']
             DistanceTraveled = SearchMatrix['DistanceTraveled']
             ListOfFilesWithinTimeInterval = SearchMatrix['ListOfFilesWithinTimeInterval']
         
-    
-    
-    
+            try: 
+                plt.figure(1)
+                plt.clf()
+                plt.subplot(2,1,1)
+                plt.imshow(10*np.log10(SVres_port),aspect = 'auto')
+                plt.subplot(2,1,2)
+                plt.imshow(10*np.log10(SVres_stb),aspect = 'auto')
+                plt.savefig(data_directory.dir_search+'/'+SearchMatrixName.replace('.mat','search.jpg'))
+            except: 
+                dummy = 1
     
             
             # Finding the location of the schools in the search matrix
@@ -203,14 +218,31 @@ def MakeWork(makeNewWork,data_directory,SearchMatrixName,
             x__school_traj_port,y__school_traj_port = FindLocationOfSchool(Cat_port, Bananatool, DistanceTraveled)
             x__school_traj_stb,y__school_traj_stb = FindLocationOfSchool(Cat_stb, Bananatool, DistanceTraveled)
                 
+            y__school_traj_stb = -y__school_traj_stb
             
             
+            try: 
+                plt.figure(1)
+                plt.clf()
+                plt.plot(x__school_traj_port,y__school_traj_port,'k.')
+                plt.plot(x__school_traj_stb,y__school_traj_stb,'k.')
+                plt.savefig(data_directory.dir_search+'/'+SearchMatrixName.replace('.mat','filt.jpg'))
+            except: 
+                dummy = 1
                 
             
             
             #Start writing work files.
             #Go through each ping
-            WorkFileOutput = np.array([])
+            WorkPhi = np.array([])
+            WorkBeam = np.array([])
+            WorkFile = np.array([])
+            WorkTime = np.array([])
+            WorkIDX = np.array([])
+            
+            
+            
+            
             for ii in range(len(DistanceTraveled.T)): 
                 
                 
@@ -231,6 +263,7 @@ def MakeWork(makeNewWork,data_directory,SearchMatrixName,
                     
                     
                     
+                    
                     #Compute the range
                     rangeCorr = 3; 
                     samplespace =variables.soundvelocity*variables.sampleinterval/2
@@ -244,43 +277,122 @@ def MakeWork(makeNewWork,data_directory,SearchMatrixName,
                     Phi = np.reshape(np.dot(np.ones(Range[:,np.newaxis].shape),(variables.diry)[:,np.newaxis].T),(-1))
                     Range = np.reshape(np.dot(Range[:,np.newaxis],np.ones((variables.diry)[:,np.newaxis].T.shape)),(-1))
         
+                    
+            
     
-    
-                
+                idx = np.where(abs(x__school_traj_port-DistanceTraveled[0,ii]) <=700)[0]
+                for iik in range(len(idx)): 
+                    r_port = np.sqrt((x__school_traj_port[idx[iik]]-(X+DistanceTraveled[0,ii]))**2+(y__school_traj_port[idx[iik]]-Y)**2)
+                    WorkPhi = np.hstack((WorkPhi,Phi[np.where(r_port<=R_s[0])[0]]))
+                    WorkBeam = np.hstack((WorkBeam,Range[np.where(r_port<=R_s[0])[0]]))
+                    WorkTime = np.hstack((WorkTime,np.repeat(int(ListOfFilesWithinTimeInterval[ii][0]),len(Phi[np.where(r_port<=R_s[0])[0]]))))
+                    WorkFile = np.hstack((WorkFile,np.repeat(ListOfFilesWithinTimeInterval[ii][1],len(Phi[np.where(r_port<=R_s[0])[0]]))))
+                    WorkIDX = np.hstack((WorkIDX,np.repeat(int(ListOfFilesWithinTimeInterval[ii][2]),len(Phi[np.where(r_port<=R_s[0])[0]]))))
                     
-                #Skipp those pings that don't have data
-                if np.nansum([(x__school_traj_port<=np.nanmax(X)+DistanceTraveled[0,ii])&(x__school_traj_port>=np.nanmin(X)+DistanceTraveled[0,ii])]) >0: 
                     
                     
+#                    plt.draw()
+#                    plt.pause(0.001)
                     
+#                    
+#                    for iip in np.where(r_port<=R_s[0])[0]: 
+##                            if np.min(r_port)<=R_s[0]: 
+#                        if len(WorkFileOutput) == 0: 
+#                            WorkFileOutput=np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),
+#                                                      ListOfFilesWithinTimeInterval[ii][1],
+#                                                      int(ListOfFilesWithinTimeInterval[ii][2]),
+#                                                      Phi[iip],Range[iip]))
+#                            
+#                            
+#                        else: 
+#                            WorkFileOutput = np.vstack((WorkFileOutput
+#                                                        ,np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),
+#                                                                    ListOfFilesWithinTimeInterval[ii][1],
+#                                                                    int(ListOfFilesWithinTimeInterval[ii][2])
+#                                                                    ,Phi[iip],Range[iip]))))
+                                    
+                                 
+                idx = np.where(abs(x__school_traj_stb-DistanceTraveled[0,ii]) <=700)[0]
+                for iik in range(len(idx)): 
                     
-                    #go through each pixel and find if it is relevant data
-                    for iik in range(len(X)): 
-                        
-                        print(len(X)-iik,end = '\r')
-                        r_stb = np.sqrt((x__school_traj_stb-(X[iik]+DistanceTraveled[0,ii]))**2+(y__school_traj_stb-Y[iik])**2)
-                        r_port = np.sqrt((x__school_traj_port-(X[iik]+DistanceTraveled[0,ii]))**2+(y__school_traj_port-Y[iik])**2)
-                        
-                        
-                        if np.min(r_stb)<=R_s[0]: 
-                            if len(WorkFileOutput) == 0: 
-                                WorkFileOutput=np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),ListOfFilesWithinTimeInterval[ii][1],int(ListOfFilesWithinTimeInterval[ii][2]),Phi[iik],Range[iik]))
-                            else: 
-                                WorkFileOutput = np.vstack((WorkFileOutput,np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),ListOfFilesWithinTimeInterval[ii][1],int(ListOfFilesWithinTimeInterval[ii][2]),Phi[iik],Range[iik]))))
-                            
-                            
-                        if np.min(r_port)<=R_s[0]: 
-                            
-                            if len(WorkFileOutput) == 0: 
-                                WorkFileOutput=np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),ListOfFilesWithinTimeInterval[ii][1],int(ListOfFilesWithinTimeInterval[ii][2]),Phi[iik],Range[iik]))
-                            else: 
-                                WorkFileOutput = np.vstack((WorkFileOutput,np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),ListOfFilesWithinTimeInterval[ii][1],int(ListOfFilesWithinTimeInterval[ii][2]),Phi[iik],Range[iik]))))
-                                
-                                
-                                
-                    sc.savemat(data_directory.dir_work+'/Horizontal_'+SearchMatrixName,mdict={'WorkFile':WorkFileOutput})
+                    r_stb = np.sqrt((x__school_traj_stb[idx[iik]]-(X+DistanceTraveled[0,ii]))**2+(y__school_traj_stb[idx[iik]]-Y)**2)
+                    WorkPhi = np.hstack((WorkPhi,Phi[np.where(r_stb<=R_s[0])[0]]))
+                    WorkBeam = np.hstack((WorkBeam,Range[np.where(r_stb<=R_s[0])[0]]))
+                    WorkPhi = np.hstack((WorkPhi,Phi[np.where(r_stb<=R_s[0])[0]]))
+                    WorkBeam = np.hstack((WorkBeam,Range[np.where(r_stb<=R_s[0])[0]]))
+                    WorkTime = np.hstack((WorkTime,np.repeat(int(ListOfFilesWithinTimeInterval[ii][0]),len(Phi[np.where(r_stb<=R_s[0])[0]]))))
+                    WorkFile = np.hstack((WorkFile,np.repeat(ListOfFilesWithinTimeInterval[ii][1],len(Phi[np.where(r_stb<=R_s[0])[0]]))))
+                    WorkIDX = np.hstack((WorkIDX,np.repeat(int(ListOfFilesWithinTimeInterval[ii][2]),len(Phi[np.where(r_stb<=R_s[0])[0]]))))
+                    
+
+#                print(WorkFileOutput.shape[0])
+                #Make a new file so it does not become too large
+                if len(WorkPhi)>2000000: 
+                    sc.savemat(data_directory.dir_work+'/Horizontal_'+str(ticken)+'_'+SearchMatrixName,mdict={'WorkPhi':WorkPhi,'WorkBeam':WorkBeam,'WorkFile':WorkFile,'WorkIDX':WorkIDX,'WorkTime':WorkTime})
+                    ticken = ticken+1
+                    
+                    WorkPhi = np.array([])
+                    WorkBeam = np.array([])
+                    WorkFile = np.array([])
+                    WorkTime = np.array([])
+                    WorkIDX = np.array([])
+            sc.savemat(data_directory.dir_work+'/Horizontal_'+str(ticken)+'_'+SearchMatrixName,mdict={'WorkPhi':WorkPhi,'WorkBeam':WorkBeam,'WorkFile':WorkFile,'WorkIDX':WorkIDX,'WorkTime':WorkTime})
             
             
+                    
+                    
+#                #Skip those pings that don't have relevant data
+#                if np.nansum([(x__school_traj_port<=np.nanmax(X)+DistanceTraveled[0,ii])&(x__school_traj_port>=np.nanmin(X)+DistanceTraveled[0,ii])]) >0: 
+#                    
+#                    
+#                    
+#                    
+#                    #go through each pixel and find if it is relevant data
+#                    for iik in range(len(X)): 
+#                        
+#                        print(len(X)-iik,end = '\r')
+#                        
+#                        
+#                        #Find the distance between pixels and the search matrix output
+#                        r_stb = np.sqrt((x__school_traj_stb-(X[iik]+DistanceTraveled[0,ii]))**2+(y__school_traj_stb-Y[iik])**2)
+#                        r_port = np.sqrt((x__school_traj_port-(X[iik]+DistanceTraveled[0,ii]))**2+(y__school_traj_port-Y[iik])**2)
+#                        
+#                        
+#                        
+#                        if np.min(r_stb)<=R_s[0]: 
+#                            if len(WorkFileOutput) == 0: 
+#                                WorkFileOutput=np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),
+#                                                          ListOfFilesWithinTimeInterval[ii][1],
+#                                                          int(ListOfFilesWithinTimeInterval[ii][2]),
+#                                                          Phi[iik],Range[iik]))
+#                                
+#                                
+#                            else: 
+#                                WorkFileOutput = np.vstack((WorkFileOutput
+#                                                            ,np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),
+#                                                                        ListOfFilesWithinTimeInterval[ii][1],
+#                                                                        int(ListOfFilesWithinTimeInterval[ii][2])
+#                                                                        ,Phi[iik],Range[iik]))))
+#                            
+#                            
+#                        if np.min(r_port)<=R_s[0]: 
+#                            if len(WorkFileOutput) == 0: 
+#                                WorkFileOutput=np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),
+#                                                          ListOfFilesWithinTimeInterval[ii][1],
+#                                                          int(ListOfFilesWithinTimeInterval[ii][2]),
+#                                                          Phi[iik],Range[iik]))
+#                                
+#                                
+#                            else: 
+#                                WorkFileOutput = np.vstack((WorkFileOutput
+#                                                            ,np.hstack((int(ListOfFilesWithinTimeInterval[ii][0]),
+#                                                                        ListOfFilesWithinTimeInterval[ii][1],
+#                                                                        int(ListOfFilesWithinTimeInterval[ii][2])
+#                                                                        ,Phi[iik],Range[iik]))))
+#                                
+#                                
+#                    
+                                
             
             
             
@@ -305,185 +417,9 @@ def MakeWork(makeNewWork,data_directory,SearchMatrixName,
                 plt.draw()
                 plt.savefig(data_directory.dir_search+'/'+SearchMatrixName.replace('.mat','3.jpg'))
             except: 
-                k=1
+                dummy=1
 
         
 
-
-
-#
-#    
-#def processinnput(Work,x__school_traj,X_traj,y__school_traj,Y_traj,case,corr): 
-#    
-#    if len(case['BananaTool'])==1:
-#        BananaTool = case['BananaTool'][0]
-#    else: 
-#        BananaTool = case['BananaTool']
-#
-#
-#    for ii in range(len(x__school_traj)):   
-#        R = (x__school_traj[ii]-X_traj)**2+(y__school_traj[ii]-Y_traj)**2
-#        if ii == 0: 
-#            r_test = R
-#        else: 
-#            r_test = np.minimum(r_test,R)
-#    
-#    x_i,y_i,z_i = np.where(np.sqrt(r_test)<=(int(BananaTool[0])+corr))
-#    Work[x_i,y_i,z_i]=1
-#
-#
-#
-#    return Work
-#        
-#    
-#    
-#    
-#    
-#def MakeIndex(case,Work,x__school_traj_port,y__school_traj_port,X_traj,Y_traj,
-#              x__school_traj_stb,y__school_traj_stb,filename): 
-#    '''Make index file '''
-#    
-#    
-#    #Correction function when the distance of beams increases
-#    
-#    corr =  case['MakeRange']*np.sin(2*np.pi/64)
-#
-#    print('    Start (1/2)')
-#    Work = processinnput(Work,x__school_traj_port,X_traj,y__school_traj_port,Y_traj,case,corr)
-#
-#    
-#    print('    Start (2/2)')
-#    Work = processinnput(Work,x__school_traj_stb,X_traj,y__school_traj_stb,Y_traj,case,corr)
-#
-#    #Save the work file for future use
-#    sc.savemat(filename,mdict={'Work':Work})
-#    
-    
-    
-#
-#def ComputePearsonR(SA_profos,SA_profos2,SA_AutoWithoutGhost):
-#    #Compute the Pearson r between the two models
-#
-#    sap = np.zeros(len(SA_profos))
-#    sap2 = np.zeros(len(SA_profos))
-#    saa = np.zeros(len(SA_profos))
-#    for ik in range(len(SA_profos)): 
-#        if ik == 0: 
-#            sap[ik] = SA_profos[ik]
-#            sap2[ik] = SA_profos2[ik]
-#            saa[ik] = SA_AutoWithoutGhost[ik]
-#        else:   
-#            sap[ik] = SA_profos[ik]-SA_profos[(ik-1)]
-#            sap2[ik] = SA_profos2[ik]-SA_profos2[(ik-1)]
-#            saa[ik] = SA_AutoWithoutGhost[ik]-SA_AutoWithoutGhost[(ik-1)]
-#            
-#    PR_Before = scpy.stats.pearsonr(sap,saa)
-#    PR_After = scpy.stats.pearsonr(sap2,saa)
-#    
-#    return PR_Before, PR_After
-#    
-    
-    
-        
-
-#def WaveRemover(dim,pitch,roll,limit):
-#    #This function identify when there is a chanse that, due to vessel movement, 
-#    #there is a chanse of surface reveberation.
-#    #It will then remove these pings
-#    #ADD could be included in the MakeSearchMatrix.py  !!!
-#    
-#    WaveRemover = np.ones(dim)
-#    WaveRemover[:,:,np.where(abs(pitch-np.mean(pitch))>limit)] = np.nan
-#    WaveRemover[:,:,np.where((roll-np.mean(roll))>limit)] = np.nan
-#
-#    return WaveRemover
-
-
-    
-    
-    
-
-#def ProtocolForCluster(X_port,X_port_ghost,X_stb,X_stb_ghost,Bananatool,
-#                      MakeDist,Cat_port,min_samples):
-#    '''
-#    This is the protocol for making the cluster
-#    
-#    In future this will change so it don't merge small schools closly togetter in range direction
-#    '''
-#    
-#    
-#    #Find only data without ghost
-#    #Bruk heller x__xchool_trajS
-#    X_port_G = np.zeros((1,2))
-#    for i in np.arange(len(X_port[:,0])-1,0,-1):
-#        for ii in range(len(X_port_ghost[:,0])-1,0,-1): 
-#            if (X_port_ghost[ii,0]==X_port[i,0]): 
-#                if (X_port_ghost[ii,1]==X_port[i,1]): 
-#                    X_port_G = np.vstack((X_port_G,X_port_ghost[ii,:]))
-#    X_port_G = X_port_G[1:,:]
-#
-#
-#    X_stb_G = np.zeros((1,2))
-#    for i in np.arange(len(X_stb[:,0])-1,0,-1):
-#        for ii in range(len(X_stb_ghost[:,0])-1,0,-1): 
-#            if (X_stb_ghost[ii,0]==X_stb[i,0]): 
-#                if (X_stb_ghost[ii,1]==X_stb[i,1]): 
-#                    X_stb_G = np.vstack((X_stb_G,X_stb_ghost[ii,:]))
-#    X_stb_G = X_stb_G[1:,:]
-#
-#
-#
-#    '''Make cluster out of the data'''
-#    
-#    
-#    X_port_G = X_port_G.astype(int)
-#    X_stb_G = X_stb_G.astype(int)
-#    
-#    
-#    if len(Bananatool)==1:
-#        BananaTool = Bananatool[0]
-#    else: 
-#        BananaTool = Bananatool
-#        
-#        
-#        
-#        
-#    
-#    #Convert range data to m
-#    #The constant 0.18 is the sample distance
-#    X_port_G[:,1] = abs(X_port_G[:,1])*int(BananaTool[3])*0.18
-#    X_stb_G[:,1] = X_stb_G[:,1]*int(BananaTool[3])*0.18
-#    
-#
-#
-#
-#    #Help to find the correct travel distance of the pixel
-#    Distance = np.unique(MakeDist)
-#    StartFrom = int((len(Distance)-Cat_port.shape[1])/2)+1
-#
-#
-#
-#
-#    #Convert travele distane to m
-#    X_port_G[:,0] = Distance[StartFrom+X_port_G[:,0]]-Distance[StartFrom]
-#    X_stb_G[:,0] = Distance[StartFrom+X_stb_G[:,0]]-Distance[StartFrom]*1.
-#
-#
-#
-#    
-#    #Stack the two sides togheter
-#    #ADD skift til den andre posisjonskoordinatencd 
-#    X_db = np.vstack((X_port_G,X_stb_G))
-#
-#    
-#    
-#    
-#    #Do the density algorithm, It may be replaced with another if suitable
-#    distanceBetweenPings = [x - np.unique(MakeDist)[i - 1] for i, x in enumerate(np.unique(MakeDist))][1:]
-#    dB_ = DBSCAN(np.nanmean(distanceBetweenPings)*2, min_samples).fit(X_db)
-#        
-#    return X_db,dB_
-#            
-#     
-    
+                
     

@@ -376,16 +376,16 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                 SVres_stbGhost = np.hstack((SVres_stbGhost,sV_stbGhost))
            
                   
-                try: 
-                    import matplotlib.pyplot as plt
-                    plt.figure(1)
-                    plt.clf()
-                    plt.imshow(10*np.log10(SVres_port),aspect = 'auto')
-                    plt.colorbar()
-                    plt.draw()
-                    plt.savefig(directory2Data.replace('mat','jpg'))
-                except: 
-                    dummy=1
+#                try: 
+#                    import matplotlib.pyplot as plt
+#                    plt.figure(1)
+#                    plt.clf()
+#                    plt.imshow(10*np.log10(SVres_port),aspect = 'auto')
+#                    plt.colorbar()
+#                    plt.draw()
+#                    plt.savefig(directory2Data.replace('mat','jpg'))
+#                except: 
+#                    dummy=1
         
         
                     

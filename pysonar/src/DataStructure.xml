@@ -6,10 +6,30 @@
 
 
 
+<CruiceList> 
+	<CruiceCode 
+	code = '2018105' 
+	vessel = 'GOSARS' 
+	nation = '578'
+	VCode = '4174'
+	vesselCode = 'GOSARS_4174' 
+	platform_type = 'ship, research' 
+	platform_code = '58GS' 
+	CruicePath = '/cruise_data/2018/S2018105_PGOSARS_4174\ACOUSTIC\SU90' 
+	PreferedNMEA = '$INGLL'
+	PreferedHeading = '$INHDT'
+	CruiceNewDirection ='//ces.imr.no/cruise_data/2018/S2018105_PGOSARS_4174\ACOUSTIC\SU90' 
+	Equipment = 'SU90'>
+	</CruiceCode> 
+</CruiceList> 
+
+
 
 <CruiceList> 
 	<CruiceCode code = '2017836' 
 	vessel = 'Vendla' 
+	nation = '578'
+	VCode = '3670'
 	vesselCode = 'VENDLA_3670' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58VA' 
@@ -83,6 +103,8 @@
 <CruiceList> 
 	<CruiceCode code = '2016844' 
 	vessel = 'Kings Bay' 
+	nation = '578'
+	VCode = '3223'
 	vesselCode = 'KINGSBAY_3223' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58KA' 
@@ -171,23 +193,6 @@
 
 
 
-<CruiceList> 
-	<CruiceCode 
-	code = '2018105' 
-	vessel = 'GOSARS' 
-	vesselCode = 'GOSARS_4174' 
-	platform_type = 'ship, research' 
-	platform_code = '????' 
-	CruicePath = '/cruise_data/2018/S2018105_PGO
-	SARS_4174\ACOUSTIC\SU90' 
-	PreferedNMEA = '$INGLL'
-	PreferedHeading = '$INHDT'
-	CruiceNewDirection ='//ces.imr.no/cruise_data/2018/S2018105_PGOSARS_4174\ACOUSTIC\SU90' 
-	Equipment = 'SU90'>
-	</CruiceCode> 
-</CruiceList> 
-
-
 
 
 
@@ -196,9 +201,11 @@
 	<CruiceCode 
 	code = '2017107' 
 	vessel = 'GOSARS' 
+	nation = '578'
+	VCode = '4174'
 	vesselCode = 'GOSARS_4174' 
 	platform_type = 'ship, research' 
-	platform_code = '????' 
+	platform_code = '58GS'  
 	CruicePath = '/cruise_data/2017/S2017107_PGOSARS_4174/ACOUSTIC_DATA/SU90' 
 	PreferedNMEA = '$INGLL'
 	PreferedHeading = '$INHDT'
@@ -216,9 +223,11 @@
 	<CruiceCode 
 	code = '2016205' 
 	vessel = 'JOHANHJORT' 
+	nation = '578'
+	VCode = '1019'
 	vesselCode = 'JOHANHJORT_1019' 
 	platform_type = 'ship, research' 
-	platform_code = '????' 
+	platform_code = '58JH' 
 	CruicePath = '/cruise_data/2016/S2016205_PJOHANHJORT_1019/ACOUSTIC_DATA/SH90/SH90_RAWDATA/SH90_SURVEY' 
 	PreferedNMEA = '$????'
 	PreferedHeading = '$????'
@@ -232,9 +241,11 @@
 	<CruiceCode 
 	code = '2016857' 
 	vessel = 'MYTTERSTAD' 
+	nation = '578'
+	VCode = '9103'
 	vesselCode = 'MYTTERSTAD_9103/' 
 	platform_type = 'ship, fishing' 
-	platform_code = '????' 
+	platform_code = '58P9' 
 	CruicePath = '/cruise_data/2016/S2016857_PMYTTERSTAD_9103/ACOUSTIC_DATA/SH90' 
 	PreferedNMEA = '$????'
 	PreferedHeading = '$????'
@@ -249,9 +260,11 @@
 	<CruiceCode 
 	code = '2015108' 
 	vessel = 'GOSARS' 
+	nation = '578'
+	VCode = '4174'
 	vesselCode = 'GOSARS_4174' 
 	platform_type = 'ship, research' 
-	platform_code = '????' 
+	platform_code = '58GS' 
 	CruicePath = '/cruise_data/2015/S2015108_PGOSARS_4174/ACOUSTIC_DATA/SU90/SU90_RAWDATA/SU90_SURVEY' 
 	PreferedNMEA = '$????'
 	PreferedHeading = '$????'
@@ -265,6 +278,8 @@
 <CruiceList> 
 	<CruiceCode code = '2016851' 
 	vessel = 'Vendla' 
+	nation = '578'
+	VCode = '3206'
 	vesselCode = 'VENDLA_3206' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58VA' 
@@ -308,6 +323,8 @@
 <CruiceList> 
 	<CruiceCode code = '2018831' 
 	vessel = 'Eros' 
+	nation = '578'
+	VCode = '3670'
 	vesselCode = 'VENDLA_3670' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58KA' 
@@ -326,6 +343,8 @@
 <CruiceList> 
 	<CruiceCode code = '2018830' 
 	vessel = 'Eros' 
+	nation = '578'
+	VCode = '3317'
 	vesselCode = 'EROS_3317' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58KA' 
@@ -344,6 +363,8 @@
 <CruiceList> 
 	<CruiceCode code = '2018829' 
 	vessel = 'Kings Bay' 
+	nation = '578'
+	VCode = '2142'
 	vesselCode = 'KINGSBAY_2142' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58KA' 
@@ -361,6 +382,8 @@
 <CruiceList> 
 	<CruiceCode code = '2017839' 
 	vessel = 'Kings Bay' 
+	nation = '578'
+	VCode = '3223'
 	vesselCode = 'KINGSBAY_3223' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58KA' 
@@ -380,6 +403,8 @@
 <CruiceList> 
 	<CruiceCode code = '2017840' 
 	vessel = 'Vendla' 
+	nation = '578'
+	VCode = '3606'
 	vesselCode = 'VENDLA_3606' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58VA' 
@@ -400,6 +425,8 @@
 <CruiceList> 
 	<CruiceCode code = '2017838' 
 	vessel = 'Eros' 
+	nation = '578'
+	VCode = '3317'
 	vesselCode = 'EROS_3317' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58EP' 
@@ -425,6 +452,8 @@
 <CruiceList> 
 	<CruiceCode code = '2016833' 
 	vessel = 'M Ytterstad' 
+	nation = '578'
+	VCode = '9103'
 	vesselCode = 'MYTTERSTAD_9103' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58P9' 
@@ -446,6 +475,8 @@
 <CruiceList> 
 	<CruiceCode code = '2016834' 
 	vessel = 'Libas' 
+	nation = '578'
+	VCode = '4176'
 	vesselCode = 'LIBAS_4176' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58LB' 
@@ -469,6 +500,8 @@
 <CruiceList> 
 	<CruiceCode code = '2015833' 
 	vessel = 'Nybo' 
+	nation = '578'
+	VCode = '4135'
 	vesselCode = 'NYBO_4135' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58NX' 
@@ -492,6 +525,8 @@
 <CruiceList> 
 	<CruiceCode code = '2015844' 
 	vessel = 'Inger Hildur' 
+	nation = '578'
+	VCode = '4415'
 	vesselCode = 'INGERHILDUR_4415' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58I6' 
@@ -514,6 +549,8 @@
 <CruiceList> 
 	<CruiceCode code = '2015845' 
 	vessel = 'Ligrunn' 
+	nation = '578'
+	VCode = '3050'
 	vesselCode = 'LIGRUNN_3050' 
 	platform_type = 'ship, fishing' 
 	platform_code = '58LR' 
