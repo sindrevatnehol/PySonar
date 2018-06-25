@@ -15,7 +15,7 @@
 	vesselCode = 'GOSARS_4174' 
 	platform_type = 'ship, research' 
 	platform_code = '58GS' 
-	CruicePath = '/cruise_data/2018/S2018105_PGOSARS_4174\ACOUSTIC\SU90' 
+	CruicePath = '/cruise_data-temp/2018/S2018105_PGOSARS_4174\ACOUSTIC\SU90\SU90_RAWDATA' 
 	PreferedNMEA = '$INGLL'
 	PreferedHeading = '$INHDT'
 	CruiceNewDirection ='//ces.imr.no/cruise_data/2018/S2018105_PGOSARS_4174\ACOUSTIC\SU90' 
@@ -40,65 +40,8 @@
 	PreferedHeading = '$HEHDT'
 	CruiceNewDirection ='//ces.imr.no/mea/2017_14809_REDUS/cruise_data/2017/S2017836_PVENDLA_3670/ACOUSTIC_DATA/SX90/survey/raw' 
 	Equipment = 'SX90'>
-	
-
-	
-	<transect num = '1-1' startTime = '20170514T173500' endTime = '20170514T181100'></transect>
-	<transect num = '1-2' startTime = '20170514T182600' endTime = '20170514T185000'></transect>
-	<transect num = '2-1' startTime = '20170514T200200' endTime = '20170514T205300'></transect>
-	<transect num = '2-2' startTime = '20170514T211100' endTime = '20170514T213900'></transect>
-	<transect num = '2-3' startTime = '20170514T225000' endTime = '20170514T234300'></transect>
-	<transect num = '2-4' startTime = '20170514T235600' endTime = '20170515T004200'></transect>
-	<transect num = '2-5' startTime = '20170515T005500' endTime = '20170515T014500'></transect>
-	<transect num = '2-6' startTime = '20170515T015700' endTime = '20170515T024500'></transect>
-	<transect num = '2-7' startTime = '20170515T025900' endTime = '20170515T034800'></transect>
-	<transect num = '2-8' startTime = '20170515T040000' endTime = '20170515T044700'></transect>
-	<transect num = '2-9' startTime = '20170515T050300' endTime = '20170515T055300'></transect>
-	<transect num = '2-10' startTime = '20170515T060800' endTime = '20170515T070400'></transect>
-	<transect num = '2-11' startTime = '20170515T072000' endTime = '20170515T080700'></transect>
-	<transect num = '2-12' startTime = '20170515T082200' endTime = '20170515T091300'></transect>
-	<transect num = '2-13' startTime = '20170515T092900' endTime = '20170515T095800'></transect>
-	<transect num = '3-1' startTime = '20170515T182000' endTime = '20170515T190800'></transect>
-	<transect num = '3-2' startTime = '20170515T192300' endTime = '20170515T201500'></transect>
-	<transect num = '3-3' startTime = '20170515T203000' endTime = '20170515T212200'></transect>
-	<transect num = '3-4' startTime = '20170515T213800' endTime = '20170515T222800'></transect>
-	<transect num = '3-5' startTime = '20170515T224200' endTime = '20170515T233500'></transect>
-	<transect num = '3-6' startTime = '20170515T234900' endTime = '20170516T003800'></transect>
-	<transect num = '3-7' startTime = '20170516T005000' endTime = '20170516T030600'></transect>
-	<transect num = '3-8' startTime = '20170516T032100' endTime = '20170516T040800'></transect>
-	<transect num = '3-9' startTime = '20170516T042400' endTime = '20170516T052300'></transect>
-	<transect num = '3-10' startTime = '20170516T053800' endTime = '20170516T062800'></transect>
-	<transect num = '3-11' startTime = '20170516T064400' endTime = '20170516T072000'></transect>
-	<transect num = '4-1' startTime = '20170516T190600' endTime = '20170516T195300'></transect>
-	<transect num = '4-2' startTime = '20170516T200900' endTime = '20170516T210000'></transect>
-	<transect num = '4-3' startTime = '20170516T211500' endTime = '20170516T220300'></transect>
-	<transect num = '4-4' startTime = '20170516T221700' endTime = '20170516T231000'></transect>
-	<transect num = '4-5' startTime = '20170516T232300' endTime = '20170517T001500'></transect>
-	<transect num = '4-6' startTime = '20170517T002800' endTime = '20170517T011800'></transect>
-	<transect num = '4-7' startTime = '20170517T013100' endTime = '20170517T022200'></transect>
-	<transect num = '4-8' startTime = '20170517T023600' endTime = '20170517T032500'></transect>
-	<transect num = '4-9' startTime = '20170517T033900' endTime = '20170517T043000'></transect>
-	<transect num = '4-10' startTime = '20170517T044500' endTime = '20170517T053700'></transect>
-	<transect num = '4-11' startTime = '20170517T055200' endTime = '20170517T064300'></transect>
-	<transect num = '4-12' startTime = '20170517T065800' endTime = '20170517T073000'></transect>
-	<transect num = '5' startTime = '20170517T195800' endTime = '20170518T021800'></transect>
-	<transect num = '6' startTime = '20170518T183200' endTime = '20170519T012900'></transect>
-	<transect num = '7' startTime = '20170519T085500' endTime = '20170519T150400'></transect>
-	<transect num = '8' startTime = '20170520T154900' endTime = '20170520T215300'></transect>
-	<transect num = '9' startTime = '20170521T144000' endTime = '20170521T201100'></transect>
-	<transect num = '10' startTime = '20170522T161700' endTime = '20170522T225200'></transect>
 	</CruiceCode> 
 </CruiceList> 
-
-
-
-
-
-
-
-
-
-
 
 <CruiceList> 
 	<CruiceCode code = '2016844' 
@@ -116,86 +59,8 @@
 	PreferedHeading = '$HEHDT'
 	CruiceNewDirection ='//ces.imr.no/mea/2017_14809_REDUS/cruise_data/2017/S2017839_PKINGSBAY_3223/ACOUSTIC_DATA/SU90/survey/netcdf' 
 	Equipment = 'SU90'>	
-	
-	<transect num = '1-1' startTime = '20160503T193730' endTime = '20160503T200900'></transect>
-	<transect num = '1-2' startTime = '20160503T205600' endTime = '20160503T213400'></transect>
-	<transect num = '1-3' startTime = '20160503T231900' endTime = '20160503T235800'></transect>
-	<transect num = '1-4' startTime = '20160504T012200' endTime = '20160504T015500'></transect>
-	<transect num = '1-5' startTime = '20160504T024300' endTime = '20160504T033500'></transect>
-	<transect num = '1-6' startTime = '20160504T051000' endTime = '20160504T055500'></transect>
-	<transect num = '1-7' startTime = '20160504T064000' endTime = '20160504T071000'></transect>
-	<transect num = '1-8' startTime = '20160504T081000' endTime = '20160504T084400'></transect>
-	<transect num = '1-9' startTime = '20160504T093300' endTime = '20160504T100100'></transect>
-	<transect num = '1-10' startTime = '20160504T104800' endTime = '20160504T112100'></transect>
-	<transect num = '1-11' startTime = '20160504T144200' endTime = '20160504T152400'></transect>
-	<transect num = '2-1' startTime = '20160505T213800' endTime = '20160505T220000'></transect>
-	<transect num = '2-2' startTime = '20160505T233300' endTime = '20160506T001800'></transect>
-	<transect num = '2-3' startTime = '20160506T011500' endTime = '20160506T022100'></transect>
-	<transect num = '2-4' startTime = '20160506T031700' endTime = '20160506T035400'></transect>
-	<transect num = '2-5' startTime = '20160506T044500' endTime = '20160506T053400'></transect>
-	<transect num = '2-6' startTime = '20160506T063900' endTime = '20160506T095500'></transect>
-	<transect num = '2-7' startTime = '20160506T104500' endTime = '20160506T141700'></transect>
-	<transect num = '2-8' startTime = '20160506T151700' endTime = '20160506T155400'></transect>
-	<transect num = '2-9' startTime = '20160506T164500' endTime = '20160506T172500'></transect>
-	<transect num = '2-10' startTime = '20160506T203200' endTime = '20160506T210200'></transect>
-	<transect num = '3-1' startTime = '20160508T222400' endTime = '20160508T225700'></transect>
-	<transect num = '3-2' startTime = '20160509T022300' endTime = '20160509T025600'></transect>
-	<transect num = '3-3' startTime = '20160509T034800' endTime = '20160509T042600'></transect>
-	<transect num = '3-4' startTime = '20160509T052000' endTime = '20160509T055700'></transect>
-	<transect num = '3-5' startTime = '20160509T064300' endTime = '20160509T071700'></transect>
-	<transect num = '3-6' startTime = '20160509T080700' endTime = '20160509T084300'></transect>
-	<transect num = '3-7' startTime = '20160509T092800' endTime = '20160509T100200'></transect>
-	<transect num = '3-8' startTime = '20160509T105000' endTime = '20160509T112200'></transect>
-	<transect num = '4-1' startTime = '20160509T221900' endTime = '20160509T225300'></transect>
-	<transect num = '4-2' startTime = '20160510T001300' endTime = '20160510T004000'></transect>
-	<transect num = '4-3' startTime = '20160510T012900' endTime = '20160510T015800'></transect>
-	<transect num = '4-4' startTime = '20160510T024200' endTime = '20160510T031600'></transect>
-	<transect num = '4-5' startTime = '20160510T041100' endTime = '20160510T045000'></transect>
-	<transect num = '4-6' startTime = '20160510T053500' endTime = '20160510T060800'></transect>
-	<transect num = '5-1' startTime = '20160510T143400' endTime = '20160510T150700'></transect>
-	<transect num = '5-2' startTime = '20160510T155600' endTime = '20160510T163100'></transect>
-	<transect num = '5-3' startTime = '20160510T181500' endTime = '20160510T185600'></transect>
-	<transect num = '5-4' startTime = '20160510T194400' endTime = '20160510T202000'></transect>
-	<transect num = '5-5' startTime = '20160510T210700' endTime = '20160510T213500'></transect>
-	<transect num = '5-6' startTime = '20160511T011800' endTime = '20160511T014200'></transect>
-	<transect num = '5-7' startTime = '20160511T023700' endTime = '20160511T031100'></transect>
-	<transect num = '5-8' startTime = '20160511T040200' endTime = '20160511T043600'></transect>
-	<transect num = '5-9' startTime = '20160511T052400' endTime = '20160511T055900'></transect>
-	<transect num = '5-10' startTime = '20160511T064800' endTime = '20160511T072500'></transect>
-	<transect num = '5-11' startTime = '20160511T080900' endTime = '20160511T083700'></transect>
-	<transect num = '6-1' startTime = '20160512T012200' endTime = '20160512T015800'></transect>
-	<transect num = '6-2' startTime = '20160512T024900' endTime = '20160512T032500'></transect>
-	<transect num = '6-3' startTime = '20160512T041400' endTime = '20160512T045100'></transect>
-	<transect num = '6-4' startTime = '20160512T054500' endTime = '20160512T062200'></transect>
-	<transect num = '6-5' startTime = '20160512T071300' endTime = '20160512T074800'></transect>
-	<transect num = '6-6' startTime = '20160512T083400' endTime = '20160512T091300'></transect>
-	<transect num = '6-7' startTime = '20160512T101000' endTime = '20160512T104500'></transect>
-	<transect num = '6-8' startTime = '20160512T113500' endTime = '20160512T122100'></transect>
-	<transect num = '6-9' startTime = '20160512T141500' endTime = '20160512T145600'></transect>
-	<transect num = '6-10' startTime = '20160512T203800' endTime = '20160512T212100'></transect>
-	<transect num = '6-11' startTime = '20160512T222400' endTime = '20160512T230400'></transect>
-	<transect num = '7-1' startTime = '20160513T131700' endTime = '20160513T135200'></transect>
-	<transect num = '7-2' startTime = '20160513T145700' endTime = '20160513T153700'></transect>
-	<transect num = '7-3' startTime = '20160513T192600' endTime = '20160513T201300'></transect>
-	<transect num = '7-4' startTime = '20160513T230200' endTime = '20160513T233600'></transect>
-	<transect num = '7-5' startTime = '20160514T005300' endTime = '20160514T013000'></transect>
-	<transect num = '7-6' startTime = '20160514T023000' endTime = '20160514T030200'></transect>
-	<transect num = '7-7' startTime = '20160514T035600' endTime = '20160514T043600'></transect>
-	<transect num = '7-8' startTime = '20160514T053500' endTime = '20160514T061500'></transect>
-	<transect num = '7-9' startTime = '20160514T070500' endTime = '20160514T075300'></transect>
-	<transect num = '7-10' startTime = '20160514T085900' endTime = '20160514T094000'></transect>
 	</CruiceCode> 
-	
-	
 </CruiceList> 
-
-
-
-
-
-
-
-
 
 <CruiceList> 
 	<CruiceCode 
@@ -214,11 +79,6 @@
 	</CruiceCode> 
 </CruiceList> 
 
-
-
-
-
-
 <CruiceList> 
 	<CruiceCode 
 	code = '2016205' 
@@ -235,7 +95,6 @@
 	Equipment = 'SH90'>
 	</CruiceCode> 
 </CruiceList> 
-
 
 <CruiceList> 
 	<CruiceCode 
@@ -255,7 +114,6 @@
 </CruiceList> 
 
 
-
 <CruiceList> 
 	<CruiceCode 
 	code = '2015108' 
@@ -272,8 +130,6 @@
 	Equipment = 'SU90'>
 	</CruiceCode> 
 </CruiceList> 
-
-
 
 <CruiceList> 
 	<CruiceCode code = '2018831' 

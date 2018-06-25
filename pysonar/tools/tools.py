@@ -508,14 +508,13 @@ def OrginizeData(CruiceIndex,WorkDirectory,OS):
             
             
             #Make the folder according to standard
-            print('Make Structure')
+            print('Make Structure               ')
             MakeNewFolders(directory2Data)
         
             
             
             #Get list of files that has not been copied to the correct structure
             print('    -Get files from server  ',end='\r')
-            
             
             
             #Check if file exist, this is a bugfix when working localy
@@ -526,9 +525,7 @@ def OrginizeData(CruiceIndex,WorkDirectory,OS):
                 #Get list of files on server and list that has not been copied
                 ListFromServer = os.listdir(OS+CruiceIndex.getAttribute('CruicePath'))
                 ListOfFilesNotcopied = list(set(ListFromServer)-set(os.listdir(directory2Data.dir_originalrawdata)))
-                
-                
-                
+
                 #Go through each file that has not been copyed
                 for i in np.arange(len(ListOfFilesNotcopied)): 
                     
