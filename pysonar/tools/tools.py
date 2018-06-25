@@ -8,7 +8,7 @@ Created on Mon May  7 10:39:10 2018
 import os, scipy
 import numpy as np
 from xml.etree import ElementTree
-import glob
+import glob, datetime, time
 from shutil import copyfile
 from xml.etree import ElementTree as ET
 import Raw2NetcdfConverter
@@ -125,8 +125,11 @@ class FolderStructure(object):
         self.dir_nc = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/netcdf'
         self.dir_work = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/WorkFiles'
         self.dir_search = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/Search'
-        self.dir_result = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/Result'
+        self.dir_result = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/Report'
         self.dir_src = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/src'
+        self.dir_LSSS_report = dir_cruice+'/ACOUSTIC/LSSS/REPORTS'
+        self.dir_PROFOS_report = dir_cruice+'/ACOUSTIC/LSSS/REPORTS/PROFOS'
+        self.dir_PROMUS_report = dir_cruice+'/ACOUSTIC/LSSS/REPORTS/PROMUS'
             
         
         
@@ -140,32 +143,130 @@ def mergexml(directory,res_dir):
     '''Protocol to merge smaller xml files into one larger'''
 
     #Get all files
+#    xml_files = glob.glob(directory +"/*.xml")
+#    xml_element_tree = None
+#    
+#    
+#    
+#    #Go through each file
+#    for xml_file in xml_files:
+#        
+#        #Get xml info
+#        data = ElementTree.parse(xml_file).getroot()
+#        
+#        
+#        for result in data.iter('echosounder_dataset'):
+#            if xml_element_tree is None:
+#                xml_element_tree = data 
+#            else:
+#                xml_element_tree.extend(result) 
+#    if xml_element_tree is not None:
+#        tree = str(ElementTree.tostring(xml_element_tree))[2:-1] #ET.ElementTree(root)
+#        
+#    fid = open(res_dir+'/ListUserFile20_SU90_vertical.txt','w')
+#    fid.write(tree)
+#    fid.close()
+#    
+#    
+#    
+    root = ET.Element("echosounder_dataset")
+    
+    
     xml_files = glob.glob(directory +"/*.xml")
-    xml_element_tree = None
     
+    first = 0
     
+    ET.SubElement(root,'report_time').text = str(datetime.datetime.fromtimestamp((time.time())).strftime('%Y-%m-%d %H:%M:%S'))
+    ET.SubElement(root,'lsss_version').text = "PNMDformats v 0.1 - vertical"
     
-    #Go through each file
+
     for xml_file in xml_files:
-        
-        #Get xml info
         data = ElementTree.parse(xml_file).getroot()
+        for result in data:#.iter('echosounder_dataset'):
+            if first == 0: 
+                
+                if result.tag == 'nation':
+                    nation = result.text
+                    ET.SubElement(root,'nation').text = nation
+                if result.tag == 'platform':
+                    platform = result.text
+                    ET.SubElement(root,'platform').text = platform
+                if result.tag == 'cruice_id':
+                    cruice_id = result.text
+                    ET.SubElement(root,'cruice_id').text = cruice_id
+
+            if result.tag == 'distance_list': 
+                
+                
+                if first == 0: 
+                    distance_list = ET.SubElement(root,'distance_list')
+                    
+                    
+                for dist in result: 
+                    
+                    distance = ET.SubElement(distance_list,'distance')
+                    
+                    distance.set('log_start',dist.attrib['log_start'])
+                    distance.set('start_time',dist.attrib['start_time'])
+                    
+                    for var in dist: 
+                        if var.tag == 'integrator_dist':
+                            ET.SubElement(distance,'integrator_dist').text = var.text
+                        if var.tag == 'pel_ch_thickness':
+                            ET.SubElement(distance,'pel_ch_thickness').text = var.text
+                        if var.tag == 'include_estimate':
+                            ET.SubElement(distance,'include_estimate').text = var.text
+                        if var.tag == 'lat_start':
+                            ET.SubElement(distance,'lat_start').text = var.text
+                        if var.tag == 'lon_start':
+                            ET.SubElement(distance,'lon_start').text = var.text
+                        if var.tag == 'lat_stop':
+                            ET.SubElement(distance,'lat_stop').text = var.text
+                        if var.tag == 'lon_stop':
+                            ET.SubElement(distance,'lon_stop').text = var.text
+                        if var.tag == 'stop_time':
+                            ET.SubElement(distance,'stop_time').text = var.text
+                        if var.tag == 'frequency':
+                            
+                            frequency = ET.SubElement(distance,'frequency')
+                            frequency.set('freq',var.attrib['freq'] )
+                            frequency.set('transceiver',var.attrib['transceiver'])
+                            
+                            for freq in var: 
+                                if freq.tag == 'quality': 
+                                    ET.SubElement(frequency,'quality').text = freq.text
+                                if freq.tag == 'bubble_corr': 
+                                    ET.SubElement(frequency,'bubble_corr').text = freq.text
+                                if freq.tag == 'threshold': 
+                                    ET.SubElement(frequency,'threshold').text = '-65'
+                                if freq.tag == 'num_pel_ch': 
+                                    ET.SubElement(frequency,'num_pel_ch').text = freq.text
+                                if freq.tag == 'upper_interpret_depth': 
+                                    ET.SubElement(frequency,'upper_interpret_depth').text = freq.text
+                                if freq.tag == 'lower_interpret_depth': 
+                                    ET.SubElement(frequency,'lower_interpret_depth').text = freq.text
+                                if freq.tag == 'upper_interpret_depth': 
+                                    ET.SubElement(frequency,'upper_interpret_depth').text = freq.text
+                                if freq.tag == 'lower_integrator_depth': 
+                                    ET.SubElement(frequency,'lower_integrator_depth').text = freq.text
+                                if freq.tag == 'ch_type': 
+                                    ch_type = ET.SubElement(frequency,'ch_type')
+                                    ch_type.set('type','P')
+                                    for chn in freq: 
+                                        sa_by = ET.SubElement(ch_type,'sa_by_acocat')
+                                        sa_by.set('acocat', chn.attrib['acocat'])
+                                        for sa in chn: 
+                                            
+                                            sa_value = ET.SubElement(sa_by,'sa')
+                                            sa_value.set('ch',sa.attrib['ch'])
+                                            sa_value.text= sa.text
+        first = 1
+          
         
-        
-        for result in data.iter('echosounder_dataset'):
-            if xml_element_tree is None:
-                xml_element_tree = data 
-            else:
-                xml_element_tree.extend(result) 
-    if xml_element_tree is not None:
-        tree = str(ElementTree.tostring(xml_element_tree))[2:-1] #ET.ElementTree(root)
-        
-    fid = open(res_dir+'/ListUserFile20_SU90_vertical.txt','w')
-    fid.write(tree)
-    fid.close()
-    
-    
-    
+    indent(root)
+    tree = ET.ElementTree(root)
+    tree.write(res_dir+'/ListUserFile20_SU90_vertical.xml')
+                
     
     
     
@@ -205,6 +306,12 @@ def MakeNewFolders(directory2Data):
         os.makedirs(directory2Data.dir_src)
     if not os.path.exists(directory2Data.dir_work):
         os.makedirs(directory2Data.dir_work)
+    if not os.path.exists(directory2Data.dir_LSSS_report):
+        os.makedirs(directory2Data.dir_LSSS_report)
+    if not os.path.exists(directory2Data.dir_PROFOS_report):
+        os.makedirs(directory2Data.dir_PROFOS_report)
+#    if not os.path.exists(directory2Data.dir_PROMUS_report):
+        
 #    if not os.path.exists(directory2Data.dir_NCconvertProgress):
 #        os.makedirs(directory2Data.dir_NCconvertProgress)
         
