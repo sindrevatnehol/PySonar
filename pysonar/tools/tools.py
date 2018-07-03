@@ -12,6 +12,7 @@ import glob, datetime, time
 from shutil import copyfile
 from xml.etree import ElementTree as ET
 import Raw2NetcdfConverter
+from numba import jit 
 
 
 
@@ -536,13 +537,15 @@ def OrginizeData(CruiceIndex,WorkDirectory,OS):
                                      str(len(ListOfFilesNotcopied)-i) , decimals = 1, length = 50)
                     
                     
-                    
-                    #Copy the files
-                    try:
-                        copyfile(OS+CruiceIndex.getAttribute('CruicePath')+'/'+ListOfFilesNotcopied[i], 
-                             directory2Data.dir_originalrawdata+'/'+ListOfFilesNotcopied[i])
-                    except: 
-                        print('      * Bad file', end = '\r')
+                    if '.raw' in ListOfFilesNotcopied[i]: 
+                        #Copy the files
+                        try:
+                            copyfile(OS+CruiceIndex.getAttribute('CruicePath')+'/'+ListOfFilesNotcopied[i], 
+                                 directory2Data.dir_originalrawdata+'/'+ListOfFilesNotcopied[i])
+                        except: 
+                            print('      * Bad file', end = '\r')
+                    else: 
+                        print('Skipped: '+ListOfFilesNotcopied[i])
                         
                         
                         
@@ -634,6 +637,7 @@ def ApplyTVG(AmplitudeData,soundvelocity,sampleinterval,transmitpower,
     
     
     
+@jit
 def ConvertToechogram(Wdist,sv_mat):
     '''
     Purpose
@@ -660,8 +664,34 @@ def ConvertToechogram(Wdist,sv_mat):
     return sA
     
     
+@jit
+def ConvertToechogram2(Wdist1,Wdist2,Wdist3,Wdist4,sv_mat,rangen):
+    sA = np.array([])
+    sA2 = np.array([])
+    sA3 = np.array([])
+    sA4 = np.array([])
+    
+    for i in rangen: 
+        idxWeight = np.where(Wdist1[i].toarray()>0)
+        idxWeight2 = np.where(Wdist2[i].toarray()>0)
+        idxWeight3 = np.where(Wdist3[i].toarray()>0)
+        idxWeight4 = np.where(Wdist4[i].toarray()>0)
+        
+        #Find the sa value in linear domain. 
+        sA= np.hstack((sA,np.nansum(sv_mat[idxWeight])))
+        sA2= np.hstack((sA2,np.nansum(sv_mat[idxWeight2])))
+        sA3= np.hstack((sA3,np.nansum(sv_mat[idxWeight3])))
+        sA4= np.hstack((sA4,np.nansum(sv_mat[idxWeight4])))
+    
+    return sA, sA2, sA3, sA4
     
     
+    
+    
+    
+    
+    
+@jit
 def GetDistanceMatrix(DistanceMatrix,RangeMatrix,BeamDirectionMatrix,svMatrix,theta_tilt,BananaTool):   
     '''
     This function computes the distance matrix. 

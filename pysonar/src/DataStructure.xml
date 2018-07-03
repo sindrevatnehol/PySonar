@@ -15,7 +15,7 @@
 	vesselCode = 'GOSARS_4174' 
 	platform_type = 'ship, research' 
 	platform_code = '58GS' 
-	CruicePath = '/cruise_data-temp/2018/S2018105_PGOSARS_4174\ACOUSTIC\SU90\SU90_RAWDATA' 
+	CruicePath = '/cruise_data_temp/2018/S2018105_PGOSARS_4174\ACOUSTIC\SU90\SU90_RAWDATA' 
 	PreferedNMEA = '$INGLL'
 	PreferedHeading = '$INHDT'
 	CruiceNewDirection ='//ces.imr.no/cruise_data/2018/S2018105_PGOSARS_4174\ACOUSTIC\SU90' 

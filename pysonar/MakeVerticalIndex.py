@@ -66,7 +66,6 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,
         #Get the full path name
         filename = os.path.join(dirnc,ListOfFilesWithinTimeInterval[filename_index,1])
         
-        print(filename)
         #Load the nc file
         fileID = Dataset(filename,'r',format = 'NETCDF4')
         

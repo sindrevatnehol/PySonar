@@ -303,7 +303,7 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
             
 
             
-            if platform.system() == 'Linux':
+            if platform.system() == 'Linux1':
                 sV_port =  np.asarray(Parallel(n_jobs = multiprocessing.cpu_count())(delayed(tools.ConvertToechogram)(Wdist_port[i],sv_mat) for i in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3]))))))
                 
                 
@@ -318,19 +318,22 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
                 
             
                 
-                sV_stb = []
-                sV_port = []
-                sV_portGhost = []
-                sV_stbGhost = []
-    
-    
-    
-                for indeks in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3])))): 
-                    sV_port = np.hstack((sV_port,tools.ConvertToechogram(Wdist_port[indeks],sv_mat)))
-                    sV_stb = np.hstack((sV_stb,tools.ConvertToechogram(Wdist_stb[indeks],sv_mat)))
-                    sV_portGhost = np.hstack((sV_portGhost,tools.ConvertToechogram(Wdist_portGhost[indeks],sv_mat)))
-                    sV_stbGhost = np.hstack((sV_stbGhost,tools.ConvertToechogram(Wdist_stbGhost[indeks],sv_mat)))
-  
+                
+                
+#                    
+#                sV_stb = []
+#                sV_port = []
+#                sV_portGhost = []
+#                sV_stbGhost = []
+#                
+#
+                sV_port, sV_stb, sV_portGhost ,sV_stbGhost = tools.ConvertToechogram2(Wdist_port,Wdist_stb,Wdist_portGhost,Wdist_stbGhost,sv_mat,range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3])))))
+#                for indeks in range(len(range(int(BananaTool[1]),int(BananaTool[2]),int(BananaTool[3])))): 
+#                    sV_port = np.hstack((sV_port,tools.ConvertToechogram(Wdist_port[indeks],sv_mat)))
+#                    sV_stb = np.hstack((sV_stb,tools.ConvertToechogram(Wdist_stb[indeks],sv_mat)))
+#                    sV_portGhost = np.hstack((sV_portGhost,tools.ConvertToechogram(Wdist_portGhost[indeks],sv_mat)))
+#                    sV_stbGhost = np.hstack((sV_stbGhost,tools.ConvertToechogram(Wdist_stbGhost[indeks],sv_mat)))
+                
             
             
 
@@ -417,20 +420,25 @@ def MakeSearch(ListOfFilesWithinTimeInterval,RemoveToCloseValues,R_s,res,directo
             
             
             
-            if AddNaN >0:
-                sv = np.vstack((sv,np.nan*np.ones((AddNaN,64))))
-                RangeOut = np.vstack((RangeOut[:,np.newaxis],np.nan*np.ones((AddNaN,1))))
+            if DistanceTraveled[-1]-DistanceTraveled[-2]>2: 
+                if AddNaN >0:
+                    sv = np.vstack((sv,np.nan*np.ones((AddNaN,64))))
+                    RangeOut = np.vstack((RangeOut[:,np.newaxis],np.nan*np.ones((AddNaN,1))))
+                else: 
+                    sv=sv[:svMatrix.shape[0],:]
+                    RangeOut = RangeOut[:svMatrix.shape[0],np.newaxis]
+    
+    
+                svMatrix = np.dstack((svMatrix,sv))
+                DistanceMatrix = np.dstack((DistanceMatrix, np.ones((len(sv),64))*DistanceTraveled[-1]))
+                BeamDirectionMatrix = np.dstack((BeamDirectionMatrix, np.repeat(variables.diry[:,np.newaxis].T,len(sv),axis=0)))
+                RangeMatrix = np.dstack((RangeMatrix, np.repeat(RangeOut[:,np.newaxis],64,axis=1)))
             else: 
-                sv=sv[:svMatrix.shape[0],:]
-                RangeOut = RangeOut[:svMatrix.shape[0],np.newaxis]
-
-            
-
-            svMatrix = np.dstack((svMatrix,sv))
-            DistanceMatrix = np.dstack((DistanceMatrix, np.ones((len(sv),64))*DistanceTraveled[-1]))
-            BeamDirectionMatrix = np.dstack((BeamDirectionMatrix, np.repeat(variables.diry[:,np.newaxis].T,len(sv),axis=0)))
-            RangeMatrix = np.dstack((RangeMatrix, np.repeat(RangeOut[:,np.newaxis],64,axis=1)))
-            
+                svMatrix = sv
+                DistanceMatrix = np.ones((len(sv),64))*DistanceTraveled[-1]
+                DistanceTraveled = DistanceTraveled[1:]
+                BeamDirectionMatrix = np.repeat(variables.diry[:,np.newaxis].T,len(sv),axis=0)
+                RangeMatrix = np.repeat(RangeOut[:,np.newaxis],64,axis=1)
 
             
             
