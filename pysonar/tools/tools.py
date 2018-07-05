@@ -5,7 +5,7 @@ Created on Mon May  7 10:39:10 2018
 @author: sindrev
 """
 
-import os, scipy
+import os, scipy, shutil
 import numpy as np
 from xml.etree import ElementTree
 import glob, datetime, time
@@ -13,7 +13,8 @@ from shutil import copyfile
 from xml.etree import ElementTree as ET
 import Raw2NetcdfConverter
 from numba import jit 
-
+from lxml import etree
+from netCDF4 import Dataset
 
 
 
@@ -101,22 +102,6 @@ class FolderStructure(object):
     the PySonar
     '''
     def __init__(self, dir_cruice,equipment):
-#        self.dir_cruice = dir_cruice+'/'
-#        self.dir_acoustic_data = dir_cruice+'/ACOUSTIC_DATA/'
-#        self.dir_su90 = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/'
-#        self.dir_PySonar = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar'
-#        self.dir_nc = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/netcdf'
-#        self.dir_work = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/WorkFiles'
-#        self.dir_search = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/Search'
-#        self.dir_result = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/Result'
-#        self.dir_rawdata = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/RAWDATA'
-#        self.dir_originalrawdata = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/ORIGINALRAWDATA'
-#        self.dir_src = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/src'
-#        self.dir_NCconvertProgress = dir_cruice+'/ACOUSTIC_DATA/'+equipment+'/PySonar/src/NCconvertProgress'
-        
-        
-        
-        
         self.dir_cruice = dir_cruice+'/'
         self.dir_acoustic_data = dir_cruice+'/ACOUSTIC/'
         self.dir_su90 = dir_cruice+'/ACOUSTIC/'+equipment+'/'
@@ -142,34 +127,6 @@ class FolderStructure(object):
 
 def mergexml(directory,res_dir): 
     '''Protocol to merge smaller xml files into one larger'''
-
-    #Get all files
-#    xml_files = glob.glob(directory +"/*.xml")
-#    xml_element_tree = None
-#    
-#    
-#    
-#    #Go through each file
-#    for xml_file in xml_files:
-#        
-#        #Get xml info
-#        data = ElementTree.parse(xml_file).getroot()
-#        
-#        
-#        for result in data.iter('echosounder_dataset'):
-#            if xml_element_tree is None:
-#                xml_element_tree = data 
-#            else:
-#                xml_element_tree.extend(result) 
-#    if xml_element_tree is not None:
-#        tree = str(ElementTree.tostring(xml_element_tree))[2:-1] #ET.ElementTree(root)
-#        
-#    fid = open(res_dir+'/ListUserFile20_SU90_vertical.txt','w')
-#    fid.write(tree)
-#    fid.close()
-#    
-#    
-#    
     root = ET.Element("echosounder_dataset")
     
     
@@ -311,10 +268,6 @@ def MakeNewFolders(directory2Data):
         os.makedirs(directory2Data.dir_LSSS_report)
     if not os.path.exists(directory2Data.dir_PROFOS_report):
         os.makedirs(directory2Data.dir_PROFOS_report)
-#    if not os.path.exists(directory2Data.dir_PROMUS_report):
-        
-#    if not os.path.exists(directory2Data.dir_NCconvertProgress):
-#        os.makedirs(directory2Data.dir_NCconvertProgress)
         
                
 
@@ -385,7 +338,250 @@ def addFrequencyLevelInfo(distance,freq,tran,NumCH,TH):
     
     
     
-      
+def GetTransectTimes(filename,code):
+
+    
+    doc2 = etree.parse(filename)
+    distance_list = doc2.find('distance_list')
+#    old_stop = ''
+#    Start = 0
+#    End = []
+#    transect_IDX = []
+#    transect_i = 1
+#    new_start = False
+
+    start_time = []
+    log_start = []
+    stop_time = []
+    lat_start = []
+    lon_start = []
+    lat_stop = []
+    lon_stop = []
+    
+    
+    for i in distance_list:
+        
+        start_time = np.hstack((start_time,i.get('start_time').replace(' ','T').replace('-','').replace(':','')))
+        log_start = np.hstack((log_start,i.get('log_start')))
+        stop_time = np.hstack((stop_time,i.find('stop_time').text.replace(' ','T').replace('-','').replace(':','')))
+        lat_start = np.hstack((lat_start,i.find('lat_start').text))
+        lon_start = np.hstack((lon_start,i.find('lon_start').text))
+        lat_stop = np.hstack((lat_stop,i.find('lat_stop').text))
+        lon_stop = np.hstack((lon_stop,i.find('lon_stop').text))
+
+    return start_time,log_start,stop_time,lat_start,lat_stop,lon_start,lon_stop    
+
+
+def GetLuf20Info(directory2Data,CruiceIndex):
+    
+    for dirpath,_,filenames in os.walk(directory2Data.dir_src + '/EKLUF20/'):
+        for f in filenames:
+            filename =  os.path.abspath(os.path.join(dirpath, f))
+            TimeIDX = GetTransectTimesIDX(filename,str(CruiceIndex.getAttribute('code')))
+            start_time,log_start,stop_time,lat_start,lat_stop,lon_start,lon_stop = GetTransectTimes(filename,str(CruiceIndex.getAttribute('code')))
+        if filenames == []: 
+            
+            
+            for path, subdirs, files in os.walk(directory2Data.dir_acoustic_data):
+                for name in files:
+                    if 'ListUserFile20__L'in os.path.join(path,name): 
+                        try: 
+                            copyfile(os.path.join(path,name),directory2Data.dir_src+'\EKLUF20\\'+name)
+                        except shutil.SameFileError: 
+                            k=1
+                        break
+                    
+            for dirpath,_,filenames in os.walk(directory2Data.dir_src + '/EKLUF20/'):
+                for f in filenames:
+                    filename =  os.path.abspath(os.path.join(dirpath, f))
+                    TimeIDX = GetTransectTimesIDX(filename,str(CruiceIndex.getAttribute('code')))
+                    start_time,log_start,stop_time,lat_start,lat_stop,lon_start,lon_stop = GetTransectTimes(filename,str(CruiceIndex.getAttribute('code')))
+                
+        
+    return  start_time,log_start,stop_time,lat_start,lat_stop,lon_start,lon_stop, TimeIDX
+    
+    
+def ComListOfFiles(directory2Data,beam_mode):
+    #This function makes an idx of all files
+
+
+    #Open the IDX files
+    try:
+        fd = open(directory2Data.dir_src+'/'+beam_mode+'pingtime.csv','r')
+        fd2 = open(directory2Data.dir_src+'/'+beam_mode+'FileList.csv','r')
+        fd3 = open(directory2Data.dir_src+'/'+beam_mode+'IDX.csv','r')
+        fd4 = open(directory2Data.dir_src+'/'+beam_mode+'BeamIDX.csv','r')
+#        fd5 = open(directory2Data.dir_src+'/'+beam_mode+'LogDist.csv','r')
+
+
+        A = np.asarray(fd.read().split(','))[:-1]
+        B = np.asarray(fd2.read().split(','))[:-1]
+        C = np.asarray(fd3.read().split(','))[:-1]
+        D = np.asarray(fd4.read().split(','))[:-1]
+        CompleteListOfFiles = np.array((A.T,B.T,C.T)).T
+ # If the files don't exist, create them
+    except FileNotFoundError:
+
+
+        #Sort all the .nc files
+        ListOfFiles = np.sort(os.listdir(directory2Data.dir_rawdata))
+
+         #open and rewrite IDX files
+        fd = open(directory2Data.dir_src+'/'+beam_mode+'pingtime.csv','w')
+        fd2 = open(directory2Data.dir_src+'/'+beam_mode+'FileList.csv','w')
+        fd3 = open(directory2Data.dir_src+'/'+beam_mode+'IDX.csv','w')
+        fd4 = open(directory2Data.dir_src+'/'+beam_mode+'BeamIDX.csv','w')
+#        fd5 = open(directory2Data.dir_src+'/'+beam_mode+'LogDist.csv','w')
+
+
+
+        #This helps to prevent opening and closing the same file multiple times
+        oldFileName = ''
+
+        
+        #Loop through each file
+        CompleteListOfFiles = []
+        for i in range(len(ListOfFiles)):
+
+            #Print progress
+            printProgressBar(i+1,len(ListOfFiles),prefix = 'Stacking: ', suffix = 'Completed', length = 50)
+
+
+            try: 
+                #If this is a new file, close the last and open this
+                if ListOfFiles[i]!=oldFileName:
+                    try:
+                        fid_nc.close()
+                    except:
+                        k=1
+    
+                    fid_nc = Dataset(os.path.join(directory2Data.dir_rawdata, ListOfFiles[i]),'r')
+                    oldFileName = ListOfFiles[i]
+    
+                #Get the correct beam group
+                if fid_nc.groups['Sonar'].groups['Beam_group1'].beam_mode == beam_mode:
+                    beamgrp = 'Beam_group1'
+    
+                elif fid_nc.groups['Sonar'].groups['Beam_group2'].beam_mode == beam_mode:
+                    beamgrp = 'Beam_group2'
+    
+    
+    
+                #Get the beam data
+                beam_data = fid_nc.groups['Sonar'].groups[beamgrp]
+    
+    
+                #Loop through each ping
+                for ii in range(len(beam_data.variables['ping_time'])):
+#                    timeID = np.where(abs(beam_data.variables['ping_time'][ii]-fid_nc.groups['Platform'].variables['time1'][:]/100)==
+#                                          np.nanmin(abs(beam_data.variables['ping_time'][ii]-fid_nc.groups['Platform'].variables['time1'][:]/100)))
+                    
+                    
+                    fd.write(str(beam_data.variables['ping_time'][ii])+',')
+                    fd2.write(ListOfFiles[i]+',')
+                    fd3.write(str(ii)+',')
+                    fd4.write(beamgrp+',')
+            except: 
+                print('   *bad ping*')
+                
+                #Close files
+        fd.close()
+        fd2.close()
+        fd3.close()
+        fd4.close()
+        
+        
+        #Reopen the files
+        fd=open(directory2Data.dir_src+'/'+beam_mode+'pingtime.csv','r')
+        fd2=open(directory2Data.dir_src+'/'+beam_mode+'FileList.csv','r')
+        fd3=open(directory2Data.dir_src+'/'+beam_mode+'IDX.csv','r')
+        fd4 = open(directory2Data.dir_src+'/'+beam_mode+'BeamIDX.csv','r')
+        
+        #Get the IDX information
+        A = np.asarray(fd.read().split(','))[:-1]
+        B = np.asarray(fd2.read().split(','))[:-1]
+        C = np.asarray(fd3.read().split(','))[:-1]
+        D = np.asarray(fd4.read().split(','))[:-1]
+#        logdist = np.asarray(fd5.read().split(','))[:-1]
+        CompleteListOfFiles = np.array((A.T,B.T,C.T)).T
+
+ #Close the files
+        fd.close()
+        fd2.close()
+        fd3.close()
+        fd4.close()
+#        fd5.close()
+        
+        
+    return CompleteListOfFiles, D
+
+
+
+def GetTransectTimesIDX(filename,code):
+
+    
+    doc2 = etree.parse(filename)
+    distance_list = doc2.find('distance_list')
+    old_stop = ''
+    Start = 0
+    End = []
+    transect_IDX = []
+    transect_i = 1
+#    new_start = False
+
+    start_time = []
+#    log_start = []
+    stop_time = []
+#    lat_start = []
+#    lon_start = []
+#    lat_stop = []
+#    lon_stop = []
+    
+    
+    for i in distance_list:
+        
+        start_time = i.get('start_time').replace(' ','T').replace('-','').replace(':','')
+#        log_start = i.get('log_start')
+        stop_time = i.find('stop_time').text.replace(' ','T').replace('-','').replace(':','')
+#        lat_start = i.find('lat_start').text
+#        lon_start = i.find('lon_start').text
+#        lat_stop = i.find('lat_stop').text
+#        lon_stop = i.find('lon_start').text
+#
+#    return start_time,log_start,stop_time,lat_start,lat_stop,lon_start,lon_stop
+#        print(start_time)
+#        print(log_start,lon_stop)
+#
+        if transect_i <10: 
+            trnsID = '00'+str(transect_i)
+        elif transect_i <100: 
+            trnsID = '0'+str(transect_i)
+        else:
+            trnsID = str(transect_i)
+        
+            
+        if old_stop!=start_time: 
+            End = np.hstack((End,old_stop))
+            Start = np.hstack((Start,start_time))
+            transect_IDX = np.hstack((transect_IDX,code + '_'+trnsID))
+            transect_i = transect_i+1
+            
+            
+            
+        if Start == 0:
+            Start = start_time
+            transect_IDX = np.hstack((transect_IDX,code + '_'+trnsID))
+            transect_i = transect_i+1
+    
+            
+        old_stop = stop_time
+
+    #add last time
+    End = np.hstack((End,stop_time))
+    
+    
+    TimeIDX  = np.vstack((transect_IDX.T,Start[1:].T,End[1:].T)).T
+    return TimeIDX
       
     
     
@@ -483,6 +679,43 @@ def TransectTimeIDX(CruiceIndex):
     
     
     
+    #@jit
+def GetShortListOfFiles(CompleteListOfFiles,startTime,endTime):
+    ShortListOfFiles = []
+
+    for i in range(len(CompleteListOfFiles[:][:])):
+        
+        printProgressBar(i + 1, len(CompleteListOfFiles[:,0]), prefix = 'Make short list:', suffix = 'Completed       ', length = 50)
+        
+#        print(CompleteListOfFiles[:][i])
+        
+        start = SecondsBetweenTransect(startTime,int(CompleteListOfFiles[:][i][0]))
+        end = SecondsBetweenTransect(endTime,int(CompleteListOfFiles[:][i][0]))
+        
+        
+        if start<0:
+            if end >0:
+                if ShortListOfFiles == []:
+                    ShortListOfFiles = CompleteListOfFiles[i,:]
+                else:
+                    ShortListOfFiles = np.vstack((ShortListOfFiles,CompleteListOfFiles[i,:]))
+
+    return ShortListOfFiles
+    
+    
+    
+def SecondsBetweenTransect(startTime,unixtime):
+
+    fulldate = datetime.datetime.strptime('1601-01-01 00:00:00.000',"%Y-%m-%d %H:%M:%S.%f")
+
+    starten =  datetime.datetime.strptime(startTime,"%Y%m%d%H%M%S")
+
+    fulldate = (starten-fulldate).total_seconds() #datetime.timedelta(milliseconds=int(startTime))
+
+    seconds = fulldate-unixtime/10000000
+
+    return seconds
+
     
         
         
@@ -892,15 +1125,19 @@ def ComputeDistance(travelDist,lat,lon):
 class GetVariablesFromNC(object):
     
     def __init__(self,fileID,beamgrp,Files,fileIDX):
+        
+        
         if type(beamgrp) == np.str: 
             bmgrp = beamgrp
         else:
             bmgrp = beamgrp[fileIDX]
         
-        if Files == False:
-            fIDX = int(fileIDX)
-        else: 
-            fIDX = int(Files[fileIDX,2])
+        fIDX = fileIDX
+           
+#        if Files == False:
+#            fIDX = int(fileIDX)
+#        else: 
+#            fIDX = int(Files[fileIDX,2])
         
         #Get beam sonar configuration info   
         try: 

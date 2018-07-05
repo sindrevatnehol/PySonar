@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Thu Jul  5 11:39:22 2018
+
+@author: sindrev
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Wed Apr 25 15:55:04 2018
 
 @author: sindrev
@@ -39,7 +46,7 @@ def haversine(lon1, lat1, lon2, lat2):
 
 def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,
                       R_s,res,directory2Data,dirnc,beamgrp,start_time,
-                      log_start,stop_time,lat_start,lat_stop,lon_start,lon_stop): 
+                      log_start,stop_time,lat_start,lat_stop,lon_start,lon_stop,ping_idx): 
 
     
     
@@ -55,16 +62,16 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,
     
     
     
-    
     #Loop through all files within the time interval
-    for filename_index in range(0,len(ListOfFilesWithinTimeInterval[:,0])):
+    for filename_index in range(0,len(ListOfFilesWithinTimeInterval)):
         
         #Print the progression
-        tools.printProgressBar(filename_index + 1, len(ListOfFilesWithinTimeInterval[:,0]), prefix = 'Make Vertical:', suffix = 'Completed', length = 50)
+        tools.printProgressBar(filename_index + 1, len(ListOfFilesWithinTimeInterval), prefix = 'Make Vertical:', suffix = 'Completed', length = 50)
         
         
         #Get the full path name
-        filename = os.path.join(dirnc,ListOfFilesWithinTimeInterval[filename_index,1])
+        filename = os.path.join(dirnc,ListOfFilesWithinTimeInterval[filename_index])
+        
         
         #Load the nc file
         fileID = Dataset(filename,'r',format = 'NETCDF4')
@@ -80,68 +87,68 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,
             
         #Get the vertical beam data
         #FIKS slik at den henter vertikal data
-        variables = tools.GetVariablesFromNC(fileID,beamgrp,ListOfFilesWithinTimeInterval,filename_index)
+        variables = tools.GetVariablesFromNC(fileID,beamgrp,ListOfFilesWithinTimeInterval,ping_idx[filename_index])
         fileID.close()
             
             
-        try: 
-            #The sonar data often includes corrputed value of 
-            #the transmit power that destroys the analysis. 
-            #This will fix this problum, but the sv values are not
-            #correct. 
-            #ADD this data should be labeled when making the work files
-            #so the user can now that it is corrupted.
-            if variables.transmitpower == 0: 
-                variables.transmitpower = 4633
-                
-    
-    
-                
-                
-            #Compute the sv and TS 
-            #ADD TS are not used here !!!
-            sv, RangeOut= tools.ApplyTVG(10*np.log10(variables.BeamAmplitudeData),
-                                    variables.soundvelocity[0],
-                                    variables.sampleinterval,
-                                    variables.transmitpower,
-                                    variables.absorptioncoefficient[0],
-                                    variables.frequency,
-                                    variables.pulslength,
-                                    variables.gaintx,
-                                    variables.equivalentbeamangle,
-                                    variables.sacorrection,
-                                    variables.dirx)
-                
+#        try: 
+        #The sonar data often includes corrputed value of 
+        #the transmit power that destroys the analysis. 
+        #This will fix this problum, but the sv values are not
+        #correct. 
+        #ADD this data should be labeled when making the work files
+        #so the user can now that it is corrupted.
+        if variables.transmitpower == 0: 
+            variables.transmitpower = 4633
             
-            #Remove data too close to the vessel
-            sv[np.where(RangeOut<=RemoveToCloseValues)] = np.nan
-               
+
+
+            
+            
+        #Compute the sv and TS 
+        #ADD TS are not used here !!!
+        sv, RangeOut= tools.ApplyTVG(10*np.log10(variables.BeamAmplitudeData),
+                                variables.soundvelocity[0],
+                                variables.sampleinterval,
+                                variables.transmitpower,
+                                variables.absorptioncoefficient[0],
+                                variables.frequency,
+                                variables.pulslength,
+                                variables.gaintx,
+                                variables.equivalentbeamangle,
+                                variables.sacorrection,
+                                variables.dirx)
+            
+        
+        #Remove data too close to the vessel
+        sv[np.where(RangeOut<=RemoveToCloseValues)] = np.nan
            
-            sv[:,np.where(variables.dirx>=60)] = np.nan
+       
+        sv[:,np.where(variables.dirx>=60)] = np.nan
 #            sv[np.where(sv<-65)] = np.nan
-               
-               
-            #Stack the vertical beam data
-            if DataMatrix == []:
+           
+           
+        #Stack the vertical beam data
+        if DataMatrix == []:
+            sv_x,sv_y = sv.shape
+            
+            DataMatrix = 10**(sv/10)[:,:,np.newaxis]
+            time0 = variables.time
+            ping_counter = ping_counter+1
+            
+        else: 
+            if sv_x>sv.shape[0]: 
+                sv=np.append(sv,np.nan*np.ones((sv_x-sv.shape[0],sv_y)),axis=0)
+            elif sv_x<sv.shape[0]: 
+                DataMatrix=np.append(DataMatrix,np.nan*np.ones((sv.shape[0]-sv_x,sv_y,DataMatrix.shape[2])),axis=0)
                 sv_x,sv_y = sv.shape
                 
-                DataMatrix = 10**(sv/10)[:,:,np.newaxis]
-                time0 = variables.time
-                ping_counter = ping_counter+1
-                
-            else: 
-                if sv_x>sv.shape[0]: 
-                    sv=np.append(sv,np.nan*np.ones((sv_x-sv.shape[0],sv_y)),axis=0)
-                elif sv_x<sv.shape[0]: 
-                    DataMatrix=np.append(DataMatrix,np.nan*np.ones((sv.shape[0]-sv_x,sv_y,DataMatrix.shape[2])),axis=0)
-                    sv_x,sv_y = sv.shape
-                    
-                DataMatrix = np.dstack((DataMatrix,10**(sv/10)[:,:,np.newaxis]))
-                time0=np.hstack((time0,variables.time))
-                ping_counter = ping_counter+1
+            DataMatrix = np.dstack((DataMatrix,10**(sv/10)[:,:,np.newaxis]))
+            time0=np.hstack((time0,variables.time))
+            ping_counter = ping_counter+1
             
-        except AttributeError:
-            print('* bad file')
+#        except AttributeError:
+#            print('* bad file')
         
             
             
