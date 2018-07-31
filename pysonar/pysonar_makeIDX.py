@@ -122,28 +122,23 @@ def getLuf20Info(directory2Data,code):
 def readIDX(directory2Data,beam_mode):
     
     from netCDF4 import Dataset
-    import numpy as np
     
     print('Read IDX')
     f = Dataset(directory2Data.dir_src+'/IDX_'+beam_mode+'.nc','r')
     
-    
-    Time = f.groups['IDXinfo'].variables['ping_time'][:]
-
-        
-        
-    
-
     liste = {}
 
     liste['ping_time'] = f.groups['IDXinfo'].variables['ping_time'][:]
-    liste['FileList'] = f.groups['IDXinfo'].variables['FileList'][:]
+    print('Read IDX - time')
     liste['IDX'] = f.groups['IDXinfo'].variables['IDX'][:]
+    print('Read IDX - idx')
     liste['BeamIDX'] = f.groups['IDXinfo'].variables['BeamIDX'][:]
+    print('Read IDX - beam')
+    liste['FileList'] = f.groups['IDXinfo'].variables['FileList'][:]
+    print('Read IDX - files')
     
     f.close()
     
-    print('IDX is read')
     return liste
 
     
@@ -169,14 +164,6 @@ def makeIDX(directory2Data,beam_mode):
     print('Got list of files')
 
     
-    
-    
-    
-    
-    ping_time = []
-    FileList = []
-    IDX = []
-    BeamIDX = []
 
     tot_index = 0
 
@@ -208,7 +195,6 @@ def makeIDX(directory2Data,beam_mode):
         
         
 
-#        try: 
             #If this is a new file, close the last and open this
         if ListOfFiles[i]!=oldFileName:
             try:
@@ -234,12 +220,6 @@ def makeIDX(directory2Data,beam_mode):
 
         #Loop through each ping
         for ii in range(len(beam_data.variables['ping_time'][:])):
-            ping_time = np.hstack((ping_time,beam_data.variables['ping_time'][ii]))
-            
-#                FileList = np.hstack((FileList,ListOfFiles[i]))
-#                IDX = np.hstack((IDX,ii))
-#                BeamIDX = np.hstack((BeamIDX,beamgrp))
-
             
             FileL[tot_index] = str(ListOfFiles[i])#FileList
             idx[tot_index] = ii
@@ -251,10 +231,6 @@ def makeIDX(directory2Data,beam_mode):
 
     
             tot_index = tot_index +1
-                    
-        
-#        except: 
-#            dummy = 1
 
         
     f.close()

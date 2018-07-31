@@ -8,7 +8,7 @@ from tools import tools
 from shutil import copyfile
 import scipy.io as sc
 from MakeSearch import MakeSearch
-from MakeVerticalIndex import MakeVerticalIndex
+from Index import MakeVerticalIndex
 from MakeVerticalIndex import haversine
 from VerticalLuf20 import MakeVerticalLuf20
 from MakeWork import MakeWork

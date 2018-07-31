@@ -32,10 +32,12 @@ def doVerticalProcess(directory2Data,idx_list,LUF20_info_list,liste,RemoveToClos
     import numpy as np
     import random, os
     from pysonar_makeverticalIDX import MakeVerticalIndex
+    from VerticalLuf20 import MakeVerticalLuf20
     
     
     
-    start_time=LUF20_info_list['start_time']
+    
+    start_time= LUF20_info_list['start_time']
     log_start = LUF20_info_list['log_start']
     stop_time = LUF20_info_list['stop_time']
     lat_start = LUF20_info_list['lat_start']
@@ -66,6 +68,7 @@ def doVerticalProcess(directory2Data,idx_list,LUF20_info_list,liste,RemoveToClos
         
         
     
+        
         start = SecondsBetweenTransect(start_time[Transect].replace('T',''),idx_list['ping_time'])
         end = SecondsBetweenTransect(stop_time[Transect].replace('T',''),idx_list['ping_time'])
         
@@ -123,11 +126,4 @@ def doVerticalProcess(directory2Data,idx_list,LUF20_info_list,liste,RemoveToClos
                 
                         
                         
-                
-    #Make Report files               
-#    tools.MakeVerticalLuf20(CompleteListOfFiles_vertical,directory2Data, nation,cruice_id,vplatform)
-#    tools.mergexml(directory2Data.dir_result+'\Vertical',directory2Data.dir_result)
-    
-
-
     
