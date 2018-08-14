@@ -12,7 +12,7 @@ import glob, datetime, time
 from shutil import copyfile
 from xml.etree import ElementTree as ET
 import Raw2NetcdfConverter
-from numba import jit 
+#from numba import jit 
 from lxml import etree
 from netCDF4 import Dataset
 
@@ -870,7 +870,7 @@ def ApplyTVG(AmplitudeData,soundvelocity,sampleinterval,transmitpower,
     
     
     
-@jit
+#@jit
 def ConvertToechogram(Wdist,sv_mat):
     '''
     Purpose
@@ -897,7 +897,7 @@ def ConvertToechogram(Wdist,sv_mat):
     return sA
     
     
-@jit
+#@jit
 def ConvertToechogram2(Wdist1,Wdist2,Wdist3,Wdist4,sv_mat,rangen):
     sA = np.array([])
     sA2 = np.array([])
@@ -924,7 +924,7 @@ def ConvertToechogram2(Wdist1,Wdist2,Wdist3,Wdist4,sv_mat,rangen):
     
     
     
-@jit
+#@jit
 def GetDistanceMatrix(DistanceMatrix,RangeMatrix,BeamDirectionMatrix,svMatrix,theta_tilt,BananaTool):   
     '''
     This function computes the distance matrix. 
