@@ -8,7 +8,7 @@ from tools import tools
 from shutil import copyfile
 import scipy.io as sc
 from MakeSearch import MakeSearch
-from Index import MakeVerticalIndex
+#from Index import MakeVerticalIndex
 from MakeVerticalIndex import haversine
 from VerticalLuf20 import MakeVerticalLuf20
 from MakeWork import MakeWork
@@ -364,7 +364,7 @@ def main(threshold, RemoveToCloseValues, R_s, recompute, reconvert,GO_horizontal
     #Get the work directory to where all the files is stoored
     #This should be merged with the one above
     WorkDirectory = OS+ '/mea/2018_Redus'
-#    WorkDirectory = 'F:'
+    WorkDirectory = 'F:'
 
 
 
@@ -386,7 +386,7 @@ def main(threshold, RemoveToCloseValues, R_s, recompute, reconvert,GO_horizontal
     #Loop through each cruice
     for CruiceIndex in CruiceCode:
         
-        
+        print(CruiceIndex)
         
         
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -438,8 +438,8 @@ def main(threshold, RemoveToCloseValues, R_s, recompute, reconvert,GO_horizontal
                 
                 
                 
-        tools.DataConverter(CruiceIndex,WorkDirectory,os.getcwd(),maxPingInFile,
-                  MaxNumberOfFilesInNC,directory2Data, reconvert)
+#        tools.DataConverter(CruiceIndex,WorkDirectory,os.getcwd(),maxPingInFile,
+#                  MaxNumberOfFilesInNC,directory2Data, reconvert)
                 
 #        #Convert raw file to netcdf                   
 #        print('    *Convert .raw data                     ',end='\r') 
@@ -501,9 +501,9 @@ def main(threshold, RemoveToCloseValues, R_s, recompute, reconvert,GO_horizontal
             
         #Get transect-times from Luf20
         #A system to copy the files from server must be implemented
-        print('Scanning LUF20',end='\r')
         start_time,log_start,stop_time,lat_start,lat_stop,lon_start,lon_stop, TimeIDX = GetLuf20Info(directory2Data,CruiceIndex)
         print('LUF20 scanned',end='\r')
+        print('Scanning LUF20',end='\r')
                 
                 
                 
@@ -640,111 +640,111 @@ def main(threshold, RemoveToCloseValues, R_s, recompute, reconvert,GO_horizontal
             
                 
         #Loop through each transect in a randomized maner
-        if GO_vertical == True: 
-            
-            
-            
-            
-            
-            #Get transact list and randomise it
-            NumTransect = np.arange(len(start_time))
-            random.shuffle(NumTransect)
-            
-            
-            
-            
-            
-            
-            #Loop through each transect
-            for Transect in NumTransect:
-                print('    -Start on log distance: '+ log_start[Transect]=#,end='\r')
-    
-                
-                
-                
-                
-                
-                
-                #Go through each equipment
-                for eqip in SonarEquipment:
-                    if eqip == CruiceIndex.getAttribute("Equipment"):
-                        if not os.path.isfile(directory2Data.dir_work+'/'+'Vertical_T'+str(log_start[Transect])+'.mat'): 
-                    
-                            
-                            print('Start making short list')
-                            #Get list of files in one transect
-                            ShortListOfFiles = GetShortListOfFiles(CompleteListOfFiles_vertical,
-                                                                   start_time[Transect].replace('T','')
-                                                                   ,stop_time[Transect].replace('T',''))
-    
-                            
-                            
-                            
-                            if not ShortListOfFiles == []:
-                                MakeVerticalIndex(ShortListOfFiles
-                                                  ,RemoveToCloseValues
-                                                  ,R_s,res
-                                                  ,directory2Data
-                                                  ,directory2Data.dir_rawdata
-                                                  ,beamgrp_vert,
-                                                  start_time[Transect],
-                                                  log_start[Transect],
-                                                  stop_time[Transect],
-                                                  lat_start[Transect],
-                                                  lat_stop[Transect],
-                                                  lon_start[Transect],
-                                                  lon_stop[Transect])
-                                
-                                
-
-                            else: 
-                                sc.savemat(directory2Data.dir_work+'/'+'Vertical_T'+str(log_start[Transect])+'.mat',mdict={'empty':0})
-                                
-                                
-                                
-                        elif recompute == True: 
-                    
-                            
-                            
-                            #Get list of files in one transect
-                            ShortListOfFiles = GetShortListOfFiles(CompleteListOfFiles_vertical,
-                                                                   start_time[Transect].replace('T','')
-                                                                   ,stop_time[Transect].replace('T',''))
-    
-                            
-                            
-                            if not ShortListOfFiles == []:
-                                MakeVerticalIndex(ShortListOfFiles
-                                                  ,RemoveToCloseValues
-                                                  ,R_s,res
-                                                  ,directory2Data
-                                                  ,directory2Data.dir_rawdata
-                                                  ,beamgrp_vert,
-                                                  start_time[Transect],
-                                                  log_start[Transect],
-                                                  stop_time[Transect],
-                                                  lat_start[Transect],
-                                                  lat_stop[Transect],
-                                                  lon_start[Transect],
-                                                  lon_stop[Transect])
-                                
-                                
-
-                            else: 
-                                sc.savemat(directory2Data.dir_work+'/'+'Vertical_T'+str(log_start[Transect])+'.mat',mdict={'empty':0})
-    
-
-                                
-                            
-            print('     -finnished making log distance ',end='\r')
-                
-                                
-                                
-                                
-                        
-            #Make Report files               
-            MakeVerticalLuf20(CompleteListOfFiles_vertical,directory2Data, nation,cruice_id,vplatform)
-            tools.mergexml(directory2Data.dir_result+'\Vertical',directory2Data.dir_result)
+#        if GO_vertical == True: 
+#            
+#            
+#            
+#            
+#            
+#            #Get transact list and randomise it
+#            NumTransect = np.arange(len(start_time))
+#            random.shuffle(NumTransect)
+#            
+#            
+#            
+#            
+#            
+#            
+#            #Loop through each transect
+#            for Transect in NumTransect:
+#                print('    -Start on log distance: '+ log_start[Transect]=#,end='\r')
+#    
+#                
+#                
+#                
+#                
+#                
+#                
+#                #Go through each equipment
+#                for eqip in SonarEquipment:
+#                    if eqip == CruiceIndex.getAttribute("Equipment"):
+#                        if not os.path.isfile(directory2Data.dir_work+'/'+'Vertical_T'+str(log_start[Transect])+'.mat'): 
+#                    
+#                            
+#                            print('Start making short list')
+#                            #Get list of files in one transect
+#                            ShortListOfFiles = GetShortListOfFiles(CompleteListOfFiles_vertical,
+#                                                                   start_time[Transect].replace('T','')
+#                                                                   ,stop_time[Transect].replace('T',''))
+#    
+#                            
+#                            
+#                            
+#                            if not ShortListOfFiles == []:
+#                                MakeVerticalIndex(ShortListOfFiles
+#                                                  ,RemoveToCloseValues
+#                                                  ,R_s,res
+#                                                  ,directory2Data
+#                                                  ,directory2Data.dir_rawdata
+#                                                  ,beamgrp_vert,
+#                                                  start_time[Transect],
+#                                                  log_start[Transect],
+#                                                  stop_time[Transect],
+#                                                  lat_start[Transect],
+#                                                  lat_stop[Transect],
+#                                                  lon_start[Transect],
+#                                                  lon_stop[Transect])
+#                                
+#                                
+#
+#                            else: 
+#                                sc.savemat(directory2Data.dir_work+'/'+'Vertical_T'+str(log_start[Transect])+'.mat',mdict={'empty':0})
+#                                
+#                                
+#                                
+#                        elif recompute == True: 
+#                    
+#                            
+#                            
+#                            #Get list of files in one transect
+#                            ShortListOfFiles = GetShortListOfFiles(CompleteListOfFiles_vertical,
+#                                                                   start_time[Transect].replace('T','')
+#                                                                   ,stop_time[Transect].replace('T',''))
+#    
+#                            
+#                            
+#                            if not ShortListOfFiles == []:
+#                                MakeVerticalIndex(ShortListOfFiles
+#                                                  ,RemoveToCloseValues
+#                                                  ,R_s,res
+#                                                  ,directory2Data
+#                                                  ,directory2Data.dir_rawdata
+#                                                  ,beamgrp_vert,
+#                                                  start_time[Transect],
+#                                                  log_start[Transect],
+#                                                  stop_time[Transect],
+#                                                  lat_start[Transect],
+#                                                  lat_stop[Transect],
+#                                                  lon_start[Transect],
+#                                                  lon_stop[Transect])
+#                                
+#                                
+#
+#                            else: 
+#                                sc.savemat(directory2Data.dir_work+'/'+'Vertical_T'+str(log_start[Transect])+'.mat',mdict={'empty':0})
+#    
+#
+#                                
+#                            
+#            print('     -finnished making log distance ',end='\r')
+#                
+#                                
+#                                
+#                                
+#                        
+#            #Make Report files               
+#            MakeVerticalLuf20(CompleteListOfFiles_vertical,directory2Data, nation,cruice_id,vplatform)
+#            tools.mergexml(directory2Data.dir_result+'\Vertical',directory2Data.dir_result)
     
         
         
@@ -765,8 +765,8 @@ if __name__ == '__main__':
     #Some user innputt that will be selectable as inputs
     recompute = False
     reconvert = False
-    GO_horizontal = False
-    GO_vertical = True
+    GO_horizontal = True
+    GO_vertical = False
     Stack = True
     
     

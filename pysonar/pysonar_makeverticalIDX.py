@@ -179,11 +179,11 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,
         
         
     #Try saving the data
-#    try: 
-    scp.savemat(directory2Data.dir_work+'/'+'Vertical_T'+str(transectID)+'.mat',mdict = {'r_mask':r_mask,'b_mask':b_mask,'ping_mask':ping_mask,
+    try: 
+        scp.savemat(directory2Data.dir_work+'/'+'Vertical_T'+str(transectID)+'.mat',mdict = {'r_mask':r_mask,'b_mask':b_mask,'ping_mask':ping_mask,
                 'start_time':start_time,'log_start':log_start,'stop_time':stop_time,'lat_start':lat_start,'lat_stop':lat_stop,'lon_start':lon_start,'lon_stop':lon_stop})
-#    except TypeError: 
-#        print(start_time,log_start,stop_time,lat_start,lat_stop,lon_start,lon_stop)
+    except TypeError: 
+        print(start_time,log_start,stop_time,lat_start,lat_stop,lon_start,lon_stop)
     
     
         
