@@ -1176,22 +1176,27 @@ class GetVariablesFromNC(object):
             
             self.BeamAmplitudeData =(BeamAmplitudeDataIM**2 + BeamAmplitudeDataReal**2)
             
-            
-            NMEA_time= fileID.groups['Platform'].variables[fileID.groups['Platform'].variables['longitude'].dimensions[0]][:]/100
-            Latitude = fileID.groups['Platform'].variables['latitude'][:]
-            Longitude = fileID.groups['Platform'].variables['longitude'][:]
-            
-            NMEA_idx = np.where(abs(NMEA_time-pingtime)==np.min(abs(NMEA_time-pingtime)))
-            #Get NMEA data
-            self.Longitude = Longitude[NMEA_idx]
-            self.Latitude = Latitude[NMEA_idx]
-            self.NMEA_time = NMEA_time[NMEA_idx]
-            
+            try: 
+                NMEA_time= fileID.groups['Platform'].variables[fileID.groups['Platform'].variables['longitude'].dimensions[0]][:]/100
+                Latitude = fileID.groups['Platform'].variables['latitude'][:]
+                Longitude = fileID.groups['Platform'].variables['longitude'][:]
+                
+                NMEA_idx = np.where(abs(NMEA_time-pingtime)==np.min(abs(NMEA_time-pingtime)))
+                #Get NMEA data
+                self.Longitude = Longitude[NMEA_idx]
+                self.Latitude = Latitude[NMEA_idx]
+                self.NMEA_time = NMEA_time[NMEA_idx]
+                            
+            except KeyError: 
+                print('Bad variable innput in file')
+                self.Longitude = np.nan
+                self.Latitude = np.nan
+                self.NMEA_time = np.nan
+                            
+
 
         except IndexError: 
             k=1
-        except KeyError: 
-            print('Bad variable innput in file')
 
 
 
