@@ -1190,6 +1190,8 @@ class GetVariablesFromNC(object):
 
         except IndexError: 
             k=1
+        except KeyError: 
+            print('Bad variable innput in file')
 
 
 
