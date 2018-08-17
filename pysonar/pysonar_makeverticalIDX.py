@@ -442,140 +442,140 @@ def MakeReport(CompleteListOfFiles,directory2Data, nation,cruice_id,platform):
         ##                            print('bad ping')
         #    
         #            
-                A =  np.nansum(NASC,axis=1)[:,np.newaxis]/len(NASC[0,:])
-                A = A*(1852**2)*pel_ch_thickness*4*np.pi
-        
-                
-                
-                Liste = {}
-                Liste['Report_time'] = str(datetime.datetime.fromtimestamp((time.time())).strftime('%Y-%m-%d %H:%M:%S'))
-                
-                #General overview
-                Liste['Instrument'] = {}
-                Liste['Calibration'] = {}
-                Liste['DataAcquisition'] = {}
-                Liste['DataProcessingMethod'] = {}
-                Liste['Cruice'] = {}
-        
-        
-        
-                #Instrument section
-                
-                #Må gå inn i xml fil
-                
-                Liste['Instrument']['Frequency'] = variables.frequency
-                Liste['Instrument']['TransducerLocation'] = 'AA'
-                Liste['Instrument']['TransducerManufacturer'] = 'Simrad'
-                Liste['Instrument']['TransducerModel'] = 'SU90'
-                Liste['Instrument']['TransducerSerial'] = 'Unknown'
-                Liste['Instrument']['TransducerBeamType'] = 'M2'
-                Liste['Instrument']['TransducerDepth'] = ''
-                Liste['Instrument']['TransducerOrientation'] = ''
-                Liste['Instrument']['TransducerPSI'] = ''
-                Liste['Instrument']['TransducerBeamAngleMajor'] = ''
-                Liste['Instrument']['TransducerBeamAngleMinor'] = ''
-                Liste['Instrument']['TransceiverManufacturer'] = ''
-                Liste['Instrument']['TransceiverModel'] = ''
-                Liste['Instrument']['TransceiverSerial'] = ''
-                Liste['Instrument']['TransducerOrientation'] = ''
-        
+                    A =  np.nansum(NASC,axis=1)[:,np.newaxis]/len(NASC[0,:])
+                    A = A*(1852**2)*pel_ch_thickness*4*np.pi
             
-                #Calibration Section
-                Liste['Calibration']['Date'] = ''
-                Liste['Calibration']['AcquisitionMethod'] = ''
-                Liste['Calibration']['ProcessingMethod'] = ''
-                Liste['Calibration']['AccuracyEstimate'] = ''
+                    
+                    
+                    Liste = {}
+                    Liste['Report_time'] = str(datetime.datetime.fromtimestamp((time.time())).strftime('%Y-%m-%d %H:%M:%S'))
+                    
+                    #General overview
+                    Liste['Instrument'] = {}
+                    Liste['Calibration'] = {}
+                    Liste['DataAcquisition'] = {}
+                    Liste['DataProcessingMethod'] = {}
+                    Liste['Cruice'] = {}
+            
+            
+            
+                    #Instrument section
+                    
+                    #Må gå inn i xml fil
+                    
+                    Liste['Instrument']['Frequency'] = variables.frequency
+                    Liste['Instrument']['TransducerLocation'] = 'AA'
+                    Liste['Instrument']['TransducerManufacturer'] = 'Simrad'
+                    Liste['Instrument']['TransducerModel'] = 'SU90'
+                    Liste['Instrument']['TransducerSerial'] = 'Unknown'
+                    Liste['Instrument']['TransducerBeamType'] = 'M2'
+                    Liste['Instrument']['TransducerDepth'] = ''
+                    Liste['Instrument']['TransducerOrientation'] = ''
+                    Liste['Instrument']['TransducerPSI'] = ''
+                    Liste['Instrument']['TransducerBeamAngleMajor'] = ''
+                    Liste['Instrument']['TransducerBeamAngleMinor'] = ''
+                    Liste['Instrument']['TransceiverManufacturer'] = ''
+                    Liste['Instrument']['TransceiverModel'] = ''
+                    Liste['Instrument']['TransceiverSerial'] = ''
+                    Liste['Instrument']['TransducerOrientation'] = ''
+            
                 
-        
-                #Calibration Section
-                Liste['DataAcquisition']['SoftwareName'] = ''
-                Liste['DataAcquisition']['SoftwareVersion'] = ''
-                Liste['DataAcquisition']['StoredDataFormat'] = ''
-                Liste['DataAcquisition']['StoredDataFormatVersion'] = ''
-                Liste['DataAcquisition']['ConvertedDataFormat'] = ''
-                Liste['DataAcquisition']['ConvertedDataFormatVersion'] = ''
-                Liste['DataAcquisition']['PingDutyCycle'] = ''
-        
-        
-                #Data Processing
-                Liste['DataProcessingMethod']['SoftwareName'] = 'pysonar'
-                Liste['DataProcessingMethod']['SoftwareVersion'] = '0.1'
-                Liste['DataProcessingMethod']['TriwaveCorrection '] = 'NA'
-                Liste['DataProcessingMethod']['ChannelID'] = ''
-                Liste['DataProcessingMethod']['Bandwidth'] = ''
-                Liste['DataProcessingMethod']['Frequency'] = variables.frequency
-                Liste['DataProcessingMethod']['TransceiverPower'] = variables.transmitpower
-                Liste['DataProcessingMethod']['TransmitPulseLength'] = variables.pulslength
-                Liste['DataProcessingMethod']['OnAxisGain'] = variables.gaintx
-                Liste['DataProcessingMethod']['OnAxisGainUnit'] = 'dB'
-                Liste['DataProcessingMethod']['SaCorrection'] = variables.sacorrection
-                Liste['DataProcessingMethod']['Absorption'] = variables.absorptioncoefficient[0]
-                Liste['DataProcessingMethod']['AbsorptionDescription'] = 'Nominal'
-                Liste['DataProcessingMethod']['SoundSpeed'] = variables.soundvelocity[0]
-                Liste['DataProcessingMethod']['SoundSpeedDescription'] = 'Nominal'
-                Liste['DataProcessingMethod']['TransducerPSI'] = ''
-        
-                
-        
-                #Cruice
-                Liste['Cruice']['Survey'] = ''
-                Liste['Cruice']['Country'] = 'NO'
-                Liste['Cruice']['Nation'] = nation
-                Liste['Cruice']['Platform'] = platform
-                Liste['Cruice']['StartDate'] = ''
-                Liste['Cruice']['StopDate'] = ''
-                Liste['Cruice']['Organisation'] = ''
-                Liste['Cruice']['LocalID'] = cruice_id
-        
-                print(Depth_bottom)
-        
-        
-        #        try: 
-                tiime = workfile['start_time'][0]
-                stime = tiime[:4]+'-'+tiime[4:6]+'-'+tiime[6:8]+' '+tiime[9:11]+':'+tiime[11:13]+':'+tiime[13:]
-        #        except: 
-        #            stime = ''
-        #        try: 
-                tiime = workfile['stop_time'][0]
-                etime = tiime[:4]+'-'+tiime[4:6]+'-'+tiime[6:8]+' '+tiime[9:11]+':'+tiime[11:13]+':'+tiime[13:]
-        #        except: 
-        #            etime = ''
-        
-        
-                Liste['Cruice']['Log'] = {}
-    
-    
-                Liste['Cruice']['Log']['Distance'] = workfile['log_start'][0]
-                Liste['Cruice']['Log']['TimeStart'] = stime
-                Liste['Cruice']['Log']['TimeStop'] = etime
-                Liste['Cruice']['Log']['Latitude_start'] = workfile['lat_start'][0]
-                Liste['Cruice']['Log']['Longitude_start'] = workfile['lon_start'][0]
-                Liste['Cruice']['Log']['Latitude_stop'] = workfile['lat_stop'][0]
-                Liste['Cruice']['Log']['Longitude_stop'] = workfile['lon_stop'][0]
-                Liste['Cruice']['Log']['Bottom_depth'] = Depth_bottom
-                Liste['Cruice']['Log']['Origin'] = ''
-                Liste['Cruice']['Log']['Validity'] = ''
+                    #Calibration Section
+                    Liste['Calibration']['Date'] = ''
+                    Liste['Calibration']['AcquisitionMethod'] = ''
+                    Liste['Calibration']['ProcessingMethod'] = ''
+                    Liste['Calibration']['AccuracyEstimate'] = ''
+                    
+            
+                    #Calibration Section
+                    Liste['DataAcquisition']['SoftwareName'] = ''
+                    Liste['DataAcquisition']['SoftwareVersion'] = ''
+                    Liste['DataAcquisition']['StoredDataFormat'] = ''
+                    Liste['DataAcquisition']['StoredDataFormatVersion'] = ''
+                    Liste['DataAcquisition']['ConvertedDataFormat'] = ''
+                    Liste['DataAcquisition']['ConvertedDataFormatVersion'] = ''
+                    Liste['DataAcquisition']['PingDutyCycle'] = ''
+            
+            
+                    #Data Processing
+                    Liste['DataProcessingMethod']['SoftwareName'] = 'pysonar'
+                    Liste['DataProcessingMethod']['SoftwareVersion'] = '0.1'
+                    Liste['DataProcessingMethod']['TriwaveCorrection '] = 'NA'
+                    Liste['DataProcessingMethod']['ChannelID'] = ''
+                    Liste['DataProcessingMethod']['Bandwidth'] = ''
+                    Liste['DataProcessingMethod']['Frequency'] = variables.frequency
+                    Liste['DataProcessingMethod']['TransceiverPower'] = variables.transmitpower
+                    Liste['DataProcessingMethod']['TransmitPulseLength'] = variables.pulslength
+                    Liste['DataProcessingMethod']['OnAxisGain'] = variables.gaintx
+                    Liste['DataProcessingMethod']['OnAxisGainUnit'] = 'dB'
+                    Liste['DataProcessingMethod']['SaCorrection'] = variables.sacorrection
+                    Liste['DataProcessingMethod']['Absorption'] = variables.absorptioncoefficient[0]
+                    Liste['DataProcessingMethod']['AbsorptionDescription'] = 'Nominal'
+                    Liste['DataProcessingMethod']['SoundSpeed'] = variables.soundvelocity[0]
+                    Liste['DataProcessingMethod']['SoundSpeedDescription'] = 'Nominal'
+                    Liste['DataProcessingMethod']['TransducerPSI'] = ''
+            
+                    
+            
+                    #Cruice
+                    Liste['Cruice']['Survey'] = ''
+                    Liste['Cruice']['Country'] = 'NO'
+                    Liste['Cruice']['Nation'] = nation
+                    Liste['Cruice']['Platform'] = platform
+                    Liste['Cruice']['StartDate'] = ''
+                    Liste['Cruice']['StopDate'] = ''
+                    Liste['Cruice']['Organisation'] = ''
+                    Liste['Cruice']['LocalID'] = cruice_id
+            
+                    print(Depth_bottom)
+            
+            
+            #        try: 
+                    tiime = workfile['start_time'][0]
+                    stime = tiime[:4]+'-'+tiime[4:6]+'-'+tiime[6:8]+' '+tiime[9:11]+':'+tiime[11:13]+':'+tiime[13:]
+            #        except: 
+            #            stime = ''
+            #        try: 
+                    tiime = workfile['stop_time'][0]
+                    etime = tiime[:4]+'-'+tiime[4:6]+'-'+tiime[6:8]+' '+tiime[9:11]+':'+tiime[11:13]+':'+tiime[13:]
+            #        except: 
+            #            etime = ''
+            
+            
+                    Liste['Cruice']['Log'] = {}
         
         
-                Liste['Cruice']['Log']['Sample'] = {}
-                Liste['Cruice']['Log']['Sample']['ChannelThickness'] = pel_ch_thickness
-                Liste['Cruice']['Log']['Sample']['Acocat'] = 'Unknown'
-                Liste['Cruice']['Log']['Sample']['SvThreshold'] = str(TH)
-                Liste['Cruice']['Log']['Sample']['PingAxisInterval'] = 1  #samme som integration thickness
-                Liste['Cruice']['Log']['Sample']['PingAxisIntervalType'] = 'distance'
-                Liste['Cruice']['Log']['Sample']['PingAxisIntervalUnit'] = 'nmi'
-                Liste['Cruice']['Log']['Sample']['DataValue'] = A
-                Liste['Cruice']['Log']['Sample']['DataType'] = 'C'
-                Liste['Cruice']['Log']['Sample']['DataUnit'] = 'm2nm-2'
-                Liste['Cruice']['Log']['Sample']['PhantomEchoDistance'] = PhantomEchoDist
-                Liste['Cruice']['Log']['Sample']['PhantomEchoWidth'] = PhantomEchoWidth
-                
+                    Liste['Cruice']['Log']['Distance'] = workfile['log_start'][0]
+                    Liste['Cruice']['Log']['TimeStart'] = stime
+                    Liste['Cruice']['Log']['TimeStop'] = etime
+                    Liste['Cruice']['Log']['Latitude_start'] = workfile['lat_start'][0]
+                    Liste['Cruice']['Log']['Longitude_start'] = workfile['lon_start'][0]
+                    Liste['Cruice']['Log']['Latitude_stop'] = workfile['lat_stop'][0]
+                    Liste['Cruice']['Log']['Longitude_stop'] = workfile['lon_stop'][0]
+                    Liste['Cruice']['Log']['Bottom_depth'] = Depth_bottom
+                    Liste['Cruice']['Log']['Origin'] = ''
+                    Liste['Cruice']['Log']['Validity'] = ''
+            
+            
+                    Liste['Cruice']['Log']['Sample'] = {}
+                    Liste['Cruice']['Log']['Sample']['ChannelThickness'] = pel_ch_thickness
+                    Liste['Cruice']['Log']['Sample']['Acocat'] = 'Unknown'
+                    Liste['Cruice']['Log']['Sample']['SvThreshold'] = str(TH)
+                    Liste['Cruice']['Log']['Sample']['PingAxisInterval'] = 1  #samme som integration thickness
+                    Liste['Cruice']['Log']['Sample']['PingAxisIntervalType'] = 'distance'
+                    Liste['Cruice']['Log']['Sample']['PingAxisIntervalUnit'] = 'nmi'
+                    Liste['Cruice']['Log']['Sample']['DataValue'] = A
+                    Liste['Cruice']['Log']['Sample']['DataType'] = 'C'
+                    Liste['Cruice']['Log']['Sample']['DataUnit'] = 'm2nm-2'
+                    Liste['Cruice']['Log']['Sample']['PhantomEchoDistance'] = PhantomEchoDist
+                    Liste['Cruice']['Log']['Sample']['PhantomEchoWidth'] = PhantomEchoWidth
+                    
+            
+                    import scipy.io as sc
+                    sc.savemat(directory2Data.dir_result+outloc+'/Vertical/Report_'+work,mdict=Liste)
+                    
         
-                import scipy.io as sc
-                sc.savemat(directory2Data.dir_result+outloc+'/Vertical/Report_'+work,mdict=Liste)
-                
-    
-                Depth_bottom = 0
+                    Depth_bottom = 0
 #            except: 
 #                
 #                from SendMail import send_email
