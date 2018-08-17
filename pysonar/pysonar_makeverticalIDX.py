@@ -74,7 +74,7 @@ def MakeVerticalIndex(ListOfFilesWithinTimeInterval,RemoveToCloseValues,
         #Get the full path name
         filename = os.path.join(dirnc,ListOfFilesWithinTimeInterval[filename_index])
         
-        
+        print(filename)
         #Load the nc file
         fileID = Dataset(filename,'r',format = 'NETCDF4')
         
@@ -210,7 +210,7 @@ def GetBottomDepth(maxlat,minlat,maxlon,minlon,delta_lat,delta_lon):
             except: 
                 dummy=1
     except: 
-        Depth = 1000
+        Depth = -1000
         print('*    Bad Depth')
     return np.min(Depth)
         
@@ -290,7 +290,7 @@ def MakeReport(CompleteListOfFiles,directory2Data, nation,cruice_id,platform):
         work = Work_list[work_i]
         if work != 'Com.mat':
 
-            try: 
+#            try: 
                 if not os.path.isfile(directory2Data.dir_result+outloc+'/Vertical/Report_'+work): 
                     
                 
@@ -462,6 +462,7 @@ def MakeReport(CompleteListOfFiles,directory2Data, nation,cruice_id,platform):
                 #Instrument section
                 
                 #Må gå inn i xml fil
+                
                 Liste['Instrument']['Frequency'] = variables.frequency
                 Liste['Instrument']['TransducerLocation'] = 'AA'
                 Liste['Instrument']['TransducerManufacturer'] = 'Simrad'
@@ -527,7 +528,6 @@ def MakeReport(CompleteListOfFiles,directory2Data, nation,cruice_id,platform):
                 Liste['Cruice']['LocalID'] = cruice_id
         
                 print(Depth_bottom)
-                print(directory2Data.dir_result+outloc+'/Vertical/Report_'+work)
         
         
         #        try: 
@@ -576,10 +576,12 @@ def MakeReport(CompleteListOfFiles,directory2Data, nation,cruice_id,platform):
                 
     
                 Depth_bottom = 0
-            except: 
-                
-                from SendMail import send_email
-                send_email('bad stuff for Report_'+work)
+#            except: 
+#                
+#                from SendMail import send_email
+#                send_email('bad stuff for Report_'+work)
+
+
         #Må generaliseres
 
 

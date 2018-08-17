@@ -6,7 +6,7 @@ Created on Tue Jul  3 14:23:28 2018
 """
 
 
-import os,platform, random
+import os,platform
 #import numpy as np
 from SendMail import send_email
 from tools import tools
@@ -79,6 +79,7 @@ def main(threshold, RemoveToCloseValues, R_s, recompute, reconvert,GO_horizontal
     #Loop through all surveys
     for lista in liste: 
         lista = '2016844'
+        lista = '2017836'
         
         
         #something for the user
@@ -126,12 +127,13 @@ def main(threshold, RemoveToCloseValues, R_s, recompute, reconvert,GO_horizontal
 #            idx_list_horizontal = readIDX(directory2Data,'Horizontal')
         
         
-        try: 
-            LUF20_info_list = getLuf20Info(directory2Data,lista)
-        except: 
+        print('Start reading LUF20')
+#        try: 
+        LUF20_info_list = getLuf20Info(directory2Data,lista)
+#        except: 
             
-            send_email('Read EKLUF20 failed for ' +lista)
-            
+#            send_email('Read EKLUF20 failed for ' +lista)
+        print('Luf20 has been read')
         
         if GO_vertical == True: 
             
@@ -144,17 +146,18 @@ def main(threshold, RemoveToCloseValues, R_s, recompute, reconvert,GO_horizontal
             
             
             print('Start process vertical')
-            doVerticalProcess(directory2Data,idx_list_vertical,LUF20_info_list,liste[lista],RemoveToCloseValues,R_s,res,randomize=True)
+#            doVerticalProcess(directory2Data,idx_list_vertical,LUF20_info_list,liste[lista],RemoveToCloseValues,R_s,res,randomize=True)
+            
             nation = liste[lista]['nation']
             cruice_id = liste[lista]['cruice_id']
             vplatform = liste[lista]['vesselCode']
             
-            
-                
+            print('Start making report per log')
             #Make Report files               
             MakeReport(idx_list_vertical,directory2Data, nation,cruice_id,vplatform)
             
             
+            print('Merge report')
             #Make the LUF report files
             reader(directory2Data, LUF20 = True, LUFICES = False)
         
