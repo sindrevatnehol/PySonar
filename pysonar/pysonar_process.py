@@ -359,7 +359,7 @@ def doVerticalProcess(directory2Data,idx_list,LUF20_info_list,liste,RemoveToClos
             
             
             
-            if not os.path.isfile(directory2Data.dir_work+'/'+'Vertical_T'+str(log_start[Transect])+'.mat'):
+            if not os.path.isfile(directory2Data.dir_verticalwork+'/'+'Vertical_T'+str(log_start[Transect])+'.mat'):
                 MakeVerticalIndex(idx_list['FileList'][short_idx]
                                               ,RemoveToCloseValues
                                               ,R_s,res

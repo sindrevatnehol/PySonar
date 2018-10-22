@@ -4,6 +4,7 @@ Created on Fri Jul  6 15:03:21 2018
 
 @author: sindrev
 """
+import time
 
 def indent(elem, level=0):
   '''
@@ -41,15 +42,28 @@ def LUF20template(directory2Data):
     from xml.etree import ElementTree as ET
     import numpy as np
     
+   
     
     
     #Loop through each work file
     first = True
     
     
+    
+
+    list1 = os.listdir(directory2Data.dir_result+'/Vertical/')
+    
+#    liste1a = 
+#    print(list1)
+    
+    list1 = [float(x.replace('Report_Vertical_T','').replace('.mat','')) for x in list1]
+    list1.sort()
+    
+    list2 = ['Report_Vertical_T'+str(s)+'.mat' for s in list1]
+
     #Loop through all files
-    for report in np.sort(os.listdir(directory2Data.dir_result+'/Vertical/')): 
-        print('printing ' + report)
+    for report in (list2): 
+        print('printing ' + report,end='\r')
         
         #Load report file
         try: 
@@ -92,7 +106,7 @@ def LUF20template(directory2Data):
             
             ET.SubElement(frequency,'quality').text =  '2'
             ET.SubElement(frequency,'bubble_corr').text =  '0'
-            ET.SubElement(frequency,'threshold').text =str(report_file['Cruice']['Log'][0][0]['Sample'][0][0]['SvThreshold'][0][0])
+            ET.SubElement(frequency,'threshold').text =str(int(report_file['Cruice']['Log'][0][0]['Sample'][0][0]['SvThreshold'][0][0]))
             ET.SubElement(frequency,'num_pel_ch').text =  str(len(report_file['Cruice']['Log'][0][0]['Sample'][0][0]['DataValue'][0][0]))
             ET.SubElement(frequency,'upper_interpret_depth').text =  '0'
             ET.SubElement(frequency,'upper_integrator_depth').text =  '0'
@@ -125,9 +139,11 @@ def LUF20template(directory2Data):
                     sa_value.set('ch',str(i+i))
                     sa_value.text = str(sa[i][0])
             
-
+            
         except: 
             print('Bad LUF')
+    report_file=[]           
+        
     #Fix the xml structure
     indent(root)
     
@@ -135,8 +151,8 @@ def LUF20template(directory2Data):
     #Write the report file
     tree = ET.ElementTree(root)
     tree.write(directory2Data.dir_result+'/ListUserFile20_SU90_vertical.xml')
-                
-    
+            
+
 
     
 

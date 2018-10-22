@@ -67,7 +67,6 @@ def main(threshold, RemoveToCloseValues, R_s, recompute, reconvert,GO_horizontal
     #Get the work directory to where all the files is stoored
     #This should be merged with the one above
     WorkDirectory = OS+ '/mea/2018_Redus'
-#    WorkDirectory = 'F:'
 
 
 
@@ -78,23 +77,19 @@ def main(threshold, RemoveToCloseValues, R_s, recompute, reconvert,GO_horizontal
     
     #Loop through all surveys
     for lista in liste: 
-        lista = '2016844'
-#        lista = '2017836'
-        
+        lista = '2018830'
         
         #something for the user
         os.system('cls' if os.name == 'nt' else 'clear')
         tools.WelcomeScreen('PySonar.py')
+        
         print('Start on survey: '+lista)
 #        send_email('Start on survey: ' +lista)
         
         
+        
         #Get the structure of all data
-#        try: 
         directory2Data = getOrganisedData(liste[lista],WorkDirectory,OS)
-#        except: 
-            
-#            send_email('Get directory2data failed for' +lista)
                 
         
         #Convert .raw to .nc 
@@ -127,44 +122,61 @@ def main(threshold, RemoveToCloseValues, R_s, recompute, reconvert,GO_horizontal
 #            idx_list_horizontal = readIDX(directory2Data,'Horizontal')
         
         
+        
+        #Process to read the LUF20 from echosounder
         print('Start reading LUF20')
-#        try: 
-        #LUF20_info_list = getLuf20Info(directory2Data,lista)
-#        except: 
-            
-#            send_email('Read EKLUF20 failed for ' +lista)
+        try: 
+            LUF20_info_list = getLuf20Info(directory2Data,lista)
+        except: 
+            send_email('Read EKLUF20 failed for ' +lista)
         print('Luf20 has been read')
+        
+        
+        
         
         if GO_vertical == True: 
             
-            
-#            try: 
-#                idx_list_vertical = readIDX(directory2Data,'Vertical')
-#            except: 
-#                makeIDX(directory2Data,'Vertical')
-#                idx_list_vertical = readIDX(directory2Data,'Vertical')
+            try: 
+                idx_list_vertical = readIDX(directory2Data,'Vertical')
+            except: 
+                makeIDX(directory2Data,'Vertical')
+                idx_list_vertical = readIDX(directory2Data,'Vertical')
             
             
             print('Start process vertical')
-#            doVerticalProcess(directory2Data1,idx_list_vertical,LUF20_info_list,liste[lista],RemoveToCloseValues,R_s,res,randomize=True)
+            try: 
+                doVerticalProcess(directory2Data,idx_list_vertical,LUF20_info_list,liste[lista],RemoveToCloseValues,R_s,res,randomize=True)
+            except: 
+                send_email('Something went wrong in doVerticalProcess')
+            
+            
             
             nation = liste[lista]['nation']
             cruice_id = liste[lista]['cruice_id']
             vplatform = liste[lista]['vesselCode']
             
+            
             print('Start making report per log')
+            
+            
             #Make Report files               
-            #MakeReport(idx_list_vertical,directory2Data, nation,cruice_id,vplatform)
+            try: 
+                MakeReport(idx_list_vertical,directory2Data, nation,cruice_id,vplatform)
+            except: 
+                send_email('Something went wrong in MakeReport')
             
             
             print('Merge report')
-            #Make the LUF report files
             
-            print(directory2Data.dir_result+'/ListUserFile20_SU90_vertical.xml')
-            #reader(directory2Data, LUF20 = True, LUFICES = False)
+            #Make the LUF report files
+            try: 
+                reader(directory2Data, LUF20 = True, LUFICES = False)
+            except: 
+                send_email('Something went wrong when merging the sonar-LUF')
         
-            print('Cruice Finnished :D')
-
+        
+            print('Cruice Finished :D')
+            send_email(lista+' is finished')
         
                     
                 
@@ -172,7 +184,6 @@ def main(threshold, RemoveToCloseValues, R_s, recompute, reconvert,GO_horizontal
                 
                 
             
-            asdfadf
             
             
             

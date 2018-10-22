@@ -98,34 +98,109 @@ def getOrganisedData(liste,WorkDirectory,OS, copy = False, reconvert = False):
             os.makedirs(directory2Data.dir_cruice)
         if not os.path.exists(directory2Data.dir_acoustic_data):
             os.makedirs(directory2Data.dir_acoustic_data)
+            
+        #Sonar
         if not os.path.exists(directory2Data.dir_su90):
             os.makedirs(directory2Data.dir_su90)
-        if not os.path.exists(directory2Data.dir_work):
-            os.makedirs(directory2Data.dir_work)
-        if not os.path.exists(directory2Data.dir_PySonar):
-            os.makedirs(directory2Data.dir_PySonar)
-        if not os.path.exists(directory2Data.dir_search):
-            os.makedirs(directory2Data.dir_search)
-        if not os.path.exists(directory2Data.dir_result):
-            os.makedirs(directory2Data.dir_result)
-        if not os.path.exists(directory2Data.dir_result+'\Horizontal'):
-            os.makedirs(directory2Data.dir_result+'\Horizontal')
-        if not os.path.exists(directory2Data.dir_result+'\Vertical'):
-            os.makedirs(directory2Data.dir_result+'\Vertical')
-        if not os.path.exists(directory2Data.dir_nc):
-            os.makedirs(directory2Data.dir_nc)
-        if not os.path.exists(directory2Data.dir_originalrawdata):
-            os.makedirs(directory2Data.dir_originalrawdata)
         if not os.path.exists(directory2Data.dir_rawdata):
             os.makedirs(directory2Data.dir_rawdata)
-        if not os.path.exists(directory2Data.dir_src):
-            os.makedirs(directory2Data.dir_src)
+        if not os.path.exists(directory2Data.dir_originalrawdata):
+            os.makedirs(directory2Data.dir_originalrawdata)
+            
+            
+        #EK60
+        if not os.path.exists(directory2Data.dir_ek60):
+            os.makedirs(directory2Data.dir_ek60)
+        if not os.path.exists(directory2Data.dir_ek60rawdata):
+            os.makedirs(directory2Data.dir_ek60rawdata)
+        if not os.path.exists(directory2Data.dir_ek60originalrawdata):
+            os.makedirs(directory2Data.dir_ek60originalrawdata)
+            
+            
+        #EK80
+        if not os.path.exists(directory2Data.dir_ek80):
+            os.makedirs(directory2Data.dir_ek80)
+        if not os.path.exists(directory2Data.dir_ek80rawdata):
+            os.makedirs(directory2Data.dir_ek80rawdata)
+        if not os.path.exists(directory2Data.dir_ek80originalrawdata):
+            os.makedirs(directory2Data.dir_ek80originalrawdata)
+            
+            
+        #MS70
+        if not os.path.exists(directory2Data.dir_MS70):
+            os.makedirs(directory2Data.dir_MS70)
+        if not os.path.exists(directory2Data.dir_MS70rawdata):
+            os.makedirs(directory2Data.dir_MS70rawdata)
+        if not os.path.exists(directory2Data.dir_MS70originalrawdata):
+            os.makedirs(directory2Data.dir_MS70originalrawdata)
+            
+            
+        #ME70
+        if not os.path.exists(directory2Data.dir_ME70):
+            os.makedirs(directory2Data.dir_ME70)
+        if not os.path.exists(directory2Data.dir_ME70rawdata):
+            os.makedirs(directory2Data.dir_ME70rawdata)
+        if not os.path.exists(directory2Data.dir_ME70originalrawdata):
+            os.makedirs(directory2Data.dir_ME70originalrawdata)
+            
+            
+            
+        #Postprocessing 
+        if not os.path.exists(directory2Data.dir_PostProcessing):
+            os.makedirs(directory2Data.dir_PostProcessing)
+        
+        
+        #Pysonar
+        if not os.path.exists(directory2Data.dir_PySonar):
+            os.makedirs(directory2Data.dir_PySonar)
         if not os.path.exists(directory2Data.dir_work):
             os.makedirs(directory2Data.dir_work)
+        if not os.path.exists(directory2Data.dir_search):
+            os.makedirs(directory2Data.dir_search)
+        if not os.path.exists(directory2Data.dir_verticalwork):
+            os.makedirs(directory2Data.dir_verticalwork)
+        if not os.path.exists(directory2Data.dir_result):
+            os.makedirs(directory2Data.dir_result)
+        if not os.path.exists(directory2Data.dir_resulthorizontal):
+            os.makedirs(directory2Data.dir_resulthorizontal)
+        if not os.path.exists(directory2Data.dir_resultvertical):
+            os.makedirs(directory2Data.dir_resultvertical)
+        if not os.path.exists(directory2Data.dir_src):
+            os.makedirs(directory2Data.dir_src)
+            
+        #LSSS
+        if not os.path.exists(directory2Data.dir_LSSS):
+            os.makedirs(directory2Data.dir_LSSS)
+        if not os.path.exists(directory2Data.dir_LSSS_echosounder):
+            os.makedirs(directory2Data.dir_LSSS_echosounder)
         if not os.path.exists(directory2Data.dir_LSSS_report):
             os.makedirs(directory2Data.dir_LSSS_report)
+        if not os.path.exists(directory2Data.dir_LSSS_work):
+            os.makedirs(directory2Data.dir_LSSS_work)
+            
+        #PROFOS
+        if not os.path.exists(directory2Data.dir_PROFOS):
+            os.makedirs(directory2Data.dir_PROFOS)
         if not os.path.exists(directory2Data.dir_PROFOS_report):
             os.makedirs(directory2Data.dir_PROFOS_report)
+        if not os.path.exists(directory2Data.dir_PROFOS_work):
+            os.makedirs(directory2Data.dir_PROFOS_work)
+            
+        #PROUS
+        if not os.path.exists(directory2Data.dir_PROMUS):
+            os.makedirs(directory2Data.dir_PROMUS)
+        if not os.path.exists(directory2Data.dir_PROMUS_report):
+            os.makedirs(directory2Data.dir_PROMUS_report)
+        if not os.path.exists(directory2Data.dir_PROMUS_work):
+            os.makedirs(directory2Data.dir_PROMUS_work)
+            
+        #PROMBE
+        if not os.path.exists(directory2Data.dir_PROMBE):
+            os.makedirs(directory2Data.dir_PROMBE)
+        if not os.path.exists(directory2Data.dir_PROMBE_work):
+            os.makedirs(directory2Data.dir_PROMBE_work)
+        if not os.path.exists(directory2Data.dir_PROMBE_report):
+            os.makedirs(directory2Data.dir_PROMBE_report)
             
                    
     
@@ -142,21 +217,69 @@ def getOrganisedData(liste,WorkDirectory,OS, copy = False, reconvert = False):
         def __init__(self, dir_cruice,equipment):
             self.dir_cruice = dir_cruice+'/'
             self.dir_acoustic_data = dir_cruice+'/ACOUSTIC/'
+            
+            #Sonar path
             self.dir_su90 = dir_cruice+'/ACOUSTIC/'+equipment+'/'
             self.dir_rawdata = dir_cruice+'/ACOUSTIC/'+equipment+'/'+equipment+'_RAWDATA'
             self.dir_originalrawdata = dir_cruice+'/ACOUSTIC/'+equipment+'/'+equipment+'_ORIGINALRAWDATA'
-            self.dir_PySonar = dir_cruice+'/ACOUSTIC/PySonar/'+equipment
-            self.dir_nc = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/netcdf'
-            self.dir_work = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/WorkFiles'
-            self.dir_search = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/Search'
-            self.dir_result = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/Report'
-            self.dir_src = dir_cruice+'/ACOUSTIC/PySonar/'+equipment+'/src'
-            self.dir_LSSS_report = dir_cruice+'/ACOUSTIC/LSSS/REPORTS'
-            self.dir_PROFOS_report = dir_cruice+'/ACOUSTIC/LSSS/REPORTS/PROFOS'
-            self.dir_PROMUS_report = dir_cruice+'/ACOUSTIC/LSSS/REPORTS/PROMUS'
             
             
+            self.dir_ek60 = dir_cruice+'/ACOUSTIC/EK60/'
+            self.dir_ek60rawdata = dir_cruice+'/ACOUSTIC/EK60/EK60_RAWDATA'
+            self.dir_ek60originalrawdata = dir_cruice+'/ACOUSTIC/EK60/EK60__ORIGINALRAWDATA'
             
+            
+            self.dir_ek80 = dir_cruice+'/ACOUSTIC/EK80/'
+            self.dir_ek80rawdata = dir_cruice+'/ACOUSTIC/EK80/EK80_RAWDATA'
+            self.dir_ek80originalrawdata = dir_cruice+'/ACOUSTIC/EK80/EK80__ORIGINALRAWDATA'
+            
+            
+            self.dir_MS70 = dir_cruice+'/ACOUSTIC/MS70/'
+            self.dir_MS70rawdata = dir_cruice+'/ACOUSTIC/MS70/MS70_RAWDATA'
+            self.dir_MS70originalrawdata = dir_cruice+'/ACOUSTIC/MS70/MS70__ORIGINALRAWDATA'
+            
+            
+            self.dir_ME70 = dir_cruice+'/ACOUSTIC/ME70/'
+            self.dir_ME70rawdata = dir_cruice+'/ACOUSTIC/ME70/ME70_RAWDATA'
+            self.dir_ME70originalrawdata = dir_cruice+'/ACOUSTIC/ME70/ME70__ORIGINALRAWDATA'
+            
+            
+            #PostProcessing
+            self.dir_PostProcessing = dir_cruice+'/ACOUSTIC/POSTPROCESSING/'
+            
+            #PYSONAR
+            self.dir_PySonar = dir_cruice+'/ACOUSTIC/POSTPROCESSING/PYSONAR/'+equipment
+            self.dir_work = dir_cruice+'/ACOUSTIC/POSTPROCESSING/PYSONAR/'+equipment+'/WORK'
+            self.dir_search = dir_cruice+'/ACOUSTIC/POSTPROCESSING/PYSONAR/'+equipment+'/WORK/HORIZONTAL'
+            self.dir_verticalwork = dir_cruice+'/ACOUSTIC/POSTPROCESSING/PYSONAR/'+equipment+'/WORK/VERTICAL'
+            self.dir_result = dir_cruice+'/ACOUSTIC/POSTPROCESSING/PYSONAR/'+equipment+'/REPORTS'
+            self.dir_resulthorizontal = dir_cruice+'/ACOUSTIC/POSTPROCESSING/PYSONAR/'+equipment+'/REPORTS/HORIZONTAL'
+            self.dir_resultvertical = dir_cruice+'/ACOUSTIC/POSTPROCESSING/PYSONAR/'+equipment+'/REPORTS/VERTICAL'
+            self.dir_src = dir_cruice+'/ACOUSTIC/POSTPROCESSING/PYSONAR/'+equipment+'/src'
+            
+            #LSSS
+            self.dir_LSSS = dir_cruice+'/ACOUSTIC/POSTPROCESSING/LSSS/'
+            self.dir_LSSS_echosounder = dir_cruice+'/ACOUSTIC/POSTPROCESSING/LSSS/ECHOSOUNDER'
+            self.dir_LSSS_report = dir_cruice+'/ACOUSTIC/POSTPROCESSING/LSSS/ECHOSOUNDER/REPORTS'
+            self.dir_LSSS_work = dir_cruice+'/ACOUSTIC/POSTPROCESSING/LSSS/ECHOSOUNDER/WORK'
+            
+            
+            #PROFOS
+            self.dir_PROFOS = dir_cruice+'/ACOUSTIC/POSTPROCESSING/LSSS/PROFOS'
+            self.dir_PROFOS_report = dir_cruice+'/ACOUSTIC/POSTPROCESSING/LSSS/PROFOS/REPORTS'
+            self.dir_PROFOS_work = dir_cruice+'/ACOUSTIC/POSTPROCESSING/LSSS/PROFOS/WORK'
+            
+            
+            #PROMUS
+            self.dir_PROMUS = dir_cruice+'/ACOUSTIC/POSTPROCESSING/LSSS/PROMUS'
+            self.dir_PROMUS_work = dir_cruice+'/ACOUSTIC/POSTPROCESSING/LSSS/PROMUS/WORK'
+            self.dir_PROMUS_report = dir_cruice+'/ACOUSTIC/POSTPROCESSING/LSSS/PROMUS/REPORTS'
+            
+            
+            #PROMBE
+            self.dir_PROMBE = dir_cruice+'/ACOUSTIC/POSTPROCESSING/LSSS/PROMBE'
+            self.dir_PROMBE_work = dir_cruice+'/ACOUSTIC/POSTPROCESSING/LSSS/PROMBE/WORK'
+            self.dir_PROMBE_report = dir_cruice+'/ACOUSTIC/POSTPROCESSING/LSSS/PROMBE/REPORTS'
             
             
             
